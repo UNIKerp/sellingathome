@@ -12,9 +12,12 @@ class AuthenticaionSAH(models.Model):
 
     
     def establish_connection(self,url):
+        token = self.env['ir.config_parameter'].sudo().get_param('integration_sah.token')
+        secret_key = self.env['ir.config_parameter'].sudo().get_param('integration_sah.secret_key')
+
         headers = {
-            "token": "519827d1-1f35-446d-8895-62c5b597c64c",
-            "SECRET_KEY": "2915189c-c56c-4b65-8403-4ffd6bd917dc"
+            "token": token,
+            "SECRET_KEY": secret_key
         }
         response = requests.get(url, headers=headers)
 
