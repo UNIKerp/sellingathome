@@ -31,7 +31,7 @@ class Tarifs(models.Model):
                 "BrandTaxName": "sample string 3",
                 "TwoLetterISOCode": "FR",
                 "PriceExclTax": product_id.list_price,
-                "PriceInclTax": product_id.list_price * (res.taxes_id.amount/100),
+                "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
                 "ProductCost":  product_id.standard_price,
                 "EcoTax": 6.1,
                 "RolePrices": [
