@@ -43,6 +43,8 @@ class Tarifs(models.Model):
                 data = response.json()
                 _logger.info('=============================== %s',data)
                 #res.price_sah_id =  str(data.get('Id'))
+            else:
+                _logger.info('=============================== %s',response.text)
         
         return res
 
