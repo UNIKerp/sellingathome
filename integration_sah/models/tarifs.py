@@ -26,7 +26,7 @@ class Tarifs(models.Model):
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id =  res.product_tmpl_id
             _logger.info('=============================== %s',product_id.produit_sah_id)
-           values = {
+            values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
                 "RolePrices": [
