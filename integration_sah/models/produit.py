@@ -7,7 +7,7 @@ from datetime import date
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
-    produit_sah_id = fields.Integer("ID Selling Home")
+    produit_sah_id = fields.Char("ID Selling Home")
 
 
     @api.model
