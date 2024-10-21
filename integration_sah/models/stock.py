@@ -18,37 +18,37 @@ class StockSAH(models.Model):
         values={
             "ProductId": 118556,
             "ProductReference": "sample string 2",
-            "StockQuantity": 1,
-            "SellerId": 1,
-            "SellerRemoteReference": "sample string 3",
-            "SellerStockQuantity": 1,
-            "ProductCombinationStocks": [
-                {
-                "ProductCombinationId": 1,
-                "ProductCombinationBarcode": "sample string 1",
-                "ProductCombinationSku": "sample string 2",
-                "ProductCombinationRemoteId": 1,
-                "StockQuantity": 1,
-                "StockQuantityComing": 1,
-                "StockQuantityComingAt": "2024-10-21T13:35:30.8895444+02:00",
-                "SellerStockQuantity": 1,
-                "AllowOutOfStockOrders": True
-                },
-                {
-                "ProductCombinationId": 1,
-                "ProductCombinationBarcode": "sample string 1",
-                "ProductCombinationSku": "sample string 2",
-                "ProductCombinationRemoteId": 1,
-                "StockQuantity": 1,
-                "StockQuantityComing": 1,
-                "StockQuantityComingAt": "2024-10-21T13:35:30.8895444+02:00",
-                "SellerStockQuantity": 1,
-                "AllowOutOfStockOrders": True
-                }
-            ],
-            "StockQuantityComing": 1,
-            "StockQuantityComingAt": "2024-10-21T13:35:30.8895444+02:00",
-            "AllowOutOfStockOrders": True
+            # "StockQuantity": 1,
+            # "SellerId": 1,
+            # "SellerRemoteReference": "sample string 3",
+            # "SellerStockQuantity": 1,
+            # "ProductCombinationStocks": [
+            #     {
+            #     "ProductCombinationId": 1,
+            #     "ProductCombinationBarcode": "sample string 1",
+            #     "ProductCombinationSku": "sample string 2",
+            #     "ProductCombinationRemoteId": 1,
+            #     "StockQuantity": 1,
+            #     "StockQuantityComing": 1,
+            #     "StockQuantityComingAt": "2024-10-21T13:35:30.8895444+02:00",
+            #     "SellerStockQuantity": 1,
+            #     "AllowOutOfStockOrders": True
+            #     },
+            #     {
+            #     "ProductCombinationId": 1,
+            #     "ProductCombinationBarcode": "sample string 1",
+            #     "ProductCombinationSku": "sample string 2",
+            #     "ProductCombinationRemoteId": 1,
+            #     "StockQuantity": 1,
+            #     "StockQuantityComing": 1,
+            #     "StockQuantityComingAt": "2024-10-21T13:35:30.8895444+02:00",
+            #     "SellerStockQuantity": 1,
+            #     "AllowOutOfStockOrders": True
+            #     }
+            # ],
+            # "StockQuantityComing": 1,
+            # "StockQuantityComingAt": "2024-10-21T13:35:30.8895444+02:00",
+            # "AllowOutOfStockOrders": True
            
         }
         response = requests.put(url, headers=headers, json=values)
