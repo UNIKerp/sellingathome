@@ -33,8 +33,8 @@ class Tarifs(models.Model):
                     {
                     "CustomerRoleId": 1,
                     "Quantity": 2,
-                    "NewPriceExclTax":200,
-                    "NewPriceInclTax": 200,
+                    "NewPriceExclTax":200.0,
+                    "NewPriceInclTax": 200.0,
                     "StartDate": "2024-10-21T18:04:14.6234241+02:00",
                     "EndDate": "2024-10-21T18:04:14.6234241+02:00",
                     }
