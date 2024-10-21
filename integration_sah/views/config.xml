@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="settings_sah_integration_view_form" model="ir.ui.view">
+            <field name="name">sah.integration.res.config.settings.form</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//block[@name='integration']" position="inside">
+                    <setting string="Selling at home" help="Selling at home" id="sellingathome">
+                        <field name="token"/>
+                        <field name="secret_key"/>
+                        <!-- <div class="content-group" invisible="not module_base_geolocalize" name="base_geolocalize_warning">
+                            <div class="mt16 text-warning"><strong>Save</strong> this page and come back here to choose your Geo Provider.</div>
+                        </div> -->
+                    </setting>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
