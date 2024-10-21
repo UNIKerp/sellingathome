@@ -39,7 +39,7 @@ class Tarifs(models.Model):
                 "EcoTax": 6.1,
                 "RolePrices": [
                     {
-                    "Id": 1,
+                    # "Id": 1,
                     "CustomerRoleId": 0,
                     "Quantity": 2,
                     "NewPriceExclTax": 1.1,
@@ -47,7 +47,8 @@ class Tarifs(models.Model):
                     "StartDate": "2024-10-21T18:04:14.6234241+02:00",
                     "EndDate": "2024-10-21T18:04:14.6234241+02:00",
                     "CombinationId": 1
-                    }    
+                    },
+                ]   
             }
             response = requests.put(url, json=values, headers=headers)
             if response.status_code == 200:
