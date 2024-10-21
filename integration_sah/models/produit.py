@@ -2,7 +2,8 @@ from odoo import models, api, fields
 import requests
 import json
 from datetime import date
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
@@ -48,7 +49,9 @@ class ProduitSelligHome(models.Model):
         if post_response.status_code == 200:
             response_data = post_response.json()
             product_id = response_data.get('Id')
+            _logger.info('=========================== %s',product_id)
             res.produit_sah_id = product_id
+            _logger.info('=========================== %s',res.produit_sah_id)
             self.env['product.pricelist'].create({
                 'name': "Liste 1",
                 'price_list_sah_id':response_data['Prices'][0]['Id']
