@@ -61,7 +61,7 @@ class ProduitSelligHome(models.Model):
         return res
 
 
-    """def write(self, vals):
+    def write(self, vals):
         product_id = self.produit_sah_id
         if product_id :
             url = f"https://demoapi.sellingathome.com/v1/Products/{product_id}"
@@ -96,4 +96,4 @@ class ProduitSelligHome(models.Model):
                 print(f"Error {post_response.status_code}: {post_response.text}")
 
             res = super(ProduitSelligHome, self).write(vals)
-            return res"""
+            return res
