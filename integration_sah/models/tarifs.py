@@ -37,7 +37,6 @@ class Tarifs(models.Model):
                 "PriceInclTax": 1.1,
                 "ProductCost": 5.1,
                 "EcoTax": 6.1,
-                "IsDefault": true,
                 "RolePrices": [
                     {
                     "Id": 1,
