@@ -32,7 +32,7 @@ class Tarifs(models.Model):
                 "ProductId": product_id.produit_sah_id,
                 "BrandTaxRate": 2.1,
                 "BrandTaxName": "sample string 3",
-                "TwoLetterISOCode": "sample string 4",
+                "TwoLetterISOCode": "FR",
                 "PriceExclTax": 1.1,
                 "PriceInclTax": 1.1,
                 "ProductCost": 5.1,
