@@ -4,7 +4,7 @@
 from odoo import api, fields, models
 
 
-class ConfigSAH(models.model):
+class ConfigSAH(models.Model):
 
     _inherit = "res.company"
 
