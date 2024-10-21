@@ -30,16 +30,16 @@ class Tarifs(models.Model):
                 "BrandTaxRate": 2.1,
                 "BrandTaxName": "sample string 3",
                 "TwoLetterISOCode": "FR",
-                "PriceExclTax": 1.1,
-                "PriceInclTax": 1.1,
-                "ProductCost": 5.1,
+                "PriceExclTax": 200,
+                "PriceInclTax": 200,
+                "ProductCost": 200,
                 "EcoTax": 6.1,
                 "RolePrices": [
                     {
                     "CustomerRoleId": 1,
                     "Quantity": 2,
-                    "NewPriceExclTax": 1.1,
-                    "NewPriceInclTax": 1.1,
+                    "NewPriceExclTax":200,
+                    "NewPriceInclTax": 200,
                     "StartDate": "2024-10-21T18:04:14.6234241+02:00",
                     "EndDate": "2024-10-21T18:04:14.6234241+02:00",
                     }
