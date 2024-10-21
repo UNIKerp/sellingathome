@@ -8,6 +8,6 @@ class ConfigSAH(models.Model):
 
     _inherit = "res.company"
 
-    token = fields.Char(string="Token")
-    secret_key = fields.Char(string="Secret Key")
+    token_sah = fields.Char(string="Token")
+    secret_key_sah = fields.Char(string="Secret Key")
     
