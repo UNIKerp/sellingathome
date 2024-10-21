@@ -2,23 +2,18 @@
 <odoo>
     <data>
         <record id="settings_sah_integration_view_form" model="ir.ui.view">
-            <field name="name">sah.integration.res.config.settings.form</field>
-            <field name="model">res.config.settings</field>
-            <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+            <field name="name">sah.integration.res.company.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//block[@name='integration']" position="inside">
-                    <setting string="Selling at home" id="sellingathome">
-                        <div >
-                            <label for="token" class="col-3 col-lg-6 o_light_label"/>
-                            <field name="token"  groups="integration_sah.group_manager"/>
-                        </div>
-                        <div>
-                            <label for="secret_key" class="col-3 col-lg-6 o_light_label"/>
-                             <field name="secret_key"  groups="integration_sah.group_manager"/>
-                        </div>
-                       
-                    </setting>
-                </xpath>
+                <page name="general_info" position="after">
+                    <page  string="Selling at home" id="sellingathome" groups="integration_sah.group_manager">
+                        <group>
+                            <field name="token"/>
+                            <field name="secret_key"/>
+                        </group>
+                    </page>
+                </page>
             </field>
         </record>
     </data>
