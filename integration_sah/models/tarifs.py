@@ -27,7 +27,14 @@ class Tarifs(models.Model):
             product_id =  res.product_tmpl_id
             values = {
                 "ProductId": product_id.produit_sah_id,
-                "TwoLetterISOCode": 'FR',
+                "BrandTaxRate": 2.1,
+                "BrandTaxName": "sample string 3",
+                "TwoLetterISOCode": "FR",
+                "PriceExclTax": 1.1,
+                "PriceInclTax": 1.1,
+                "ProductCost": 5.1,
+                "EcoTax": 6.1,
+                "IsDefault": true,
                 "RolePrices": [
                     {
                     "CustomerRoleId": 1,
