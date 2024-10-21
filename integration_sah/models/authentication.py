@@ -13,20 +13,12 @@ class AuthenticaionSAH(models.Model):
     _description = "Authentication sellingathome"
 
     
-    def establish_connection(self,url):
-        company = self.env['res.compny'].search([('token','!=',False),('secret_key','!=',False)],limit=1)
+    def establish_connection(self):
+        company = self.env['res.company'].search([('token_sah','!=',False),('secret_key_sah','!=',False)],limit=1)
         if company:
             headers = {
-                "token": company.token,
-                "SECRET_KEY": company.secret_key
+                "token": company.token_sah,
+                "SECRET_KEY": company.secret_key_sah
             }
-            response = requests.get(url, headers=headers)
-
-            if response.status_code == 200:
-                return response.json()
-            else:
-                raise ValidationError("Les données fournies ne sont pas valides.")
-        else:
-            raise UserError("Une erreur est survenue, veuillez vérifier vos paramètres d'accés.")
-
+            return headers
    
