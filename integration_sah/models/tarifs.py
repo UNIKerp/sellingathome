@@ -28,13 +28,36 @@ class Tarifs(models.Model):
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id =  res.product_tmpl_id
             _logger.info('=============================== %s',product_id.produit_sah_id)
-            values = {
+            values ={
                 "ProductId": product_id.produit_sah_id,
-                "TwoLetterISOCode": "FR",
+                "BrandTaxRate": 2.1,
+                "BrandTaxName": "sample string 3",
+                "TwoLetterISOCode": "sample string 4",
+                "PriceExclTax": 1.1,
+                "PriceInclTax": 1.1,
+                "ProductCost": 5.1,
+                "EcoTax": 6.1,
+                "IsDefault": true,
                 "RolePrices": [
                     {
-                        "CustomerRoleId": 0,
-                        "Quantity": 2,
+                    "Id": 1,
+                    "CustomerRoleId": 1,
+                    "Quantity": 2,
+                    "NewPriceExclTax": 1.1,
+                    "NewPriceInclTax": 1.1,
+                    "StartDate": "2024-10-21T18:04:14.6234241+02:00",
+                    "EndDate": "2024-10-21T18:04:14.6234241+02:00",
+                    "CombinationId": 1
+                    },
+                    {
+                    "Id": 1,
+                    "CustomerRoleId": 1,
+                    "Quantity": 2,
+                    "NewPriceExclTax": 1.1,
+                    "NewPriceInclTax": 1.1,
+                    "StartDate": "2024-10-21T18:04:14.6234241+02:00",
+                    "EndDate": "2024-10-21T18:04:14.6234241+02:00",
+                    "CombinationId": 1
                     }
                 ]
             }
