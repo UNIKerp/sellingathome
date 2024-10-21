@@ -28,6 +28,13 @@ class Tarifs(models.Model):
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id =  res.product_tmpl_id
             _logger.info('=============================== %s',product_id.produit_sah_id)
+            new_price_excl_tax = 200.0  # ou res.product_tmpl_id.list_price par exemple
+            new_price_incl_tax = 200.0  # ou calculer en ajoutant la taxe
+            
+            # Utiliser la date actuelle pour StartDate et EndDate, ou personnaliser
+            start_date = datetime.now().isoformat()
+            end_date = datetime.now().isoformat()
+
             values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
@@ -35,13 +42,14 @@ class Tarifs(models.Model):
                     {
                         "CustomerRoleId": 1,
                         "Quantity": 2,
-                        "NewPriceExclTax": 200.0,
-                        "NewPriceInclTax": 200.0,
-                        "StartDate": datetime.now().isoformat(),
-                        "EndDate": datetime.now().isoformat(),
+                        "NewPriceExclTax": new_price_excl_tax,
+                        "NewPriceInclTax": new_price_incl_tax,
+                        "StartDate": start_date,
+                        "EndDate": end_date,
                     }
                 ]
             }
+
             response = requests.put(url, json=values, headers=headers)
             if response.status_code == 200:
                 data = response.json()
