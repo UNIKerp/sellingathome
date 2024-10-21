@@ -38,7 +38,7 @@ class Tarifs(models.Model):
                     }
                 ]
             }
-            response = requests.put(url_add_price, json=values, headers=headers)
+            response = requests.put(url, json=values, headers=headers)
             if response1.status_code == 200:
                 data = response.json()
                 _logger.info('=============================== %s',data)
