@@ -2,6 +2,8 @@
 import logging
 from odoo import models, fields, api
 import requests
+from odoo.exceptions import UserError
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -11,16 +13,12 @@ class AuthenticaionSAH(models.Model):
     _description = "Authentication sellingathome"
 
     
-    def establish_connection(self,url):
-        headers = {
-            "token": "519827d1-1f35-446d-8895-62c5b597c64c",
-            "SECRET_KEY": "2915189c-c56c-4b65-8403-4ffd6bd917dc"
-        }
-        response = requests.get(url, headers=headers)
-
-        if response.status_code == 200:
-            return response.json()
-        else:
-            _logger.info("Erreur connexion")
-
+    def establish_connection(self):
+        company = self.env['res.company'].search([('token_sah','!=',False),('secret_key_sah','!=',False)],limit=1)
+        if company:
+            headers = {
+                "token": company.token_sah,
+                "SECRET_KEY": company.secret_key_sah
+            }
+            return headers
    
