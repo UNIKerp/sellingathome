@@ -51,7 +51,7 @@ class ProduitSelligHome(models.Model):
             res.produit_sah_id = product_id
             self.env['product.pricelist'].create({
                 'name': "Liste 1",
-                'price_list_sah_id':post_response['Prices'][0]['Id']
+                'price_list_sah_id':response_data['Prices'][0]['Id']
             })
         else:
             print(f"Error {post_response.status_code}: {post_response.text}")
