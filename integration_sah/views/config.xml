@@ -9,8 +9,8 @@
                 <page name="general_info" position="after">
                     <page  string="Selling at home" id="sellingathome" groups="integration_sah.group_manager">
                         <group>
-                            <field name="token"/>
-                            <field name="secret_key"/>
+                            <field name="token_sah"/>
+                            <field name="secret_key_sah"/>
                         </group>
                     </page>
                 </page>
