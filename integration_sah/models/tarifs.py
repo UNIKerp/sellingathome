@@ -33,7 +33,7 @@ class Tarifs(models.Model):
                 "TwoLetterISOCode": "FR",
                 "RolePrices": [
                     {
-                        "CustomerRoleId": 1,
+                        "CustomerRoleId": 0,
                         "Quantity": 2,
                     }
                 ]
