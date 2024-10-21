@@ -8,11 +8,14 @@
             <field name="arch" type="xml">
                 <xpath expr="//block[@name='integration']" position="inside">
                     <setting string="Selling at home" help="Selling at home" id="sellingathome">
-                        <field name="token"/>
-                        <field name="secret_key"/>
-                        <!-- <div class="content-group" invisible="not module_base_geolocalize" name="base_geolocalize_warning">
-                            <div class="mt16 text-warning"><strong>Save</strong> this page and come back here to choose your Geo Provider.</div>
-                        </div> -->
+                        <div>
+                            <label for="token" class="col-3 col-lg-6 o_light_label"/>
+                            <field name="token"/>
+                        </div>
+                        <div>
+                            <label for="secret_key" class="col-3 col-lg-6 o_light_label"/>
+                             <field name="secret_key"/>
+                        </div>
                     </setting>
                 </xpath>
             </field>
