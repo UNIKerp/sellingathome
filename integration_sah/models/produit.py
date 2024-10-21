@@ -7,7 +7,7 @@ from datetime import date
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
-    produit_sah_id = fields.Char("ID Selling Home")
+    produit_sah_id = fields.Integer("ID produit SAH")
 
 
     @api.model
@@ -49,19 +49,14 @@ class ProduitSelligHome(models.Model):
             response_data = post_response.json()
             product_id = response_data.get('Id')
             res.produit_sah_id = product_id
-            pricelist_id = self.env['product.price_list'].search([],limit=1)
-            self.env['product.pricelist.item'].create({
-                'pricelist_id': pricelist_id.id,
-                'product_tmpl_id': res.id,
-                'fixed_price': res.list_price,
-                'min_quantity': 1,
-                'date_start': date.today(),
-                'date_end':  date.today(),
-                # 'price_sah_id' : response_data.Prices[0]['Id']
+            self.env['product.pricelist'].create({
+                'name': "Liste 1",
+                'price_list_sah_id':post_response['Prices'][0]['Id']
             })
         else:
             print(f"Error {post_response.status_code}: {post_response.text}")
         return res
+
 
     def write(self, vals):
         product_id = self.produit_sah_id

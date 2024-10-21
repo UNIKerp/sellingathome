@@ -2,6 +2,14 @@
 
 from odoo import api, fields, models
 import requests
+import logging
+_logger = logging.getLogger(__name__)
+
+class ProduitPriceList(models.Model):
+    _inherit = "product.pricelist"
+
+    price_list_sah_id = fields.Char(string='Id Prix SAH')
+
 
 class Tarifs(models.Model):
 
@@ -13,28 +21,32 @@ class Tarifs(models.Model):
     def create(self,vals):
         res = super(Tarifs,self).create(vals)
         headers = self.env['authentication.sah'].establish_connection()
-        url_add_price = 'https://demoapi.sellingathome.com/v1/Prices'
-        if res.product_tmpl_id:
+        if res.product_tmpl_id and res.pricelist_id:
+            url = f'https://demoapi.sellingathome.com/v1/Prices{res.pricelist_id.price_sah_id}'
+            product_id =  res.product_tmpl_id
             values = {
-                "ProductId": res.product_tmpl_id.product_sah_id,
-                "BrandTaxRate": 2.1,
-                "BrandTaxName": "sample string 3",
-                "TwoLetterISOCode": "FR",
-                "PriceExclTax": 1.1,
-                "PriceInclTax": 1.1,
-                "ProductCost": 5.1,
-                "EcoTax": 6.1,
-                "IsDefault": true,
+                "ProductId": product_id.produit_sah_id,
+                "RolePrices": [
+                    {
+                    "CustomerRoleId": 1,
+                    "Quantity": 2,
+                    "NewPriceExclTax": 1.1,
+                    "NewPriceInclTax": 1.1,
+                    "StartDate": "2024-10-21T18:04:14.6234241+02:00",
+                    "EndDate": "2024-10-21T18:04:14.6234241+02:00",
+                    }
+                ]
             }
-            response = requests.get(url_add_price, json=values, headers=headers)
+            response = requests.put(url_add_price, json=values, headers=headers)
             if response1.status_code == 200:
                 data = response.json()
-                res.price_sah_id =  str(data.get('Id'))
+                _logger.info('=============================== %s',data)
+                #res.price_sah_id =  str(data.get('Id'))
         
         return res
 
 
-    def write(self,vals):
+    """def write(self,vals):
         product_id = self.id
         url_edit = f'https://demoapi.sellingathome.com/v1/Prices/{self.price_sah_id}'
         values={
@@ -51,4 +63,4 @@ class Tarifs(models.Model):
         }
         requests.put(url_edit, headers=headers, json=values)
         res = super(Tarifs,self).write(vals)
-        return res
+        return res"""
