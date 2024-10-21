@@ -13,13 +13,13 @@ class StockSAH(models.Model):
     @api.model
     def write(self,vals):
         res = super(StockSAH,self).write(vals)
-        if 'qty_available' in vals or 'virtual_available' in vals:
+        if 'qty_available' in vals:
             url = 'https://demoapi.sellingathome.com/v1/Stocks'
             headers = self.env['authentication.sah'].establish_connection()
             values={
                 "ProductId": 118557,
                 "ProductReference": "sample string 2",
-                "StockQuantity": 10,
+                "StockQuantity": vals.get("user_id"),
                 # "SellerId": 1,
                 # "SellerRemoteReference": "sample string 3",
                 # "SellerStockQuantity": 1,
