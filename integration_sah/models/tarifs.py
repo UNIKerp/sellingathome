@@ -4,6 +4,7 @@ from odoo import api, fields, models
 import requests
 import logging
 _logger = logging.getLogger(__name__)
+from datetime import datetime
 
 class ProduitPriceList(models.Model):
     _inherit = "product.pricelist"
@@ -35,8 +36,8 @@ class Tarifs(models.Model):
                         "Quantity": 2,
                         "NewPriceExclTax": 200.0,
                         "NewPriceInclTax": 200.0,
-                        "StartDate": start_date,
-                        "EndDate": end_date,
+                        "StartDate": datetime.now().isoformat(),
+                        "EndDate": datetime.now().isoformat(),
                     }
                 ]
             }
