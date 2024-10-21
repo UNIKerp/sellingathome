@@ -22,21 +22,23 @@ class ProduitSelligHome(models.Model):
             "Prices": [
                 {
                     "ProductId": res.id,
-                    # "BrandTaxRate": 6.1,
+                    "BrandTaxRate": 2.1,
+                    "BrandTaxName": res.name,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": res.list_price,
-                    "PriceInclTax": res.list_price * 1.2,
+                    "PriceInclTax": res.list_price * (res.taxes_id.amount/100),
                     "ProductCost": res.standard_price,
-                    # "EcoTax": 8.1
+                    "EcoTax": 8.1
                 }
             ],
-            'ProductLangs': [
-            {'Name': res.name, 'Description': 'dddddddddddd', 'ShortDescription': 'teste', 'ISOValue': 'fr'
-            },
-            {'Name': res.name, 'Description': None, 'ShortDescription': 'test sac', 'ISOValue': 'en'
-            }
-        ],
+            "ProductLangs": [
+                {'Name': res.name, 
+                'Description': res.description, 
+                'ISOValue': 'fr'
+                }
+            ],
         }
+
 
         # Send POST request
         post_response = requests.post(url, json=product_data, headers=headers)

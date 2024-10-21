@@ -30,7 +30,7 @@ class Tarifs(models.Model):
             #     # "NewPriceInclTax": 1.1,
             #     "StartDate":elt.date_start,
             #     "EndDate": elt.end_start,
-            #     # "CombinationId": 1
+            #     # "CombinationId": 1yy
             #     }
             #     for elt in res.item_ids
             # ]
