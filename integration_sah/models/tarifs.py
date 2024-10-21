@@ -40,25 +40,14 @@ class Tarifs(models.Model):
                 "RolePrices": [
                     {
                     "Id": 1,
-                    "CustomerRoleId": 1,
+                    "CustomerRoleId": 0,
                     "Quantity": 2,
                     "NewPriceExclTax": 1.1,
                     "NewPriceInclTax": 1.1,
                     "StartDate": "2024-10-21T18:04:14.6234241+02:00",
                     "EndDate": "2024-10-21T18:04:14.6234241+02:00",
                     "CombinationId": 1
-                    },
-                    {
-                    "Id": 1,
-                    "CustomerRoleId": 1,
-                    "Quantity": 2,
-                    "NewPriceExclTax": 1.1,
-                    "NewPriceInclTax": 1.1,
-                    "StartDate": "2024-10-21T18:04:14.6234241+02:00",
-                    "EndDate": "2024-10-21T18:04:14.6234241+02:00",
-                    "CombinationId": 1
-                    }
-                ]
+                    }    
             }
             response = requests.put(url, json=values, headers=headers)
             if response.status_code == 200:
