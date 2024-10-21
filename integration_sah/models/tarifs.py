@@ -25,6 +25,7 @@ class Tarifs(models.Model):
             price_list_id = str(res.pricelist_id.price_list_sah_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id =  res.product_tmpl_id
+            _logger.info('=============================== %s',product_id.produit_sah_id)
             values = {
                 "ProductId": product_id.produit_sah_id,
                 "BrandTaxRate": 2.1,
