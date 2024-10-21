@@ -22,7 +22,8 @@ class Tarifs(models.Model):
         res = super(Tarifs,self).create(vals)
         headers = self.env['authentication.sah'].establish_connection()
         if res.product_tmpl_id and res.pricelist_id:
-            url = f'https://demoapi.sellingathome.com/v1/Prices{res.pricelist_id.price_sah_id}'
+            price_list_id = str(res.pricelist_id.price_list_sah_id)
+            url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id =  res.product_tmpl_id
             values = {
                 "ProductId": product_id.produit_sah_id,
