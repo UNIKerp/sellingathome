@@ -24,6 +24,7 @@ class Tarifs(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         if res.product_tmpl_id and res.pricelist_id:
             price_list_id = str(res.pricelist_id.price_list_sah_id)
+            _logger.info('===============price_list_id================ %s',price_list_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id =  res.product_tmpl_id
             _logger.info('=============================== %s',product_id.produit_sah_id)
