@@ -27,6 +27,7 @@ class Tarifs(models.Model):
             product_id =  res.product_tmpl_id
             values = {
                 "ProductId": product_id.produit_sah_id,
+                "TwoLetterISOCode": 'FR',
                 "RolePrices": [
                     {
                     "CustomerRoleId": 1,
