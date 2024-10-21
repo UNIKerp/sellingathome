@@ -51,7 +51,7 @@ class ProduitSelligHome(models.Model):
             product_id = response_data.get('Id')
             _logger.info('=========================== %s',product_id)
             res.produit_sah_id = product_id
-            _logger.info('=========================== %s',res.produit_sah_id)
+            _logger.info('=========================== %s',response_data)
             self.env['product.pricelist'].create({
                 'name': "Liste 1",
                 'price_list_sah_id':response_data['Prices'][0]['Id']
