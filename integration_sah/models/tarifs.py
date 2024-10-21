@@ -40,7 +40,7 @@ class Tarifs(models.Model):
                 "RolePrices": [
                     {
                     # "Id": 1,
-                    "CustomerRoleId": 0,
+                    "CustomerRoleId": 1,
                     "Quantity": 2,
                     "NewPriceExclTax": 1.1,
                     "NewPriceInclTax": 1.1,
