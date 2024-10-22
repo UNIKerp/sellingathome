@@ -53,7 +53,7 @@ class ProduitSelligHome(models.Model):
             res.produit_sah_id = product_id
             _logger.info('=========================== %s',response_data)
             self.env['product.pricelist'].create({
-                'name': response_data['Prices'][0]['BrandTaxName'],
+                'name':f'Tarif du produit {res.name}',
                 'price_list_sah_id':response_data['Prices'][0]['Id']
             })
         else:
