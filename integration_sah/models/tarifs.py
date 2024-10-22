@@ -94,9 +94,19 @@ class Tarifs(models.Model):
 
 
     def recuperation_liste_prices(self):
-        url2 = f"https://demoapi.sellingathome.com/v1/Prices?118812"
+        api_url = "https://demoapi.sellingathome.com/v1/Prices"
+        product_id = 118812
+        page = 1
+        offset = 0
         headers = self.env['authentication.sah'].establish_connection()
-        post_response = requests.get(url2, headers=headers)
-        if post_response.status_code == 200:
-            response_data = post_response.json()
-            _logger.info('=========================== %s',response_data)
+        params = {
+            "productid": product_id,
+            "page": page,
+            "offset": offset
+        }
+        response = requests.get(api_url, headers=headers, params=params)
+        if response.status_code == 200:
+            prices = response.json()
+            print("Liste des prix du produit:", prices)
+        else:
+            print(f"Erreur lors de la récupération des prix: {response.status_code} - {response.text}")
