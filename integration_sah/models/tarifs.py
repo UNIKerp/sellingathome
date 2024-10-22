@@ -86,6 +86,8 @@ class Tarifs(models.Model):
                 },
             ]   
         }
-        requests.put(url, headers=headers, json=values)
+        response  = requests.put(url, headers=headers, json=values)
+        if response.status_code == 200:
+            _logger.info('Données modifiées Tarifs %s',response.json())
         res = super(Tarifs,self).write(vals)
         return res
