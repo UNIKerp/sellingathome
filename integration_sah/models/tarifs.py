@@ -61,33 +61,34 @@ class Tarifs(models.Model):
 
 
     def write(self,vals):
-        headers = self.env['authentication.sah'].establish_connection()
-        price_list_id = str(self.pricelist_id.price_list_sah_id)
-        url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
-        product_id =  self.product_tmpl_id
-        start_date = self.date_start.isoformat(timespec='microseconds') + "+02:00"
-        end_date = self.date_end.isoformat(timespec='microseconds') + "+02:00"
+        if vals:
+            headers = self.env['authentication.sah'].establish_connection()
+            price_list_id = str(self.pricelist_id.price_list_sah_id)
+            url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
+            product_id =  self.product_tmpl_id
+            start_date = self.date_start.isoformat(timespec='microseconds') + "+02:00"
+            end_date = self.date_end.isoformat(timespec='microseconds') + "+02:00"
 
-        values = {
-            "ProductId": product_id.produit_sah_id,
-            "TwoLetterISOCode": "FR",
-            "PriceExclTax": product_id.list_price,
-            "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
-            "ProductCost": product_id.standard_price,
-            "RolePrices": [
-                {
-                "CustomerRoleId": 1,
-                "Quantity": int(self.min_quantity),
-                "NewPriceExclTax": self.fixed_price ,
-                #"NewPriceInclTax": self.fixed_price * (product_id.taxes_id.amount/100),
-                "StartDate": start_date or False,
-                "EndDate": end_date or False,
-                # "CombinationId": 1,
-                },
-            ]   
-        }
-        response  = requests.put(url, headers=headers, json=values)
-        if response.status_code == 200:
-            _logger.info('Données modifiées Tarifs %s',response.json())
+            values = {
+                "ProductId": product_id.produit_sah_id,
+                "TwoLetterISOCode": "FR",
+                "PriceExclTax": product_id.list_price,
+                "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
+                "ProductCost": product_id.standard_price,
+                "RolePrices": [
+                    {
+                    "CustomerRoleId": 1,
+                    "Quantity": int(self.min_quantity),
+                    "NewPriceExclTax": self.fixed_price ,
+                    #"NewPriceInclTax": self.fixed_price * (product_id.taxes_id.amount/100),
+                    "StartDate": start_date or False,
+                    "EndDate": end_date or False,
+                    # "CombinationId": 1,
+                    },
+                ]   
+            }
+            response  = requests.put(url, headers=headers, json=values)
+            if response.status_code == 200:
+                _logger.info('Données modifiées Tarifs %s',response.json())
         res = super(Tarifs,self).write(vals)
         return res
