@@ -14,50 +14,77 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         # Create the product record in Odoo
-        res = super(ProduitSelligHome, self).create(vals)
-        url = "https://demoapi.sellingathome.com/v1/Products"
         headers = self.env['authentication.sah'].establish_connection()
+        res = super(ProduitSelligHome, self).create(vals)
+        if res.categ_id:
+            url_categ = "https://demoapi.sellingathome.com/v1/Categories"
+            post_response_categ = requests.get(url_categ, headers=headers)
 
-        product_data = {
-            "ProductType": 5,
-            "Reference": res.default_code,
-            "Prices": [
-                {
-                    "ProductId": res.id,
-                    "BrandTaxRate": 2.1,
-                    "BrandTaxName": res.name,
-                    "TwoLetterISOCode": "FR",
-                    "PriceExclTax": res.list_price,
-                    "PriceInclTax": res.list_price * (res.taxes_id.amount/100),
-                    "ProductCost": res.standard_price,
-                    "EcoTax": 8.1
-                }
-            ],
-            'ProductLangs': [
-                {'Name': res.name, 
-                'Description': res.description, 
-                'ISOValue': 'fr'
-                }
-            ],
-        }
+            # Check if the response was successful
+            if post_response_categ.status_code == 200:
+                response_data_categ = post_response_categ.json()
+                _logger.info('=========================== %s',response_data_categ)
+                
+            else:
+                print(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
+            url = "https://demoapi.sellingathome.com/v1/Products"
+            
+
+            # product_data = {
+            #     "ProductType": 5,
+            #     "Reference": res.default_code,
+            #     "Prices": [
+            #         {
+            #             "ProductId": res.id,
+            #             "BrandTaxRate": 2.1,
+            #             "BrandTaxName": res.name,
+            #             "TwoLetterISOCode": "FR",
+            #             "PriceExclTax": res.list_price,
+            #             "PriceInclTax": res.list_price * (res.taxes_id.amount/100),
+            #             "ProductCost": res.standard_price,
+            #             "EcoTax": 8.1
+            #         }
+            #     ],
+            #     # "RemoteId": "sample string 2",
+            #     # "RemoteReference": "sample string 3",
+            #     "Barcode": res.barcode,
+            #     "Weight": res.weight,
+            #     # "Length": 1.1,
+            #     # "Width": 1.1,
+            #     # "Height": 1.1,
+            #     "IsPublished": True,
+            #     # "IsVirtual": true,
+            #     # "UncommissionedProduct": true,
+            #     # "StockQuantity": int(res.qty_available) or 0.0,
+            #     # "InventoryMethod": 1,
+            #     # "LowStockQuantity": 1,
+            #     # "AllowOutOfStockOrders": True,
+            #     # "WarehouseLocation": res.warehouse_id.id or '',
+            #     'ProductLangs': [
+            #         {'Name': res.name, ProductId
+            #         'Description': res.description, 
+            #         'ISOValue': 'fr'ProductId
+            #         }
+            #     ],
+            # }
 
 
-        # Send POST request
-        post_response = requests.post(url, json=product_data, headers=headers)
-
-        # Check if the response was successful
-        if post_response.status_code == 200:
-            response_data = post_response.json()
-            product_id = response_data.get('Id')
-            _logger.info('=========================== %s',product_id)
-            res.produit_sah_id = product_id
-            _logger.info('=========================== %s',response_data)
-            self.env['product.pricelist'].create({
-                'name':f'Tarif du produit {res.name}',
-                'price_list_sah_id':response_data['Prices'][0]['Id']
-            })
-        else:
-            print(f"Error {post_response.status_code}: {post_response.text}")
+            # # Send POST request
+            # post_response = requests.post(url, json=product_data, headers=headers)
+            
+            # # Check if the response was successful
+            # if post_response.status_code == 200:
+            #     response_data = post_response.json()
+            #     product_id = response_data.get('Id')
+            #     _logger.info('=========================== %s',product_id)
+            #     res.produit_sah_id = product_id
+            #     _logger.info('=========================== %s',response_data)
+            #     self.env['product.pricelist'].create({
+            #         'name':f'Tarif du produit {res.name}',
+            #         'price_list_sah_id':response_data['Prices'][0]['Id']
+            #     })
+            # else:
+            #     print(f"Error {post_response.status_code}: {post_response.text}")
         return res
 
 
