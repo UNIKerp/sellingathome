@@ -74,7 +74,6 @@ class Tarifs(models.Model):
             end_date = self.date_end.isoformat(timespec='microseconds') + "+02:00" if self.date_end else False
             # Calcul correct du prix TTC
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
-            _logger.info('=======================%s',vals['min_quantity'])
             _logger.info('=======================%s',vals.get('min_quantity'))
             values = {
                 "ProductId": product_id.produit_sah_id,
