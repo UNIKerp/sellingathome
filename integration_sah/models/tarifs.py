@@ -84,6 +84,7 @@ class Tarifs(models.Model):
                 "ProductCost": product_id.standard_price,
                 "RolePrices": [
                     {
+                        "Id": int(self.price_sah_id),
                         "CustomerRoleId": 1,
                         "Quantity": int(vals['min_quantity']) if vals.get('min_quantity') else 1,
                         "NewPriceExclTax": vals['fixed_price'] if vals.get('fixed_price') else 0.0,
