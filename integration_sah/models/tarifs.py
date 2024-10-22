@@ -88,15 +88,12 @@ class Tarifs(models.Model):
                         "CustomerRoleId": 1,
                         "Quantity": int(vals['min_quantity']) if vals.get('min_quantity') else 1,
                         "NewPriceExclTax": vals['fixed_price'] if vals.get('fixed_price') else 0.0,
-                        "StartDate": start_date,
-                        "EndDate": end_date,
+                        "StartDate": "2024-10-22T18:58:25.956496+02:00",
+                        "EndDate": "2024-10-22T18:58:25.956496+02:00",
                     },
                 ]
             }
-            _logger.info('=============================%s',values)
-            # Requête PUT vers l'API SellingAtHome
             response = requests.put(url, headers=headers, json=values)
-            # Gestion des réponses
             if response.status_code == 200:
                 _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
             else:
