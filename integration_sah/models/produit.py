@@ -13,7 +13,6 @@ class ProduitSelligHome(models.Model):
 
     @api.model
     def create(self, vals):
-        # Create the product record in Odoo
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
         id_categ = ''
@@ -21,7 +20,7 @@ class ProduitSelligHome(models.Model):
         if res.categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
-            # Check if the response was successful
+            
             if post_response_categ.status_code == 200:
                 response_data_categ = post_response_categ.json()
                 categ_parent = response_data_categ[0]['Id']
@@ -103,7 +102,6 @@ class ProduitSelligHome(models.Model):
             # Send POST request
             post_response = requests.post(url, json=product_data, headers=headers)
             
-            # Check if the response was successful
             if post_response.status_code == 200:
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
@@ -178,11 +176,11 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                         }
                     ],
-                    "Categories": [
-                    {
-                    "Id": id_categ,
-                    },
-                ],
+                    # "Categories": [
+                    #     {
+                    #     "Id": id_categ,
+                    #     },
+                    # ],
                 }
                     
                 put_response = requests.put(url, json=product_data_upagate, headers=headers)
