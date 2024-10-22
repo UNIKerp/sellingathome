@@ -70,8 +70,8 @@ class Tarifs(models.Model):
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id = self.product_tmpl_id
             # Vérification des dates avant conversion
-            start_date = self.date_start.isoformat(timespec='microseconds') + "+02:00" if self.date_start else False
-            end_date = self.date_end.isoformat(timespec='microseconds') + "+02:00" if self.date_end else False
+            start_date = vals['date_start'].isoformat(timespec='microseconds') + "+02:00" if vals.get('date_start') else False
+            end_date = vals['date_end'].isoformat(timespec='microseconds') + "+02:00" if vals.get('date_end') else False
             # Calcul correct du prix TTC
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
             _logger.info('=======================%s',vals.get('min_quantity'))
