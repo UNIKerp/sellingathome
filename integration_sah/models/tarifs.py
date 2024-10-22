@@ -33,24 +33,46 @@ class Tarifs(models.Model):
             # Calcul du prix TTC en ajoutant la taxe
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
             _logger.info('============= %s%s%s',product_id.list_price,price_incl_tax,product_id.standard_price)
-
             values = {
                 "ProductId": int(product_id.produit_sah_id),
+                "BrandTaxRate": 2.1,
+                "BrandTaxName": "sample string 3",
                 "TwoLetterISOCode": "FR",
-                "PriceExclTax": 200,
-                "PriceInclTax": 200,
-                # "ProductCost":  200.0,
+                "PriceExclTax": 1.1,
+                "PriceInclTax": 1.1,
+                "ProductCost": 5.1,
+                "EcoTax": 6.1,
+                "IsDefault": True,
                 "RolePrices": [
                     {
-                        "CustomerRoleId": 1,
-                        "Quantity": int(res.min_quantity) if res.min_quantity else 1,
-                        "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
-                        "StartDate": start_date if start_date else None,
-                        "EndDate": end_date if end_date else None,
+                    "Id": 1,
+                    "CustomerRoleId": 1,
+                    "Quantity": 2,
+                    "NewPriceExclTax": 1.1,
+                    "NewPriceInclTax": 1.1,
+                    "StartDate": "2024-10-22T18:18:08.3585587+02:00",
+                    "EndDate": "2024-10-22T18:18:08.3585587+02:00",
+                    "CombinationId": 1
                     }
-                    
                 ]
-            }
+                }
+            # values = {
+            #     "ProductId": int(product_id.produit_sah_id),
+            #     "TwoLetterISOCode": "FR",
+            #     "PriceExclTax": 200,
+            #     "PriceInclTax": 200,
+            #     # "ProductCost":  200.0,
+            #     "RolePrices": [
+            #         {
+            #             "CustomerRoleId": 1,
+            #             "Quantity": int(res.min_quantity) if res.min_quantity else 1,
+            #             "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
+            #             "StartDate": start_date if start_date else None,
+            #             "EndDate": end_date if end_date else None,
+            #         }
+                    
+            #     ]
+            # }
 
             response = requests.put(url, json=values, headers=headers)
             
