@@ -38,7 +38,7 @@ class Tarifs(models.Model):
                     "Quantity": int(res.min_quantity),
                     "NewPriceExclTax": res.fixed_price ,
                     #"NewPriceInclTax": res.fixed_price * (product_id.taxes_id.amount/100),
-                    # "StartDate": res.date_start,
+                    "StartDate": res.date_start,
                     # "EndDate": res.date_end,
                     # "CombinationId": 1
                     },
