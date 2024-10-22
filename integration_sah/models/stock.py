@@ -15,12 +15,14 @@ class StockPickingSAH(models.Model):
             for line in self.move_ids_without_package:
                 if line.product_id.product_tmpl_id.is_storable == True:
                     qty_available = line.product_id.product_tmpl_id.qty_available
+                    virtual_available = line.product_id.product_tmpl_id.virtual_available
                     url = 'https://demoapi.sellingathome.com/v1/Stocks'
                     headers = self.env['authentication.sah'].establish_connection()
                     values = {
                         "ProductId":   line.product_id.product_tmpl_id.produit_sah_id,
                         "ProductReference":  line.product_id.product_tmpl_id.default_code,
                         "StockQuantity": int(qty_available),
+                        "StockQuantityComing":int(virtual_available),
                     }
                     response = requests.put(url, headers=headers, json=values)
                     if response.status_code == 200:
