@@ -37,19 +37,19 @@ class Tarifs(models.Model):
             values = {
                 "ProductId": int(product_id.produit_sah_id),
                 "TwoLetterISOCode": "FR",
-                "PriceExclTax": product_id.list_price,
-                "PriceInclTax": price_incl_tax,
-                "ProductCost": product_id.standard_price,
-                # "RolePrices": [
-                #     {
-                #         "CustomerRoleId": 1,
-                #         "Quantity": int(res.min_quantity) if res.min_quantity else 1,
-                #         "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
-                #         "StartDate": start_date if start_date else None,
-                #         "EndDate": end_date if end_date else None,
-                #     }
+                "PriceExclTax": 1.1,
+                "PriceInclTax": 1.1,
+                "ProductCost": 1.1,
+                "RolePrices": [
+                    {
+                        "CustomerRoleId": 1,
+                        "Quantity": int(res.min_quantity) if res.min_quantity else 1,
+                        "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
+                        "StartDate": start_date if start_date else None,
+                        "EndDate": end_date if end_date else None,
+                    }
                     
-                # ]
+                ]
             }
 
             response = requests.put(url, json=values, headers=headers)
