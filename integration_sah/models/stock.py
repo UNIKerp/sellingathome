@@ -12,9 +12,10 @@ class StockPickingSAH(models.Model):
     def button_validate(self):
         res = super(StockPickingSAH,self).button_validate()
         if self.move_ids_without_package:
-            for line self.move_ids_without_package:
+            for line in self.move_ids_without_package:
                 qty_available = line.product_id.product_tmpl_id.qty_available
                 qty_available = qty_available+product_uom_qty
+                _logger.info('=====================%s',qty_available)
                 url = 'https://demoapi.sellingathome.com/v1/Stocks'
                 headers = self.env['authentication.sah'].establish_connection()
                 values = {
@@ -25,9 +26,9 @@ class StockPickingSAH(models.Model):
                     }
                     response = requests.put(url, headers=headers, json=values)
                     if response.status_code == 200:
-                        print(response.json())  
+                        _logger.info('=====================%s',response.json())  
                     else:
-                        print(f"Erreur {response.status_code}: {response.text}")
+                       _logger.info('=====================%s',response.text)
         return res
 
 class StockSAH(models.TransientModel):
