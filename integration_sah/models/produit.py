@@ -65,7 +65,7 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
-            if res.is_storable == True:
+            if self.is_storable == True:
                 url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
                 values = {
                     "ProductId":  self.produit_sah_id,
