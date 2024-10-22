@@ -63,7 +63,7 @@ class Tarifs(models.Model):
         return res
 
 
-    def write(self, vals):
+    """def write(self, vals):
         if vals:
             headers = self.env['authentication.sah'].establish_connection()
             price_list_id = str(self.pricelist_id.price_list_sah_id)
@@ -91,29 +91,12 @@ class Tarifs(models.Model):
                     },
                 ]
             }
-            # Requête PUT vers l'API SellingAtHome
             response = requests.put(url, headers=headers, json=values)
-            # Gestion des réponses
             if response.status_code == 200:
                 _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
             else:
                 _logger.error('Erreur lors de la modification dans l\'API : %s', response.text)
     
         res = super(Tarifs, self).write(vals)
-        return res
-
-
-
-    def recuperation_liste_prices(self):
-        api_url = "https://demoapi.sellingathome.com/v1/Prices"
-        headers = self.env['authentication.sah'].establish_connection()
-        params = {
-            "productid": 118823
-        }
-        response = requests.get(api_url, headers=headers, params=params)
-        if response.status_code == 200:
-            prices = response.json()
-            _logger.info('=========================== %s', prices)
-        else:
-            _logger.error('Erreur lors de la récupération des prix: %s - %s', response.status_code, response.text)
+        return res"""
 
