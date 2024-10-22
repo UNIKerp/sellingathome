@@ -35,15 +35,22 @@ class ProduitSelligHome(models.Model):
                     _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     create_category = {
                         "Id": 3677,
+                        "Reference": None,
                         "ParentCategoryId": 3675,
-                        # "ParentCategoryReference": "sample string 2",
+                        "ParentCategoryReference": None,
                         "IsPublished": True,
                         "CategoryLangs": [
                             {
                                 "Name": res.categ_id.name,
+                                "Description": None,
                                 "ISOValue": "fr",
                             },
                         ],
+                        "DisplayOrder": 0,
+                        "PublishedOnMinisites": False,
+                        "PublishedOnVisio": False,
+                        "PublishedOnHostMinisites": False,
+                        "CategoryPhoto": []
                     }
                     post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
                     if post_response_categ_create.status_code == 200:
