@@ -20,9 +20,8 @@ class StockSAH(models.TransientModel):
                 url = 'https://demoapi.sellingathome.com/v1/Stocks'
                 headers = self.env['authentication.sah'].establish_connection()
                 if headers:
-                    values={
-                        # "ProductId": object_id,
-                        "ProductId": 117425,
+                    values = {
+                        "ProductId":  produit.produit_sah_id,
                         "ProductReference": produit.default_code,
                         "StockQuantity": int(res.new_quantity),
                         # "SellerId":produit.seller_ids.partner_id.id,
