@@ -71,8 +71,8 @@ class ProduitSelligHome(models.Model):
             values = {
                 "ProductId":  self.produit_sah_id,
                 "ProductReference": self.default_code,
-                "StockQuantity": int(self.qty_available),
-                "StockQuantityComing":int(self.virtual_available),
+                "StockQuantity": int(vals['qty_available']),
+                "StockQuantityComing":vals['virtual_available'],
             }
             response2 = requests.put(url2, headers=headers, json=values)
             if response2.status_code == 200:
