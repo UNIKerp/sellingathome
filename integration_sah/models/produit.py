@@ -23,8 +23,15 @@ class ProduitSelligHome(models.Model):
             # Check if the response was successful
             if post_response_categ.status_code == 200:
                 response_data_categ = post_response_categ.json()
-                _logger.info('=========================== %s',response_data_categ)
-                
+                j=0
+                for c in response_data_categ:
+                    CategoryLangs = c['CategoryLangs']
+                    for cc in CategoryLangs :
+                        nom_cat = cc['Name']
+                        if res.categ_id.name==nom_cat:
+                            j+=1
+                            _logger.info('=========================== %s',nom_cat)
+                _logger.info(j)
             else:
                 _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
             url = "https://demoapi.sellingathome.com/v1/Products"
