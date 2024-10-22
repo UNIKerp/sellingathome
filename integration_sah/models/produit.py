@@ -36,7 +36,7 @@ class ProduitSelligHome(models.Model):
                     _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@categ_parent %s",categ_parent)
                     _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ %s",res.categ_id.name)
                     create_category = {
-                        "Reference": 'None',
+                        "Reference": res.categ_id.name,
                         "ParentCategoryId": categ_parent,
                         "IsPublished": True,
                         "CategoryLangs": [
