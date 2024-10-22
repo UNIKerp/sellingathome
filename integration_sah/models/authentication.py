@@ -18,7 +18,8 @@ class AuthenticaionSAH(models.Model):
         if company:
             headers = {
                 "token": company.token_sah,
-                "SECRET_KEY": company.secret_key_sah
+                "SECRET_KEY": company.secret_key_sah,
+                "Content-Type": "application/json"
             }
             return headers
    

@@ -2,4 +2,5 @@
 from . import authentication
 from . import config
 from . import tarifs
-from . import stock
+from . import produit
+#from . import stock
