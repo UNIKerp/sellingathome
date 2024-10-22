@@ -72,11 +72,11 @@ class ProduitSelligHome(models.Model):
                 "ProductId":  self.produit_sah_id,
                 "ProductReference": self.default_code,
                 "StockQuantity": int(vals['qty_available']),
-                "StockQuantityComing":vals['virtual_available'],
+                "StockQuantityComing":int(self.virtual_available),
             }
             response2 = requests.put(url2, headers=headers, json=values)
             if response2.status_code == 200:
-                _logger.info("************************%s%s%s",self.qty_available,vals['qty_available'],vals.get('qty_available'))  
+                _logger.info("************************%s",vals['virtual_available'])  
             else:
                 _logger.info(f"Erreur {response2.status_code}: {response2.text}")
             ####
