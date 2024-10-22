@@ -17,11 +17,8 @@ class StockPickingSAH(models.Model):
                 _logger.info('======================%s',self.picking_type_code)
                 if self.picking_type_code == 'incoming':
                     qty_available = line.product_id.product_tmpl_id.qty_available
-                    qty_available = qty_available + line.quantity
                 elif  self.picking_type_code == 'outgoing':
                     qty_available = line.product_id.product_tmpl_id.qty_available
-                    _logger.info('==============================%s000000000000000000',qty_available)
-                    qty_available = qty_available - line.quantity
                 _logger.info('==============================%s',qty_available)
                 url = 'https://demoapi.sellingathome.com/v1/Stocks'
                 headers = self.env['authentication.sah'].establish_connection()
