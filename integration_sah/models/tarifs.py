@@ -30,13 +30,13 @@ class Tarifs(models.Model):
           
             start_date = res.date_start.isoformat(timespec='microseconds') + "+02:00"
             end_date = res.date_end.isoformat(timespec='microseconds') + "+02:00"
-            _logger.info('============================= %s%s',start_date,end_date)
+
             values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
-                # "PriceExclTax": product_id.list_price,
-                # "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
-                # "ProductCost": product_id.standard_price,
+                "PriceExclTax": product_id.list_price,
+                "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
+                "ProductCost": product_id.standard_price,
                 "RolePrices": [
                     {
                     "CustomerRoleId": 1,
@@ -49,7 +49,6 @@ class Tarifs(models.Model):
                     },
                 ]   
             }
-            _logger.info("======================== %s",values)
             response = requests.put(url, json=values, headers=headers)
             if response.status_code == 200:
                 data = response.json()
