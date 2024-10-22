@@ -28,23 +28,19 @@ class Tarifs(models.Model):
             product_id =  res.product_tmpl_id
             values ={
                 "ProductId": product_id.produit_sah_id,
-                # "BrandTaxRate": 2.1,
-                # "BrandTaxName": "sample string 3",
                 "TwoLetterISOCode": "FR",
                 "PriceExclTax": product_id.list_price,
                 "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
                 "ProductCost": product_id.standard_price,
-                # "EcoTax": 6.1,
                 "RolePrices": [
                     {
-                    # "Id": 1,
                     "CustomerRoleId": 1,
                     "Quantity": 2,
-                    "NewPriceExclTax": 1.1,
-                    "NewPriceInclTax": 1.1,
-                    "StartDate": "2024-10-21T18:04:14.6234241+02:00",
-                    "EndDate": "2024-10-21T18:04:14.6234241+02:00",
-                    "CombinationId": 1
+                    "NewPriceExclTax": res.fixed_price,
+                    #"NewPriceInclTax": res.fixed_price * (product_id.taxes_id.amount/100),
+                    "StartDate": res.date_start,
+                    "EndDate": res.date_end,
+                    # "CombinationId": 1
                     },
                 ]   
             }
@@ -52,7 +48,7 @@ class Tarifs(models.Model):
             if response.status_code == 200:
                 data = response.json()
                 res.price_sah_id =  data['RolePrices'][0]['Id']
-                _logger.info('=============================== %s', res.price_sah_id )
+                _logger.info('=============================== %s ==== %s', res.price_sah_id,data )
             else:
                 _logger.info('=============================== %s',response.text)
         
