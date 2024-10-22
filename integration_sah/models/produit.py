@@ -66,12 +66,12 @@ class ProduitSelligHome(models.Model):
         if vals:
             ### Modification stock 
             #if vals.get('virtual_available') or vals.get('qty_availaible'):
-            _logger.info("==========================")
+            _logger.info("========================== %s%s",self.qty_availaible,self.virtual_available)
             url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
             values = {
                 "ProductId":  self.produit_sah_id,
                 "ProductReference": self.default_code,
-                "StockQuantity": int(self.virtual_available),
+                "StockQuantity": int(self.qty_availaible),
                 "StockQuantityComing":int(self.virtual_available),
             }
             response2 = requests.put(url2, headers=headers, json=values)
