@@ -40,9 +40,9 @@ class Tarifs(models.Model):
             values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
-                "PriceExclTax": 500.0,
-                "PriceInclTax": 575.0,
-                "ProductCost": product_id.standard_price,
+                "PriceExclTax": 1.1,
+                "PriceInclTax": 1.1,
+                "ProductCost": 1.1,
                 "RolePrices": [
                     {
                         "CustomerRoleId": 1,
