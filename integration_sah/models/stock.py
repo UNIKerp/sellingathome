@@ -23,12 +23,12 @@ class StockPickingSAH(models.Model):
                     "ProductReference":  line.product_id.product_tmpl_id.default_code,
                     "StockQuantity": int(qty_available),
                     #"StockQuantityComing":int(produit.virtual_available),
-                    }
-                    response = requests.put(url, headers=headers, json=values)
-                    if response.status_code == 200:
-                        _logger.info('=====================%s',response.json())  
-                    else:
-                       _logger.info('=====================%s',response.text)
+                }
+                response = requests.put(url, headers=headers, json=values)
+                if response.status_code == 200:
+                    _logger.info('=====================%s',response.json())  
+                else:
+                    _logger.info('=====================%s',response.text)
         return res
 
 class StockSAH(models.TransientModel):
