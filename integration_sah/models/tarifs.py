@@ -91,6 +91,7 @@ class Tarifs(models.Model):
                     },
                 ]
             }
+            _logger.info('=============================%s',values)
             # Requête PUT vers l'API SellingAtHome
             response = requests.put(url, headers=headers, json=values)
             # Gestion des réponses
