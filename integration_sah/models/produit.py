@@ -34,8 +34,6 @@ class ProduitSelligHome(models.Model):
                             id_categ = c['Id']
                             j+=1
                 if j==0:
-                    _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@categ_parent %s",categ_parent)
-                    _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ %s",res.categ_id.name)
                     create_category = {
                         "Reference": res.categ_id.name,
                         "ParentCategoryId": categ_parent,
@@ -52,7 +50,6 @@ class ProduitSelligHome(models.Model):
                     if post_response_categ_create.status_code == 200:
                         categ = post_response_categ_create.json()
                         id_categ = categ['Id']
-                        _logger.info("########################  %s",id_categ)
             else:
                 _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
 
@@ -80,9 +77,8 @@ class ProduitSelligHome(models.Model):
                 # "Width": 1.1,
                 # "Height": 1.1,
                 "IsPublished": True,
-                # "IsVirtual": true,
+                # "IsVirtual": True,
                 # "UncommissionedProduct": true,
-                # "StockQuantity": int(res.qty_available) or 0.0,
                 "InventoryMethod": suivi_stock,
                 # "LowStockQuantity": 1,
                 # "AllowOutOfStockOrders": True,
@@ -100,16 +96,13 @@ class ProduitSelligHome(models.Model):
                 ],
             }
 
-
             # Send POST request
             post_response = requests.post(url, json=product_data, headers=headers)
             
             if post_response.status_code == 200:
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
-                _logger.info('=========================== %s',product_id)
                 res.produit_sah_id = product_id
-                _logger.info('=========================== %s',response_data)
                 self.env['product.pricelist'].create({
                     'name':f'Tarif du produit {res.name}',
                     'price_list_sah_id':response_data['Prices'][0]['Id']
@@ -119,7 +112,7 @@ class ProduitSelligHome(models.Model):
         return res
 
 
-    def write(self, vals):
+    """def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
@@ -192,4 +185,4 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Error {put_response.status_code}: {put_response.text}")
                     
             rec = super(ProduitSelligHome, self).write(vals)
-            return rec
+            return rec"""
