@@ -17,12 +17,14 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
         id_categ = ''
+        categ_parent =''
         if res.categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
             # Check if the response was successful
             if post_response_categ.status_code == 200:
                 response_data_categ = post_response_categ.json()
+                categ_parent = response_data_categ[0]['Id']
                 j=0
                 for c in response_data_categ:
                     CategoryLangs = c['CategoryLangs']
@@ -34,23 +36,16 @@ class ProduitSelligHome(models.Model):
                 if j==0:
                     _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     create_category = {
-                        "Id": 3677,
-                        "Reference": None,
-                        "ParentCategoryId": 3675,
-                        "ParentCategoryReference": None,
+                        "Reference": 'None',
+                        "ParentCategoryId": categ_parent,
                         "IsPublished": True,
                         "CategoryLangs": [
                             {
                                 "Name": res.categ_id.name,
-                                "Description": None,
+                                "Description": 'None',
                                 "ISOValue": "fr",
                             },
                         ],
-                        "DisplayOrder": 0,
-                        "PublishedOnMinisites": False,
-                        "PublishedOnVisio": False,
-                        "PublishedOnHostMinisites": False,
-                        "CategoryPhoto": []
                     }
                     post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
                     if post_response_categ_create.status_code == 200:
