@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="settings_sah_integration_view_form" model="ir.ui.view">
+            <field name="name">sah.integration.res.company.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <page name="general_info" position="after">
+                    <page  string="Selling at home" id="sellingathome" groups="integration_sah.group_manager">
+                        <group>
+                            <field name="token_sah"/>
+                            <field name="secret_key_sah"/>
+                        </group>
+                    </page>
+                </page>
+            </field>
+        </record>
+    </data>
+</odoo>
