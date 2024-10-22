@@ -25,7 +25,8 @@ class Tarifs(models.Model):
 
         if res.product_tmpl_id and res.pricelist_id:
             price_list_id = str(res.pricelist_id.price_list_sah_id)
-            url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
+            #url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
+            url = 'https://demoapi.sellingathome.com/v1/Prices'
             product_id = res.product_tmpl_id
             
             # Log des informations pour déboguer
@@ -50,19 +51,12 @@ class Tarifs(models.Model):
                         "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
                         "StartDate": start_date if start_date else None,
                         "EndDate": end_date if end_date else None,
-                    },
-                    {
-                        "CustomerRoleId": 1,
-                        "Quantity": int(res.min_quantity) if res.min_quantity else 1,
-                        "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
-                        "StartDate": start_date if start_date else None,
-                        "EndDate": end_date if end_date else None,
-                    },
+                    }
                 ]
             }
 
-            response = requests.put(url, json=values, headers=headers)
-            
+            #response = requests.put(url, json=values, headers=headers)
+            response = requests.post(url, json=values, headers=headers)
             if response.status_code == 200:
                 data = response.json()
                 res.price_sah_id = data['RolePrices'][0]['Id']
