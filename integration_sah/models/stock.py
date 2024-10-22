@@ -14,6 +14,7 @@ class StockPickingSAH(models.Model):
         if self.move_ids_without_package:
             for line in self.move_ids_without_package:
                 qty_available = 0
+                _logger.info('======================%s',picking_type_code)
                 if self.picking_type_id.code == 'incoming':
                     qty_available = line.product_id.product_tmpl_id.qty_available
                     qty_available = qty_available + line.quantity
