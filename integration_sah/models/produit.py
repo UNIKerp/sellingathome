@@ -61,39 +61,41 @@ class ProduitSelligHome(models.Model):
         return res
 
 
-    """def write(self, vals):
-        product_id = self.produit_sah_id
-        if product_id :
-            url = f"https://demoapi.sellingathome.com/v1/Products/{product_id}"
-            headers = self.env['authentication.sah'].establish_connection()
+    def write(self, vals):
+        if vals:
+            product_id = self.produit_sah_id
+            if product_id :
+                url = f"https://demoapi.sellingathome.com/v1/Products/{product_id}"
+                headers = self.env['authentication.sah'].establish_connection()
 
-            product_data = {
-                "ProductType": 5,
-                "Reference": self.default_code,
-                "Prices": [
-                    {
-                        "Id": product_id,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": self.name,
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": self.list_price,
-                        "ProductCost": self.standard_price,
-                        "EcoTax": 8.1
-                    }
-                ],
-                'ProductLangs': [
-                    {'Name': self.name, 
-                    'Description': self.description, 
-                    'ISOValue': 'fr'
-                    }
-                ],
-            }
-
-            post_response = requests.put(url, json=product_data, headers=headers)
-            if post_response.status_code == 200:
-                print("Product created successfully:", post_response.json())
-            else:
-                print(f"Error {post_response.status_code}: {post_response.text}")
-
-            res = super(ProduitSelligHome, self).write(vals)
-            return res"""
+                product_data_upagate = {
+                    "ProductType": 5,
+                    "Reference": self.default_code,
+                    "Prices": [
+                        {
+                            "Id": product_id,
+                            "BrandTaxRate": 2.1,
+                            "BrandTaxName": self.name,
+                            "TwoLetterISOCode": "FR",
+                            "PriceExclTax": self.list_price,
+                            "PriceInclTax": self.list_price * (self.taxes_id.amount/100),
+                            "ProductCost": self.standard_price,
+                            "EcoTax": 8.1
+                        }
+                    ],
+                    'ProductLangs': [
+                        {'Name': self.name, 
+                        'Description': self.description, 
+                        'ISOValue': 'fr'
+                        }
+                    ],
+                }
+                    
+                put_response = requests.put(url, json=product_data_upagate, headers=headers)
+                if put_response.status_code == 200:
+                    _logger.info("Product updated successfully:", put_response.json())
+                else:
+                    _logger.info(f"Error {put_response.status_code}: {put_response.text}")
+                    
+            rec = super(ProduitSelligHome, self).write(vals)
+            return rec
