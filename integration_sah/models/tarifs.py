@@ -29,9 +29,9 @@ class Tarifs(models.Model):
             _logger.info('============================= %s',res.date_start)
           
             start_date = res.date_start.isoformat(timespec='microseconds') + "+02:00"
-            #end_date = current_time.isoformat(timespec='microseconds') + "+02:00"
+            end_date = res.date_end.isoformat(timespec='microseconds') + "+02:00"
 
-            values ={
+            values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
                 "PriceExclTax": product_id.list_price,
@@ -44,7 +44,7 @@ class Tarifs(models.Model):
                     "NewPriceExclTax": res.fixed_price ,
                     #"NewPriceInclTax": res.fixed_price * (product_id.taxes_id.amount/100),
                     "StartDate": start_date or False,
-                    # "EndDate": res.date_end,
+                    "EndDate": end_date or False,
                     # "CombinationId": 1
                     },
                 ]   
