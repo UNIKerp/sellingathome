@@ -70,8 +70,6 @@ class Tarifs(models.Model):
             price_list_id = str(self.pricelist_id.price_list_sah_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id = self.product_tmpl_id
-            start_date = self.date_start.isoformat(timespec='microseconds') + "+02:00" if vals.get('date_start') else False
-            end_date = self.date_end.isoformat(timespec='microseconds') + "+02:00" if vals.get('date_end') else False
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
             values = {
                 "ProductId": product_id.produit_sah_id,
@@ -84,8 +82,8 @@ class Tarifs(models.Model):
                         "CustomerRoleId": 1,
                         "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
                         "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
-                        "StartDate": start_date,
-                        "EndDate": end_date,
+                        "StartDate": elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
+                        "EndDate": elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end  else False,
                     }
                     for elt in self.pricelist_id.item_ids
                 ]
