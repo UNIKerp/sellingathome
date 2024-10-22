@@ -61,6 +61,7 @@ class Tarifs(models.Model):
 
 
     def write(self,vals):
+        headers = self.env['authentication.sah'].establish_connection()
         price_list_id = str(self.pricelist_id.price_list_sah_id)
         url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
         product_id =  self.product_tmpl_id
