@@ -74,7 +74,8 @@ class Tarifs(models.Model):
             end_date = self.date_end.isoformat(timespec='microseconds') + "+02:00" if self.date_end else False
             # Calcul correct du prix TTC
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
-
+            _logger.info('=======================%s',vals['min_quantity'])
+            _logger.info('=======================%s',vals.get('min_quantity'))
             values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
@@ -84,8 +85,8 @@ class Tarifs(models.Model):
                 "RolePrices": [
                     {
                         "CustomerRoleId": 1,
-                        "Quantity": int(vals['min_quantity']) if vals['min_quantity'] else 1,
-                        "NewPriceExclTax": vals['fixed_price'] if vals['fixed_price'] else 0.0,
+                        "Quantity": int(vals['min_quantity']) if vals.get('min_quantity') else 1,
+                        "NewPriceExclTax": vals['fixed_price'] if vals.get('fixed_price') else 0.0,
                         "StartDate": start_date,
                         "EndDate": end_date,
                     },
