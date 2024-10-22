@@ -76,7 +76,7 @@ class ProduitSelligHome(models.Model):
             }
             response2 = requests.put(url2, headers=headers, json=values)
             if response2.status_code == 200:
-                _logger.info("************************%s",vals['virtual_available'])  
+                _logger.info("************************%s",self.virtual_available)  
             else:
                 _logger.info(f"Erreur {response2.status_code}: {response2.text}")
             ####
