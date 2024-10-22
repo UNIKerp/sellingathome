@@ -26,7 +26,7 @@ class ProduitSelligHome(models.Model):
                 _logger.info('=========================== %s',response_data_categ)
                 
             else:
-                print(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
+                _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
             url = "https://demoapi.sellingathome.com/v1/Products"
             
 
@@ -84,7 +84,7 @@ class ProduitSelligHome(models.Model):
             #         'price_list_sah_id':response_data['Prices'][0]['Id']
             #     })
             # else:
-            #     print(f"Error {post_response.status_code}: {post_response.text}")
+            #     _logger.info(f"Error {post_response.status_code}: {post_response.text}")
         return res
 
 
