@@ -28,12 +28,12 @@ class Tarifs(models.Model):
             product_id =  res.product_tmpl_id
             values ={
                 "ProductId": product_id.produit_sah_id,
-                "BrandTaxRate": 2.1,
-                "BrandTaxName": "sample string 3",
+                # "BrandTaxRate": 2.1,
+                # "BrandTaxName": "sample string 3",
                 "TwoLetterISOCode": "FR",
-                # "PriceExclTax": 1.1,
-                # "PriceInclTax": 1.1,
-                # "ProductCost": 5.1,
+                "PriceExclTax": product_id.list_price,
+                "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
+                "ProductCost": product_id.standard_price,
                 # "EcoTax": 6.1,
                 "RolePrices": [
                     {
