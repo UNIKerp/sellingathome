@@ -87,7 +87,7 @@ class Tarifs(models.Model):
                         "StartDate": start_date,
                         "EndDate": end_date,
                     }
-                    for elt in res.pricelist_id.item_ids
+                    for elt in self.pricelist_id.item_ids
                 ]
             }
             response = requests.put(url, headers=headers, json=values)
