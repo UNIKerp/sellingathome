@@ -42,18 +42,12 @@ class Tarifs(models.Model):
                 "RolePrices": [
                     {
                         "CustomerRoleId": 1,
-                        "Quantity": int(res.min_quantity) if res.min_quantity else 1,
-                        "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
-                        "StartDate": start_date if start_date else None,
-                        "EndDate": end_date if end_date else None,
-                    },
-                    {
-                        "CustomerRoleId": 1,
-                        "Quantity": int(res.min_quantity) if res.min_quantity else 1,
-                        "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
+                        "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
+                        "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
                         "StartDate": start_date if start_date else None,
                         "EndDate": end_date if end_date else None,
                     }
+                    for elt in res.pricelist_id.item_ids
                     
                 ]
             }
