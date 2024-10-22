@@ -45,7 +45,7 @@ class Tarifs(models.Model):
                 "ProductCost": product_id.standard_price,
                 "RolePrices": [
                     {
-                        "CustomerRoleId": 0,
+                        "CustomerRoleId": 1,
                         "Quantity": int(res.min_quantity) if res.min_quantity else 1,
                         "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
                         "StartDate": start_date if start_date else None,
@@ -67,7 +67,7 @@ class Tarifs(models.Model):
 
 
 
-    """def write(self,vals):
+    def write(self,vals):
         headers = self.env['authentication.sah'].establish_connection()
         price_list_id = str(self.pricelist_id.price_list_sah_id)
         url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
@@ -97,4 +97,4 @@ class Tarifs(models.Model):
         if response.status_code == 200:
             _logger.info('Données modifiées Tarifs %s',response.json())
         res = super(Tarifs,self).write(vals)
-        return res"""
+        return res
