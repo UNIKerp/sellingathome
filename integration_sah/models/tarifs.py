@@ -35,7 +35,7 @@ class Tarifs(models.Model):
                 "RolePrices": [
                     {
                     "CustomerRoleId": 1,
-                    "Quantity": 2,
+                    "Quantity": res.min_quantity,
                     "NewPriceExclTax": res.fixed_price,
                     #"NewPriceInclTax": res.fixed_price * (product_id.taxes_id.amount/100),
                     "StartDate": res.date_start,
