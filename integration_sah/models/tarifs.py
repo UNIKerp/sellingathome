@@ -27,6 +27,10 @@ class Tarifs(models.Model):
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id =  res.product_tmpl_id
             _logger.info('============================= %s',res.date_start)
+            date_start = res.date_start
+            dt = datetime.strptime(date_start, "%Y-%m-%d %H:%M:%S")
+            date_start = dt.isoformat(timespec='microseconds') + "+02:00"
+
             values ={
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
@@ -39,7 +43,7 @@ class Tarifs(models.Model):
                     "Quantity": int(res.min_quantity),
                     "NewPriceExclTax": res.fixed_price ,
                     #"NewPriceInclTax": res.fixed_price * (product_id.taxes_id.amount/100),
-                    "StartDate": res.date_start or False,
+                    "StartDate": date_start or False,
                     # "EndDate": res.date_end,
                     # "CombinationId": 1
                     },
