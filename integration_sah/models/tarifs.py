@@ -24,19 +24,17 @@ class Tarifs(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         if res.product_tmpl_id and res.pricelist_id:
             price_list_id = str(res.pricelist_id.price_list_sah_id)
-            _logger.info('===============price_list_id================ %s',price_list_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id =  res.product_tmpl_id
-            _logger.info('=============================== %s',product_id.produit_sah_id)
             values ={
                 "ProductId": product_id.produit_sah_id,
                 "BrandTaxRate": 2.1,
                 "BrandTaxName": "sample string 3",
                 "TwoLetterISOCode": "FR",
-                "PriceExclTax": 1.1,
-                "PriceInclTax": 1.1,
-                "ProductCost": 5.1,
-                "EcoTax": 6.1,
+                # "PriceExclTax": 1.1,
+                # "PriceInclTax": 1.1,
+                # "ProductCost": 5.1,
+                # "EcoTax": 6.1,
                 "RolePrices": [
                     {
                     # "Id": 1,
@@ -61,21 +59,31 @@ class Tarifs(models.Model):
         return res
 
 
-    """def write(self,vals):
-        product_id = self.id
-        url_edit = f'https://demoapi.sellingathome.com/v1/Prices/{self.price_sah_id}'
-        values={
-            "ProductId": product_id,
-            # "BrandTaxRate": 2.1,
-            # "BrandTaxName": "prix 1 test",
-            "TwoLetterISOCode": "fr",
-            # "PriceExclTax": ,
-            # "PriceInclTax":,
-            # "ProductCost": 150,
-            # "EcoTax": 6.1,
-            # "IsDefault": True,
-            # "RolePrices":,
-        }
-        requests.put(url_edit, headers=headers, json=values)
+    def write(self,vals):
+        price_list_id = str(self.pricelist_id.price_list_sah_id)
+        url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
+        values ={
+                "ProductId": product_id.produit_sah_id,
+                "BrandTaxRate": 2.1,
+                "BrandTaxName": "sample string 3",
+                "TwoLetterISOCode": "FR",
+                "PriceExclTax": 1.1,
+                "PriceInclTax": 1.1,
+                "ProductCost": 5.1,
+                "EcoTax": 6.1,
+                "RolePrices": [
+                    {
+                    # "Id": 1,
+                    "CustomerRoleId": 1,
+                    "Quantity": 2,
+                    "NewPriceExclTax": 1.1,
+                    "NewPriceInclTax": 1.1,
+                    "StartDate": "2024-10-21T18:04:14.6234241+02:00",
+                    "EndDate": "2024-10-21T18:04:14.6234241+02:00",
+                    "CombinationId": 1
+                    },
+                ]   
+            }
+        requests.put(url, headers=headers, json=values)
         res = super(Tarifs,self).write(vals)
-        return res"""
+        return res
