@@ -35,7 +35,7 @@ class Tarifs(models.Model):
             _logger.info('============= %s%s%s',product_id.list_price,price_incl_tax,product_id.standard_price)
 
             values = {
-                "ProductId": int(product_id.produit_sah_id),
+                "ProductId": 118835,
                 "TwoLetterISOCode": "FR",
                 "PriceExclTax": 200.0,
                 "PriceInclTax": 200.0,
