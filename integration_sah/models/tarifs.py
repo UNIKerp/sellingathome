@@ -104,9 +104,7 @@ class Tarifs(models.Model):
         api_url = "https://demoapi.sellingathome.com/v1/Prices"
         headers = self.env['authentication.sah'].establish_connection()
         params = {
-            "productid": 118812,
-            "page": 1,
-            "offset": 0
+            "productid": 118823
         }
         response = requests.get(api_url, headers=headers, params=params)
         if response.status_code == 200:
