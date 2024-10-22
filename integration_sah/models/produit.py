@@ -32,8 +32,9 @@ class ProduitSelligHome(models.Model):
                             id_categ = c['Id']
                             j+=1
                 if j==0:
+                    _logger.inf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     create_category = {
-                        # "ParentCategoryId": 'All',
+                        "ParentCategoryId": 3675,
                         # "ParentCategoryReference": "sample string 2",
                         "IsPublished": True,
                         "CategoryLangs": [
@@ -46,12 +47,11 @@ class ProduitSelligHome(models.Model):
                     if post_response_categ_create.status_code == 200:
                         categ = post_response_categ_create.json()
                         id_categ = categ['Id']
-                        _logger.inf("########################  %s",categ)
+                        _logger.inf("########################  %s",id_categ)
             else:
                 _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
-            url = "https://demoapi.sellingathome.com/v1/Products"
-            
 
+            url = "https://demoapi.sellingathome.com/v1/Products"        
             product_data = {
                 "ProductType": 5,
                 "Reference": res.default_code,
