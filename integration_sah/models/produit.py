@@ -2,7 +2,8 @@ from odoo import models, api, fields
 import requests
 import json
 from datetime import date
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
@@ -48,17 +49,19 @@ class ProduitSelligHome(models.Model):
         if post_response.status_code == 200:
             response_data = post_response.json()
             product_id = response_data.get('Id')
+            _logger.info('=========================== %s',product_id)
             res.produit_sah_id = product_id
+            _logger.info('=========================== %s',response_data)
             self.env['product.pricelist'].create({
                 'name': "Liste 1",
-                'price_list_sah_id':post_response['Prices'][0]['Id']
+                'price_list_sah_id':response_data['Prices'][0]['Id']
             })
         else:
             print(f"Error {post_response.status_code}: {post_response.text}")
         return res
 
 
-    def write(self, vals):
+    """def write(self, vals):
         product_id = self.produit_sah_id
         if product_id :
             url = f"https://demoapi.sellingathome.com/v1/Products/{product_id}"
@@ -93,4 +96,4 @@ class ProduitSelligHome(models.Model):
                 print(f"Error {post_response.status_code}: {post_response.text}")
 
             res = super(ProduitSelligHome, self).write(vals)
-            return res
+            return res"""
