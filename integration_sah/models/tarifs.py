@@ -60,31 +60,31 @@ class Tarifs(models.Model):
         return res
 
 
-    """def write(self,vals):
+    def write(self,vals):
         price_list_id = str(self.pricelist_id.price_list_sah_id)
         url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
-        values ={
-                "ProductId": product_id.produit_sah_id,
-                "BrandTaxRate": 2.1,
-                "BrandTaxName": "sample string 3",
-                "TwoLetterISOCode": "FR",
-                "PriceExclTax": 1.1,
-                "PriceInclTax": 1.1,
-                "ProductCost": 5.1,
-                "EcoTax": 6.1,
-                "RolePrices": [
-                    {
-                    # "Id": 1,
-                    "CustomerRoleId": 1,
-                    "Quantity": 2,
-                    "NewPriceExclTax": 1.1,
-                    "NewPriceInclTax": 1.1,
-                    "StartDate": "2024-10-21T18:04:14.6234241+02:00",
-                    "EndDate": "2024-10-21T18:04:14.6234241+02:00",
-                    "CombinationId": 1
-                    },
-                ]   
-            }
+        product_id =  self.product_tmpl_id
+        start_date = self.date_start.isoformat(timespec='microseconds') + "+02:00"
+        end_date = self.date_end.isoformat(timespec='microseconds') + "+02:00"
+
+        values = {
+            "ProductId": product_id.produit_sah_id,
+            "TwoLetterISOCode": "FR",
+            "PriceExclTax": product_id.list_price,
+            "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
+            "ProductCost": product_id.standard_price,
+            "RolePrices": [
+                {
+                "CustomerRoleId": 1,
+                "Quantity": int(self.min_quantity),
+                "NewPriceExclTax": self.fixed_price ,
+                #"NewPriceInclTax": self.fixed_price * (product_id.taxes_id.amount/100),
+                "StartDate": start_date or False,
+                "EndDate": end_date or False,
+                # "CombinationId": 1
+                },
+            ]   
+        }
         requests.put(url, headers=headers, json=values)
         res = super(Tarifs,self).write(vals)
-        return res"""
+        return res
