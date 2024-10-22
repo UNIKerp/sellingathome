@@ -105,21 +105,20 @@ class ProduitSelligHome(models.Model):
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
-            ### Modification stock 
-            #if vals.get('virtual_available') or vals.get('qty_availaible'):
-            _logger.info("========================== %s%s",self.qty_available,self.virtual_available)
-            url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
-            values = {
-                "ProductId":  self.produit_sah_id,
-                "ProductReference": self.default_code,
-                "StockQuantity": int(self.qty_available),
-                "StockQuantityComing":int(self.virtual_available),
-            }
-            response2 = requests.put(url2, headers=headers, json=values)
-            if response2.status_code == 200:
-                _logger.info("************************%s",self.virtual_available)  
-            else:
-                _logger.info(f"Erreur {response2.status_code}: {response2.text}")
+            ### Modification stock
+            if res.is_storable == True:
+                url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
+                values = {
+                    "ProductId":  self.produit_sah_id,
+                    "ProductReference": self.default_code,
+                    "StockQuantity": int(self.qty_available),
+                    "StockQuantityComing":int(self.virtual_available),
+                }
+                response2 = requests.put(url2, headers=headers, json=values)
+                if response2.status_code == 200:
+                    _logger.info("************************%s",self.virtual_available)  
+                else:
+                    _logger.info(f"Erreur {response2.status_code}: {response2.text}")
             ####
             product_id = self.produit_sah_id
             if product_id :
