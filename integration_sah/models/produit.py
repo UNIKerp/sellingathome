@@ -34,12 +34,14 @@ class ProduitSelligHome(models.Model):
                 if j==0:
                     _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     create_category = {
+                        "Id": 3677,
                         "ParentCategoryId": 3675,
                         # "ParentCategoryReference": "sample string 2",
                         "IsPublished": True,
                         "CategoryLangs": [
                             {
                                 "Name": res.categ_id.name,
+                                "ISOValue": "fr",
                             },
                         ],
                     }
