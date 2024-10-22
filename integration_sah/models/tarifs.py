@@ -82,7 +82,7 @@ class Tarifs(models.Model):
                 #"NewPriceInclTax": self.fixed_price * (product_id.taxes_id.amount/100),
                 "StartDate": start_date or False,
                 "EndDate": end_date or False,
-                # "CombinationId": 1
+                # "CombinationId": 1,
                 },
             ]   
         }
