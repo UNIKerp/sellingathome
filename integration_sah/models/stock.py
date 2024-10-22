@@ -6,6 +6,28 @@ from datetime import datetime
 
 _logger = logging.getLogger(__name__)
 
+class StockPickingSAH(models.Model):
+    _inherit = "stock.picking"
+
+    def button_validate(self):
+        res = super(StockPickingSAH,self).button_validate()
+        if self.move_ids_without_package:
+            for line in self.move_ids_without_package:
+                qty_available = line.product_id.product_tmpl_id.qty_available
+                qty_available = qty_available + line.quantity
+                url = 'https://demoapi.sellingathome.com/v1/Stocks'
+                headers = self.env['authentication.sah'].establish_connection()
+                values = {
+                    "ProductId":   line.product_id.product_tmpl_id.produit_sah_id,
+                    "ProductReference":  line.product_id.product_tmpl_id.default_code,
+                    "StockQuantity": int(qty_available),
+                }
+                response = requests.put(url, headers=headers, json=values)
+                if response.status_code == 200:
+                    _logger.info('=====================%s',response.json())  
+                else:
+                    _logger.info('=====================%s',response.text)
+        return res
 
 class StockSAH(models.TransientModel):
     _inherit = "stock.change.product.qty"
@@ -20,9 +42,8 @@ class StockSAH(models.TransientModel):
                 url = 'https://demoapi.sellingathome.com/v1/Stocks'
                 headers = self.env['authentication.sah'].establish_connection()
                 if headers:
-                    values={
-                        # "ProductId": object_id,
-                        "ProductId": 117425,
+                    values = {
+                        "ProductId":  produit.produit_sah_id,
                         "ProductReference": produit.default_code,
                         "StockQuantity": int(res.new_quantity),
                         # "SellerId":produit.seller_ids.partner_id.id,
