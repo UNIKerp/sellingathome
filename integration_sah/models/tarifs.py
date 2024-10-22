@@ -45,7 +45,7 @@ class Tarifs(models.Model):
                 "ProductCost": product_id.standard_price,
                 "RolePrices": [
                     {
-                        "CustomerRoleId": 1,
+                        "CustomerRoleId": 0,
                         "Quantity": int(res.min_quantity) if res.min_quantity else 1,
                         "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
                         "StartDate": start_date if start_date else None,
