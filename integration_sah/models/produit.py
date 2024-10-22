@@ -51,7 +51,7 @@ class ProduitSelligHome(models.Model):
                     if post_response_categ_create.status_code == 200:
                         categ = post_response_categ_create.json()
                         id_categ = categ['Id']
-                        _logger.inf("########################  %s",id_categ)
+                        _logger.info("########################  %s",id_categ)
             else:
                 _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
 
