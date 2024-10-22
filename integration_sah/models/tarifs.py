@@ -32,9 +32,10 @@ class Tarifs(models.Model):
 
             # Calcul du prix TTC en ajoutant la taxe
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
+            _logger.info('============= %s%s%s',product_id.list_price,price_incl_tax,product_id.standard_price)
 
             values = {
-                "ProductId": product_id.produit_sah_id,
+                "ProductId": int(product_id.produit_sah_id),
                 "TwoLetterISOCode": "FR",
                 "PriceExclTax": product_id.list_price,
                 "PriceInclTax": price_incl_tax,
