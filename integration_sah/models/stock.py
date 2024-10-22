@@ -13,13 +13,7 @@ class StockPickingSAH(models.Model):
         res = super(StockPickingSAH,self).button_validate()
         if self.move_ids_without_package:
             for line in self.move_ids_without_package:
-                # qty_available = 0
-
-                #if self.picking_type_code == 'incoming':
                 qty_available = line.product_id.product_tmpl_id.qty_available
-                # elif  self.picking_type_code == 'outgoing':
-                #     qty_available = line.product_id.product_tmpl_id.qty_available
-                _logger.info('==============================%s',qty_available)
                 url = 'https://demoapi.sellingathome.com/v1/Stocks'
                 headers = self.env['authentication.sah'].establish_connection()
                 values = {
@@ -51,11 +45,7 @@ class StockSAH(models.TransientModel):
                         "ProductId":  produit.produit_sah_id,
                         "ProductReference": produit.default_code,
                         "StockQuantity": int(res.new_quantity),
-                        # "SellerId":produit.seller_ids.partner_id.id,
-                        # "SellerRemoteReference":produit.seller_ids.partner_id.ref,
                         "StockQuantityComing":int(produit.virtual_available),
-                        
-                    
                     }
                     response = requests.put(url, headers=headers, json=values)
                     if response.status_code == 200:
