@@ -18,7 +18,7 @@ class Tarifs(models.Model):
 
     price_sah_id = fields.Char(string="ID Prix SAH")
 
-    @api.model
+    @api.model_create_multi
     def create(self,vals):
         res = super(Tarifs,self).create(vals)
         headers = self.env['authentication.sah'].establish_connection()
