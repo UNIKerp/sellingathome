@@ -95,14 +95,11 @@ class Tarifs(models.Model):
 
     def recuperation_liste_prices(self):
         api_url = "https://demoapi.sellingathome.com/v1/Prices"
-        product_id = 118812
-        page = 1
-        offset = 0
         headers = self.env['authentication.sah'].establish_connection()
         params = {
-            "productid": product_id,
-            "page": page,
-            "offset": offset
+            "productid": 118812,
+            "page": 1,
+            "offset": 0
         }
         response = requests.get(api_url, headers=headers, params=params)
         if response.status_code == 200:
