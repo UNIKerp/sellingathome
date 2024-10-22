@@ -32,7 +32,7 @@ class ProduitSelligHome(models.Model):
                             id_categ = c['Id']
                             j+=1
                 if j==0:
-                    _logger.inf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                    _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     create_category = {
                         "ParentCategoryId": 3675,
                         # "ParentCategoryReference": "sample string 2",
