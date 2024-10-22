@@ -96,7 +96,7 @@ class Tarifs(models.Model):
     def recuperation_liste_prices(self):
         url2 = f"https://demoapi.sellingathome.com/v1/Prices?118812"
         headers = self.env['authentication.sah'].establish_connection()
-        post_response = requests.get(url, headers=headers)
+        post_response = requests.get(url2, headers=headers)
         if post_response.status_code == 200:
             response_data = post_response.json()
             _logger.info('=========================== %s',response_data)
