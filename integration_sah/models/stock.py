@@ -13,19 +13,20 @@ class StockPickingSAH(models.Model):
         res = super(StockPickingSAH,self).button_validate()
         if self.move_ids_without_package:
             for line in self.move_ids_without_package:
-                qty_available = line.product_id.product_tmpl_id.qty_available
-                url = 'https://demoapi.sellingathome.com/v1/Stocks'
-                headers = self.env['authentication.sah'].establish_connection()
-                values = {
-                    "ProductId":   line.product_id.product_tmpl_id.produit_sah_id,
-                    "ProductReference":  line.product_id.product_tmpl_id.default_code,
-                    "StockQuantity": int(qty_available),
-                }
-                response = requests.put(url, headers=headers, json=values)
-                if response.status_code == 200:
-                    _logger.info('=====================%s',response.json())  
-                else:
-                    _logger.info('=====================%s',response.text)
+                if line.product_id.product_tmpl_id.is_storable == True:
+                    qty_available = line.product_id.product_tmpl_id.qty_available
+                    url = 'https://demoapi.sellingathome.com/v1/Stocks'
+                    headers = self.env['authentication.sah'].establish_connection()
+                    values = {
+                        "ProductId":   line.product_id.product_tmpl_id.produit_sah_id,
+                        "ProductReference":  line.product_id.product_tmpl_id.default_code,
+                        "StockQuantity": int(qty_available),
+                    }
+                    response = requests.put(url, headers=headers, json=values)
+                    if response.status_code == 200:
+                        _logger.info('=====================%s',response.json())  
+                    else:
+                        _logger.info('=====================%s',response.text)
         return res
 
 class StockSAH(models.TransientModel):
@@ -36,8 +37,8 @@ class StockSAH(models.TransientModel):
         res = super(StockSAH,self).create(vals)
         object_id = self.env.context.get('active_id')
         if object_id:
-            produit = self.env['product.template'].search([('id','=',object_id)])
-            if res.new_quantity:
+            produit = self.env['product.template'].search([('id','=',object_id),('is_storable','=',True)])
+            if res.new_quantity and produit:
                 url = 'https://demoapi.sellingathome.com/v1/Stocks'
                 headers = self.env['authentication.sah'].establish_connection()
                 if headers:
