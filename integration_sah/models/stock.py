@@ -15,10 +15,10 @@ class StockPickingSAH(models.Model):
             for line in self.move_ids_without_package:
                 qty_available = 0
                 _logger.info('======================%s',self.picking_type_code)
-                if self.picking_type_id.code == 'incoming':
+                if self.picking_type_code == 'incoming':
                     qty_available = line.product_id.product_tmpl_id.qty_available
                     qty_available = qty_available + line.quantity
-                elif  self.picking_type_id.code == 'outgoing':
+                elif  self.picking_type_code == 'outgoing':
                     qty_available = line.product_id.product_tmpl_id.qty_available
                     qty_available = qty_available - line.quantity
                 _logger.info('==============================%s',qty_available)
