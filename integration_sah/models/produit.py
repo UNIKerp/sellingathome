@@ -20,7 +20,6 @@ class ProduitSelligHome(models.Model):
         if res.categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
-
             # Check if the response was successful
             if post_response_categ.status_code == 200:
                 response_data_categ = post_response_categ.json()
@@ -32,8 +31,22 @@ class ProduitSelligHome(models.Model):
                         if res.categ_id.name==nom_cat:
                             id_categ = c['Id']
                             j+=1
-                            _logger.info('=========================== %s',nom_cat)
-                _logger.info(j)
+                if j==0:
+                    create_category = {
+                        # "ParentCategoryId": 'All',
+                        # "ParentCategoryReference": "sample string 2",
+                        "IsPublished": True,
+                        "CategoryLangs": [
+                            {
+                                "Name": res.categ_id.name,
+                            },
+                        ],
+                    }
+                    post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+                    if post_response_categ_create.status_code == 200:
+                        categ = post_response_categ_create.json()
+                        id_categ = categ['Id']
+                        _logger.inf("########################  %s",categ)
             else:
                 _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
             url = "https://demoapi.sellingathome.com/v1/Products"
@@ -140,12 +153,32 @@ class ProduitSelligHome(models.Model):
                             "EcoTax": 8.1
                         }
                     ],
+                    # "RemoteId": "sample string 2",
+                    # "RemoteReference": "sample string 3",
+                    "Barcode": self.barcode,
+                    "Weight": self.weight,
+                    # "Length": 1.1,
+                    # "Width": 1.1,
+                    # "Height": 1.1,
+                    "IsPublished": True,
+                    # "IsVirtual": true,
+                    # "UncommissionedProduct": true,
+                    # "StockQuantity": int(res.qty_available) or 0.0,
+                    # "InventoryMethod": 1,
+                    # "LowStockQuantity": 1,
+                    # "AllowOutOfStockOrders": True,
+                    # "WarehouseLocation": res.warehouse_id.id or '',
                     'ProductLangs': [
                         {'Name': self.name, 
                         'Description': self.description, 
                         'ISOValue': 'fr'
                         }
                     ],
+                    "Categories": [
+                    {
+                    "Id": id_categ,
+                    },
+                ],
                 }
                     
                 put_response = requests.put(url, json=product_data_upagate, headers=headers)
