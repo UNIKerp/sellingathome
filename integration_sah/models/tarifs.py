@@ -25,8 +25,7 @@ class Tarifs(models.Model):
 
         if res.product_tmpl_id and res.pricelist_id:
             price_list_id = str(res.pricelist_id.price_list_sah_id)
-            #url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
-            url = 'https://demoapi.sellingathome.com/v1/Prices'
+            url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id = res.product_tmpl_id
             
             # Log des informations pour déboguer
@@ -51,12 +50,30 @@ class Tarifs(models.Model):
                         "NewPriceExclTax": res.fixed_price if res.fixed_price else 0.0,
                         "StartDate": start_date if start_date else None,
                         "EndDate": end_date if end_date else None,
+                    },
+                    {
+                        "CustomerRoleId": 1,
+                        "Quantity": 2,
+                        "NewPriceExclTax": 1.1,
+                        "NewPriceInclTax": 1.1,
+                        "StartDate": "2024-10-22T13:05:53.6460724+02:00",
+                        "EndDate": "2024-10-22T13:05:53.6460724+02:00",
+                        "CombinationId": 1
+                    },
+                    {
+                        "CustomerRoleId": 1,
+                        "Quantity": 2,
+                        "NewPriceExclTax": 1.1,
+                        "NewPriceInclTax": 1.1,
+                        "StartDate": "2024-10-22T13:05:53.6460724+02:00",
+                        "EndDate": "2024-10-22T13:05:53.6460724+02:00",
+                        "CombinationId": 1
                     }
                 ]
             }
 
-            #response = requests.put(url, json=values, headers=headers)
-            response = requests.post(url, json=values, headers=headers)
+            response = requests.put(url, json=values, headers=headers)
+            
             if response.status_code == 200:
                 data = response.json()
                 res.price_sah_id = data['RolePrices'][0]['Id']
