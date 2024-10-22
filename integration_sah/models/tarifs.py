@@ -27,8 +27,8 @@ class Tarifs(models.Model):
             price_list_id = str(res.pricelist_id.price_list_sah_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id = res.product_tmpl_id
-            start_date = res.date_start.isoformat(timespec='microseconds') + "+02:00" if res.date_start else False
-            end_date = res.date_end.isoformat(timespec='microseconds') + "+02:00" if res.date_end else False
+            start_date = res.date_start.isoformat(timespec='microseconds') + "+02:00" if res.date_start else None
+            end_date = res.date_end.isoformat(timespec='microseconds') + "+02:00" if res.date_end else None
 
             # Calcul du prix TTC en ajoutant la taxe
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
