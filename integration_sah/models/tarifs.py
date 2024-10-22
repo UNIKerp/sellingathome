@@ -27,10 +27,6 @@ class Tarifs(models.Model):
             price_list_id = str(res.pricelist_id.price_list_sah_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id = res.product_tmpl_id
-            
-            # Log des informations pour déboguer
-            _logger.info('============================= ProductId: %s, Date Start: %s, Date End: %s', product_id.produit_sah_id, res.date_start, res.date_end)
-            
             start_date = res.date_start.isoformat(timespec='microseconds') + "+02:00" if res.date_start else False
             end_date = res.date_end.isoformat(timespec='microseconds') + "+02:00" if res.date_end else False
 
@@ -88,7 +84,7 @@ class Tarifs(models.Model):
                 "RolePrices": [
                     {
                         "CustomerRoleId": 1,
-                        "Quantity": int(self.min_quantity) if self.min_quantity else 1,
+                        "Quantity": int(vals['min_quantity']) if self.min_quantity else 1,
                         "NewPriceExclTax": self.fixed_price if self.fixed_price else 0.0,
                         "StartDate": start_date,
                         "EndDate": end_date,
