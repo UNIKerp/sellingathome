@@ -41,7 +41,7 @@ class Tarifs(models.Model):
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
                 "PriceExclTax": 500.0,
-                "PriceInclTax": price_incl_tax,
+                "PriceInclTax": 575.0,
                 "ProductCost": product_id.standard_price,
                 "RolePrices": [
                     {
