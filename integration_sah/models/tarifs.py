@@ -30,7 +30,7 @@ class Tarifs(models.Model):
           
             start_date = res.date_start.isoformat(timespec='microseconds') + "+02:00"
             end_date = res.date_end.isoformat(timespec='microseconds') + "+02:00"
-
+            _logger.info('============================= %s%s',start_date,end_date)
             values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
@@ -49,6 +49,7 @@ class Tarifs(models.Model):
                     },
                 ]   
             }
+            _logger.info("======================== %s",values)
             response = requests.put(url, json=values, headers=headers)
             if response.status_code == 200:
                 data = response.json()
