@@ -71,7 +71,7 @@ class ProduitSelligHome(models.Model):
             values = {
                 "ProductId":  self.produit_sah_id,
                 "ProductReference": self.default_code,
-                "StockQuantity": int(vals['qty_available']),
+                "StockQuantity": int(self.virtual_available),
                 "StockQuantityComing":int(self.virtual_available),
             }
             response2 = requests.put(url2, headers=headers, json=values)
