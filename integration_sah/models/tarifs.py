@@ -107,7 +107,7 @@ class Tarifs(models.Model):
         response = requests.get(api_url, headers=headers, params=params)
         if response.status_code == 200:
             prices = response.json()
-            _logger.info('=========================== %s', response)
+            _logger.info('=========================== %s', prices)
         else:
             _logger.error('Erreur lors de la récupération des prix: %s - %s', response.status_code, response.text)
 
