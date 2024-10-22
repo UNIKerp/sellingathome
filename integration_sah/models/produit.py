@@ -70,9 +70,9 @@ class ProduitSelligHome(models.Model):
                 # "AllowOutOfStockOrders": True,
                 # "WarehouseLocation": res.warehouse_id.id or '',
                 'ProductLangs': [
-                    {'Name': res.name, ProductId
+                    {'Name': res.name,
                     'Description': res.description, 
-                    'ISOValue': 'fr'ProductId
+                    'ISOValue': 'fr',
                     }
                 ],
                 "Categories": [
