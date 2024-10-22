@@ -59,7 +59,7 @@ class Tarifs(models.Model):
         return res
 
 
-    def write(self,vals):
+    """def write(self,vals):
         price_list_id = str(self.pricelist_id.price_list_sah_id)
         url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
         values ={
@@ -86,4 +86,4 @@ class Tarifs(models.Model):
             }
         requests.put(url, headers=headers, json=values)
         res = super(Tarifs,self).write(vals)
-        return res
+        return res"""
