@@ -70,12 +70,9 @@ class Tarifs(models.Model):
             price_list_id = str(self.pricelist_id.price_list_sah_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
             product_id = self.product_tmpl_id
-            # Vérification des dates avant conversion
-            start_date = vals['date_start'].isoformat(timespec='microseconds') + "+02:00" if vals.get('date_start') else False
-            end_date = vals['date_end'].isoformat(timespec='microseconds') + "+02:00" if vals.get('date_end') else False
-            # Calcul correct du prix TTC
+            start_date = self.date_start.isoformat(timespec='microseconds') + "+02:00" if vals.get('date_start') else False
+            end_date = self.date_end.isoformat(timespec='microseconds') + "+02:00" if vals.get('date_end') else False
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
-            _logger.info('=======================%s',vals.get('min_quantity'))
             values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
@@ -84,12 +81,11 @@ class Tarifs(models.Model):
                 "ProductCost": product_id.standard_price,
                 "RolePrices": [
                     {
-                        "Id": int(self.price_sah_id),
                         "CustomerRoleId": 1,
                         "Quantity": int(vals['min_quantity']) if vals.get('min_quantity') else 1,
                         "NewPriceExclTax": vals['fixed_price'] if vals.get('fixed_price') else 0.0,
-                        "StartDate": "2024-10-22T18:58:25.956496+02:00",
-                        "EndDate": "2024-10-22T18:58:25.956496+02:00",
+                        "StartDate": start_date,
+                        "EndDate": end_date,
                     },
                 ]
             }
