@@ -48,6 +48,8 @@ class ClientSAH(models.Model):
                             'company_type':'company',
                             'name' :clients_sah['CompanyName'],
                         })
+                        if clients_sah['CountryIso']:
+                            pays = self.env['res.country'].search([('country_code','=',clients_sah['CountryIso'])])
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
@@ -66,6 +68,7 @@ class ClientSAH(models.Model):
                             'street2':clients_sah['StreetAddress2'],
                             'zip':clients_sah['Postcode'],
                             'city':clients_sah['City'],
+                            'pays':pays.name,
                             'partner_latitude':clients_sah['Latitude'],
                             'partner_longitude':clients_sah['Longitude'],
                             'country_code':clients_sah['CountryIso'],
@@ -80,6 +83,8 @@ class ClientSAH(models.Model):
 
                             })
                     else:
+                        if clients_sah['CountryIso']:
+                            pays = self.env['res.country'].search([('country_code','=',clients_sah['CountryIso'])])
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
@@ -97,6 +102,7 @@ class ClientSAH(models.Model):
                             'street2':clients_sah['StreetAddress2'],
                             'zip':clients_sah['Postcode'],
                             'city':clients_sah['City'],
+                            'pays':pays.name,
                             'partner_latitude':clients_sah['Latitude'],
                             'partner_longitude':clients_sah['Longitude'],
                             'country_code':clients_sah['CountryIso'],
