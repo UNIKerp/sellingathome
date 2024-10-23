@@ -31,17 +31,21 @@ class SaleSAH(models.Model):
                             'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
                             'product_uom_qty': elt['Quantity'],
                             'price_unit': elt['UnitPrice'], 
-                        }) for elt in commande['Products']] 
+                        }) for elt in commande['Products']] ,
+                        "partner_shipping_id":delivery_address.id
                       
                     })
                     delivery_address = self.env['res.partner'].create({
                         'type':"delivery",
-                        'name': commande['Lastname'], 
+                        'name': commande['FirstName']+'  '+commande['LastName'], 
                         'phone': commande['phone'],
-                        'mobile': commande['MobilePhone'],
+                        'mobile': commande['MobilePhone'], 
+                        'street':commande['StreetAddress'],
+                        'street2':commande['StreetAddress2'],
+                        'city':commande['City'],
+
                     })
                    
-
               
         else:
             print(f"Erreur {response.status_code}: {response.text}")
