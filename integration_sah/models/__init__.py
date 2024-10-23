@@ -5,3 +5,5 @@ from . import tarifs
 from . import produit
 from . import stock
 from . import client
+from . import vendeur
+
