@@ -19,10 +19,9 @@ class vendeur(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
-                contact = self.env['res.partner'].search(['|','|',('email','=',data['Email']),('phone','=',data['Phone']),('mobile','=',data['MobilePhone'])],limit=1)
+                contact = self.env['res.partner'].search([('id_vendeur_sah','=',data['Id'])])
                 if contact:
                     vals = {
-                        'id_vendeur_sah':data['Id'],
                         'active':data['IsActive'],
                         'is_seller':True,
                         'name':data['FirstName']+'  '+data['LastName'],
