@@ -12,5 +12,6 @@
         'security/ir.model.access.csv',
         'views/config.xml',
         'views/product.xml',
+        'views/client.xml',
     ],
 }
