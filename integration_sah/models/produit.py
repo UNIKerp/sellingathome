@@ -11,6 +11,7 @@ class ProduitSelligHome(models.Model):
     produit_sah_id = fields.Integer("ID produit SAH")
 
 
+
     @api.model
     def create(self, vals):
         # Create the product record in Odoo
@@ -97,3 +98,6 @@ class ProduitSelligHome(models.Model):
 
             res = super(ProduitSelligHome, self).write(vals)
             return res"""
+    
+
+  
