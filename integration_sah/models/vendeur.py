@@ -20,6 +20,7 @@ class vendeur(models.Model):
             datas = response.json()
             for data in datas:
                 contact = self.env['res.partner'].search(['|','|',('email','=',data['Email']),('phone','=',data['Phone']),('mobile','=',data['MobilePhone'])],limit=1)
+                _logger.info('=================================',contact)
                 if contact:
                     vals = {
                         'id_vendeur_sah':data['Id'],
