@@ -18,8 +18,7 @@ class ClientSAH(models.Model):
     
 
     def get_client_sah(self):
-        print("#####################")
-        
+        _logger.info('****************************************************')
         headers_client = self.env['authentication.sah'].establish_connection()
 
         url_client = "https://demoapi.sellingathome.com/v1/Customers"
