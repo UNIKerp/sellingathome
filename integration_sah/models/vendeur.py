@@ -21,7 +21,7 @@ class vendeur(models.Model):
             for data in datas:
                 contact = self.env['res.partner'].search([('id_vendeur_sah','=',data['Id'])])
                 if contact:
-                    vals = {
+                    contact.write({
                         'active':data['IsActive'],
                         'is_seller':True,
                         'name':data['FirstName']+'  '+data['LastName'],
@@ -79,8 +79,6 @@ class vendeur(models.Model):
                         # 'MiniSiteUrl':data[''],
                         # 'MiniSiteUsername':data[''],
                         # 'MiniSiteIsActive':data[''],
-                    }
-                    _logger.info('============== Maj des données des vendeurs %s  ===========',vals)
-                    contact.write(vals)
+                    })
         else:
             _logger.info("==================================Erreur: %s ==========================",  response2.text)
