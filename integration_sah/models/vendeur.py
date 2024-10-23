@@ -14,8 +14,8 @@ class vendeur(models.Model):
     def recuperation_vendeurs_sah_vers_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url = 'https://demoapi.sellingathome.com/v1/Sellers'
-
         response = requests.get(url, headers=headers)
+        _logger.info('****************************************************')
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
