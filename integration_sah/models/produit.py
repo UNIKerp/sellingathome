@@ -32,12 +32,59 @@ class ProduitSelligHome(models.Model):
     
     def update_produit_dans_sah(self, product, headers):
         """Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo"""
+        id_categ = ''
+        
+        # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
+        if product.categ_id:
+            url_categ = "https://demoapi.sellingathome.com/v1/Categories"
+            post_response_categ = requests.get(url_categ, headers=headers)
+            
+            if post_response_categ.status_code == 200:
+                response_data_categ = post_response_categ.json()
+                categ_parent = response_data_categ[0]['Id']
+                j = 0
+                
+                # Parcourir les catégories et comparer les noms
+                for c in response_data_categ:
+                    CategoryLangs = c['CategoryLangs']
+                    for cc in CategoryLangs:
+                        nom_cat = cc['Name']
+                        
+                        # Remplacer res.categ_id.name par product.categ_id.name
+                        if product.categ_id.name == nom_cat:
+                            id_categ = c['Id']
+                            j += 1
+                
+                # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
+                if j == 0:
+                    create_category = {
+                        "Reference": product.categ_id.name,
+                        "ParentCategoryId": categ_parent,
+                        "IsPublished": True,
+                        "CategoryLangs": [
+                            {
+                                "Name": product.categ_id.name,
+                                "Description": 'None',
+                                "ISOValue": "fr",
+                            },
+                        ],
+                    }
+                    
+                    post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+                    
+                    if post_response_categ_create.status_code == 200:
+                        categ = post_response_categ_create.json()
+                        id_categ = categ['Id']
+            else:
+                _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
+        
+        # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
             update_data = {
-               "ProductType": 5,
+                "ProductType": 5,
                 "Reference": product.default_code,
                 "Prices": [
                     {
@@ -46,30 +93,24 @@ class ProduitSelligHome(models.Model):
                         "BrandTaxName": product.name,
                         "TwoLetterISOCode": "FR",
                         "PriceExclTax": product.list_price,
-                        "PriceInclTax": product.list_price * (product.taxes_id.amount/100),
+                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
                         "ProductCost": product.standard_price,
                         "EcoTax": 8.1
                     }
                 ],
-                # "RemoteId": "sample string 2",
-                # "RemoteReference": "sample string 3",
                 "Barcode": product.barcode,
                 "Weight": product.weight,
-                # "Length": 1.1,
-                # "Width": 1.1,
-                # "Height": 1.1,
                 "IsPublished": True,
-                # "IsVirtual": true,
-                # "UncommissionedProduct": true,
-                # "StockQuantity": int(res.qty_available) or 0.0,
-                # "InventoryMethod": 1,
-                # "LowStockQuantity": 1,
-                # "AllowOutOfStockOrders": True,
-                # "WarehouseLocation": res.warehouse_id.id or '',
                 'ProductLangs': [
-                    {'Name': product.name, 
-                    'Description': product.description, 
-                    'ISOValue': 'fr'
+                    {
+                        'Name': product.name, 
+                        'Description': product.description_sale, 
+                        'ISOValue': 'fr'
+                    }
+                ],
+                "Categories": [
+                    {
+                        "Id": id_categ,
                     }
                 ],
             }
