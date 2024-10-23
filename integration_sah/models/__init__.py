@@ -5,3 +5,4 @@ from . import tarifs
 from . import produit
 from . import stock
 from .import sale
+from . import client

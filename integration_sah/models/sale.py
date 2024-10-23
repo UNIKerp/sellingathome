@@ -20,17 +20,27 @@ class SaleSAH(models.Model):
             commandes_sah = response.json()
             for commande in commandes_sah:
                 id_order = commande['Id']
-                print("commandessssssssssssssssssssss",commande)
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
-                partner_id = self.env['res.partner'].search([('id_order_sh','=',id_order)])
-                if not commandes_odoo:
+                partner_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
+                if not commandes_odoo and partner_id:
                     commandes_odoo.create({
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
-                        "partner_id":
-
-
+                        "partner_id":partner_id.id,
+                        'order_line': [(0, 0, {
+                            'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
+                            'product_uom_qty': elt['Quantity'],
+                            'price_unit': elt['UnitPrice'], 
+                        }) for elt in commande['Products']] 
+                      
                     })
+                    delivery_address = self.env['res.partner'].create({
+                        'type':"delivery",
+                        'name': commande['Lastname'], 
+                        'phone': commande['phone'],
+                        'mobile': commande['MobilePhone'],
+                    })
+                   
 
               
         else:
