@@ -10,6 +10,77 @@ class ProduitSelligHome(models.Model):
 
     produit_sah_id = fields.Integer("ID produit SAH")
 
+    def update_aticle_sah(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        url_produit = "https://demoapi.sellingathome.com/v1/Products"
+        get_response_produit = requests.get(url_produit, headers=headers)
+        if get_response_produit.status_code == 200:
+                response_data_produit = get_response_produit.json()
+                for identifiant in response_data_produit:
+                    identite_api = identifiant['Id']
+
+                    product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
+                
+                    if product_odoo:
+                        self.update_produit_dans_sah(product_odoo, headers)
+                    else:
+                        _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
+
+        else:
+            _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {get_response_produit.status_code}")
+
+    
+    def update_produit_dans_sah(self, product, headers):
+        """Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo"""
+        if product.produit_sah_id:
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
+            
+            # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
+            update_data = {
+               "ProductType": 5,
+                "Reference": product.default_code,
+                "Prices": [
+                    {
+                        "Id": product.produit_sah_id,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": product.name,
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": product.list_price,
+                        "PriceInclTax": product.list_price * (product.taxes_id.amount/100),
+                        "ProductCost": product.standard_price,
+                        "EcoTax": 8.1
+                    }
+                ],
+                # "RemoteId": "sample string 2",
+                # "RemoteReference": "sample string 3",
+                "Barcode": product.barcode,
+                "Weight": product.weight,
+                # "Length": 1.1,
+                # "Width": 1.1,
+                # "Height": 1.1,
+                "IsPublished": True,
+                # "IsVirtual": true,
+                # "UncommissionedProduct": true,
+                # "StockQuantity": int(res.qty_available) or 0.0,
+                # "InventoryMethod": 1,
+                # "LowStockQuantity": 1,
+                # "AllowOutOfStockOrders": True,
+                # "WarehouseLocation": res.warehouse_id.id or '',
+                'ProductLangs': [
+                    {'Name': product.name, 
+                    'Description': product.description, 
+                    'ISOValue': 'fr'
+                    }
+                ],
+            }
+            
+            put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
+            
+            if put_response_produit.status_code == 200:
+                _logger.info(f"Article {product.name} mis à jour avec succès sur l'API SAH")
+            else:
+                _logger.error(f"Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code}")
+
 
 
     @api.model
@@ -113,77 +184,39 @@ class ProduitSelligHome(models.Model):
         return res
 
 
-    """def write(self, vals):
+    def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
             if self.is_storable == True:
                 url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
                 values = {
-                    "ProductId":  self.produit_sah_id,
+                    "ProductId": self.produit_sah_id,
                     "ProductReference": self.default_code,
                     "StockQuantity": int(self.qty_available),
                     "StockQuantityComing":int(self.virtual_available),
+                    "ProductCombinationStocks": [
+                            {
+                            "ProductCombinationId": self.produit_sah_id,
+                            "ProductCombinationBarcode": "sample string 1",
+                            "ProductCombinationSku": "sample string 2",
+                            "ProductCombinationRemoteId": 1,
+                            "StockQuantity": 1,
+                            "StockQuantityComing": 1,
+                            "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                            "SellerStockQuantity": 1,
+                            "AllowOutOfStockOrders": True
+                            }
+                    ],
+                        "AllowOutOfStockOrders": True
+                    
                 }
                 response2 = requests.put(url2, headers=headers, json=values)
                 if response2.status_code == 200:
                     _logger.info("************************%s",self.virtual_available)  
                 else:
                     _logger.info(f"Erreur {response2.status_code}: {response2.text}")
-            ####
-            product_id = self.produit_sah_id
-            if product_id :
-                url = f"https://demoapi.sellingathome.com/v1/Products/{product_id}"
-                
-
-                product_data_upagate = {
-                    "ProductType": 5,
-                    "Reference": self.default_code,
-                    "Prices": [
-                        {
-                            "Id": product_id,
-                            "BrandTaxRate": 2.1,
-                            "BrandTaxName": self.name,
-                            "TwoLetterISOCode": "FR",
-                            "PriceExclTax": self.list_price,
-                            "PriceInclTax": self.list_price * (self.taxes_id.amount/100),
-                            "ProductCost": self.standard_price,
-                            "EcoTax": 8.1
-                        }
-                    ],
-                    # "RemoteId": "sample string 2",
-                    # "RemoteReference": "sample string 3",
-                    "Barcode": self.barcode,
-                    "Weight": self.weight,
-                    # "Length": 1.1,
-                    # "Width": 1.1,
-                    # "Height": 1.1,
-                    "IsPublished": True,
-                    # "IsVirtual": true,
-                    # "UncommissionedProduct": true,
-                    # "StockQuantity": int(res.qty_available) or 0.0,
-                    # "InventoryMethod": 1,
-                    # "LowStockQuantity": 1,
-                    # "AllowOutOfStockOrders": True,
-                    # "WarehouseLocation": res.warehouse_id.id or '',
-                    'ProductLangs': [
-                        {'Name': self.name, 
-                        'Description': self.description, 
-                        'ISOValue': 'fr'
-                        }
-                    ],
-                    # "Categories": [
-                    #     {
-                    #     "Id": id_categ,
-                    #     },
-                    # ],
-                }
-                    
-                put_response = requests.put(url, json=product_data_upagate, headers=headers)
-                if put_response.status_code == 200:
-                    _logger.info("Product updated successfully:", put_response.json())
-                else:
-                    _logger.info(f"Error {put_response.status_code}: {put_response.text}")
+     
                     
             rec = super(ProduitSelligHome, self).write(vals)
-            return rec"""
+            return rec
