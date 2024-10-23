@@ -36,6 +36,7 @@ class ClientSAH(models.Model):
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
+                            'id_vendeur_sah':clients_sah['SellerId'],
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
                             'phone':clients_sah['Phone'],
@@ -70,6 +71,7 @@ class ClientSAH(models.Model):
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
+                            'id_vendeur_sah':clients_sah['SellerId'],
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
                             'phone':clients_sah['Phone'],

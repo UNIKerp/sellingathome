@@ -9,6 +9,7 @@ class vendeur(models.Model):
     _inherit = "res.partner"
 
     id_vendeur_sah = fields.Char(string='Id vendeur SAH')
+    is_seller = fields.Boolean(string='Est vendeur')
 
 
     def recuperation_vendeurs_sah_vers_odoo(self):
@@ -18,11 +19,11 @@ class vendeur(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
-                contact = self.env['res.partner'].search(['|','|',('email','=',data['Email']),('phone','=',data['Phone']),('mobile','=',data['MobilePhone'])],limit=1)
+                contact = self.env['res.partner'].search([('id_vendeur_sah','=',data['Id'])])
                 if contact:
-                    vals = {
-                        'id_vendeur_sah':data['Id'],
+                    contact.write({
                         'active':data['IsActive'],
+                        'is_seller':True,
                         'name':data['FirstName']+'  '+data['LastName'],
                         'email':data['Email'],
                         'phone':data['Phone'],
@@ -78,8 +79,6 @@ class vendeur(models.Model):
                         # 'MiniSiteUrl':data[''],
                         # 'MiniSiteUsername':data[''],
                         # 'MiniSiteIsActive':data[''],
-                    }
-                    _logger.info('============== Maj des données des vendeurs %s  ===========',vals)
-                    contact.write(vals)
+                    })
         else:
             _logger.info("==================================Erreur: %s ==========================",  response2.text)
