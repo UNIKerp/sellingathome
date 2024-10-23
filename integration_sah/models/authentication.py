@@ -22,4 +22,5 @@ class AuthenticaionSAH(models.Model):
                 "Content-Type": "application/json"
             }
             return headers
-   
+        else:
+            raise ValidationError("Aucune société avec un token et une clé secrète valides n'a été trouvée.")

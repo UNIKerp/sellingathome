@@ -10,6 +10,55 @@ class ProduitSelligHome(models.Model):
 
     produit_sah_id = fields.Integer("ID produit SAH")
 
+    # création des articles venant de l'api dans odoo
+    def create_article_sah_odoo(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        url_produit = "https://demoapi.sellingathome.com/v1/Products"
+        
+        post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
+        
+        if post_response_produit.status_code == 200:
+            response_data_produit = post_response_produit.json()
+            _logger.info("Produits récupérés depuis l'API SAH")
+            
+            # Parcourir la liste des produits de l'API
+            for produit_api in response_data_produit:
+                sah_id = produit_api['Id']
+                reference = produit_api['Reference']
+                name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
+                description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
+                price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
+                barcode = produit_api.get('Barcode', False)
+                weight = produit_api.get('Weight', 0.0)
+
+                existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
+                
+                if not existing_product:
+                    if not barcode:
+                        barcode = False
+
+                    if barcode:
+                        product_with_same_barcode = self.env['product.template'].search([('barcode', '=', barcode)], limit=1)
+                        if product_with_same_barcode:
+                            _logger.warning(f"Code-barres {barcode} déjà attribué au produit {product_with_same_barcode.name}. Ignoré pour {name}.")
+                            barcode = False
+
+                    # Créer le produit dans Odoo
+                    self.env['product.template'].create({
+                        'name': name,
+                        'default_code': reference,
+                        'list_price': price,
+                        'description_sale': description,
+                        'barcode': barcode,
+                        'weight': weight,
+                        'produit_sah_id': sah_id,
+                    })
+                    _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
+                else:
+                    _logger.info(f"Produit déjà existant dans Odoo : {name} (ID SAH: {sah_id})")
+        else:
+            _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {post_response_produit.status_code}")
+
     def update_aticle_sah(self):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
@@ -29,15 +78,60 @@ class ProduitSelligHome(models.Model):
         else:
             _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {get_response_produit.status_code}")
 
-    
+    # Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo
     def update_produit_dans_sah(self, product, headers):
-        """Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo"""
+        id_categ = ''
+        # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
+        if product.categ_id:
+            url_categ = "https://demoapi.sellingathome.com/v1/Categories"
+            post_response_categ = requests.get(url_categ, headers=headers)
+            
+            if post_response_categ.status_code == 200:
+                response_data_categ = post_response_categ.json()
+                categ_parent = response_data_categ[0]['Id']
+                j = 0
+                
+                # Parcourir les catégories et comparer les noms
+                for c in response_data_categ:
+                    CategoryLangs = c['CategoryLangs']
+                    for cc in CategoryLangs:
+                        nom_cat = cc['Name']
+                        
+                        # Remplacer res.categ_id.name par product.categ_id.name
+                        if product.categ_id.name == nom_cat:
+                            id_categ = c['Id']
+                            j += 1
+                
+                # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
+                if j == 0:
+                    create_category = {
+                        "Reference": product.categ_id.name,
+                        "ParentCategoryId": categ_parent,
+                        "IsPublished": True,
+                        "CategoryLangs": [
+                            {
+                                "Name": product.categ_id.name,
+                                "Description": 'None',
+                                "ISOValue": "fr",
+                            },
+                        ],
+                    }
+                    
+                    post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+                    
+                    if post_response_categ_create.status_code == 200:
+                        categ = post_response_categ_create.json()
+                        id_categ = categ['Id']
+            else:
+                _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
+        
+        # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
             update_data = {
-               "ProductType": 5,
+                "ProductType": 5,
                 "Reference": product.default_code,
                 "Prices": [
                     {
@@ -46,30 +140,24 @@ class ProduitSelligHome(models.Model):
                         "BrandTaxName": product.name,
                         "TwoLetterISOCode": "FR",
                         "PriceExclTax": product.list_price,
-                        "PriceInclTax": product.list_price * (product.taxes_id.amount/100),
+                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
                         "ProductCost": product.standard_price,
                         "EcoTax": 8.1
                     }
                 ],
-                # "RemoteId": "sample string 2",
-                # "RemoteReference": "sample string 3",
                 "Barcode": product.barcode,
                 "Weight": product.weight,
-                # "Length": 1.1,
-                # "Width": 1.1,
-                # "Height": 1.1,
                 "IsPublished": True,
-                # "IsVirtual": true,
-                # "UncommissionedProduct": true,
-                # "StockQuantity": int(res.qty_available) or 0.0,
-                # "InventoryMethod": 1,
-                # "LowStockQuantity": 1,
-                # "AllowOutOfStockOrders": True,
-                # "WarehouseLocation": res.warehouse_id.id or '',
                 'ProductLangs': [
-                    {'Name': product.name, 
-                    'Description': product.description, 
-                    'ISOValue': 'fr'
+                    {
+                        'Name': product.name, 
+                        'Description': product.description_sale, 
+                        'ISOValue': 'fr'
+                    }
+                ],
+                "Categories": [
+                    {
+                        "Id": id_categ,
                     }
                 ],
             }
