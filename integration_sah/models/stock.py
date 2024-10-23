@@ -45,10 +45,35 @@ class StockSAH(models.TransientModel):
                 headers = self.env['authentication.sah'].establish_connection()
                 if headers:
                     values = {
-                        "ProductId":  produit.produit_sah_id,
+                        # "ProductId":  produit.produit_sah_id,
+                        "ProduitId":118556,
                         "ProductReference": produit.default_code,
                         "StockQuantity": int(res.new_quantity),
-                        "StockQuantityComing":int(produit.virtual_available),
+                        "StockQuantityComing":int(produit.virtual_available),  
+                        "ProductCombinationStocks": [
+                                {
+                                "ProductCombinationId": 118556,
+                                "ProductCombinationBarcode": "sample string 1",
+                                "ProductCombinationSku": "sample string 2",
+                                "ProductCombinationRemoteId": 1,
+                                "StockQuantity": 1,
+                                "StockQuantityComing": 1,
+                                "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                                "SellerStockQuantity": 1,
+                                "AllowOutOfStockOrders": True
+                                },
+                                {
+                                "ProductCombinationId": 118556,
+                                "ProductCombinationBarcode": "sample string 1",
+                                "ProductCombinationSku": "sample string 2",
+                                "ProductCombinationRemoteId": 1,
+                                "StockQuantity": 1,
+                                "StockQuantityComing": 1,
+                                "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                                "SellerStockQuantity": 1,
+                                "AllowOutOfStockOrders": True
+                                }
+                            ],
                     }
                     response = requests.put(url, headers=headers, json=values)
                     if response.status_code == 200:
