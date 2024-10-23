@@ -18,21 +18,12 @@ class ClientSAH(models.Model):
     
 
     def get_client_sah(self):
-        _logger.info('****************************************************')
         headers_client = self.env['authentication.sah'].establish_connection()
-
         url_client = "https://demoapi.sellingathome.com/v1/Customers"
-
         response2 = requests.get(url_client, headers=headers_client)
-        
         if response2.status_code == 200:
-            # Récupérer les données au format JSON
-            clients_data = response2.json()  # Cela convertit la réponse en JSON
-            
-            print("########################",clients_data)
+            clients_data = response2.json()
             for clients_sah in clients_data:
-                
-                print("########################",clients_sah['Id'])
                 client_odoo = self.env['res.partner'].search([('id_client_sah','=',clients_sah['Id'])])
                 if not client_odoo:
                     if clients_sah['CompanyName']:
