@@ -15,9 +15,6 @@ class ClientSAH(models.Model):
 
 
     id_client_sah = fields.Integer("ID client SAH", help="l'ID du client dans SAH")
-    is_customer = fields.Boolean("Est Client")
-    is_seller = fields.Boolean("Est Vendeur")
-
     
 
     def get_client_sah(self):
@@ -47,7 +44,6 @@ class ClientSAH(models.Model):
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
-                            'is_customer':True,
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
                             'phone':clients_sah['Phone'],
@@ -79,7 +75,6 @@ class ClientSAH(models.Model):
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
-                            'is_customer':True,
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
                             'phone':clients_sah['Phone'],
