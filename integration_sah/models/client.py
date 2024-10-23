@@ -37,7 +37,7 @@ class ClientSAH(models.Model):
             for clients_sah in clients_data:
                 
                 print("########################",clients_sah['Id'])
-                client_odoo = self.env['res.partner'].search([('id','=',clients_sah['Id'])])
+                client_odoo = self.env['res.partner'].search([('id_client_sah','=',clients_sah['Id'])])
                 if client_odoo:
                     self.write({
                         'id_client_sah':clients_sah['Id'],

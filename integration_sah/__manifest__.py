@@ -2,7 +2,7 @@
 {
     'name': "Integration Selling at home",
     'version': '18.0.1.0.0',
-    'depends': ["stock"],
+    'depends': ["stock","contacts"],
     "author":"Unikerp",
     "website" : "www.unikerp.com",
     'description': """ Integration sellingathome et odoo """,
