@@ -97,12 +97,9 @@ class ClientSAH(models.Model):
                             #'':clients_sah['CustomQuestionAnswers'],
                         })
             # 
-            print("************************", json.dumps(clients_data, indent=4))  # Formatage pour un affichage lisible
-
-            return clients_data  # Vous pouvez également retourner les données pour un usage ultérieur
+            _logger.info("==================================Résultat: %s ==========================", json.dumps(clients_data, indent=4))
         else:
-            print('Erreur lors de la récupération des clients:', response2.text)
-            return None  # Retourne None en cas d'erreur
+            _logger.info("==================================Erreur: %s ==========================",  response2.text)
 
 
    

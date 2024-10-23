@@ -82,4 +82,4 @@ class vendeur(models.Model):
                     _logger.info('============== Maj des données des vendeurs %s  ===========',vals)
                     contact.write(vals)
         else:
-            _logger.info('Erreurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr: %s', response.text)
+            _logger.info("==================================Erreur: %s ==========================",  response2.text)
