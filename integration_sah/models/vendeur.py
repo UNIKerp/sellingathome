@@ -9,7 +9,7 @@ class vendeur(models.Model):
     _inherit = "res.partner"
 
 
-    def recuperation_veudeurs_sah_vers_odoo(self):
+    def recuperation_vendeurs_sah_vers_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url = 'https://demoapi.sellingathome.com/v1/Sellers'
 
