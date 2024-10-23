@@ -13,4 +13,5 @@
         'views/config.xml',
         'views/product.xml',
     ],
+    'images':['static/description/icon.png',],
 }
