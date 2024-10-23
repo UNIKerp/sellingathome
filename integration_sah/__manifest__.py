@@ -11,5 +11,6 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/config.xml',
+        'views/product.xml',
     ],
 }

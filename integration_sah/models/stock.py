@@ -41,6 +41,21 @@ class StockPickingSAH(models.Model):
                         "ProductReference":  line.product_id.product_tmpl_id.default_code,
                         "StockQuantity": int(qty_available),
                         "StockQuantityComing":int(virtual_available),
+                        "ProductCombinationStocks": [
+                            {
+                            "ProductCombinationId": line.product_id.product_tmpl_id.produit_sah_id,
+                            "ProductCombinationBarcode": "sample string 1",
+                            "ProductCombinationSku": "sample string 2",
+                            "ProductCombinationRemoteId": 1,
+                            "StockQuantity": 1,
+                            "StockQuantityComing": 1,
+                            "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                            "SellerStockQuantity": 1,
+                            "AllowOutOfStockOrders": True
+                            }
+                        ],
+                        "AllowOutOfStockOrders": True
+                        
                     }
                     response = requests.put(url, headers=headers, json=values)
                     if response.status_code == 200:
@@ -64,9 +79,24 @@ class StockSAH(models.TransientModel):
                 if headers:
                     values = {
                         "ProductId":  produit.produit_sah_id,
+                        # "ProductId":118556,
                         "ProductReference": produit.default_code,
                         "StockQuantity": int(res.new_quantity),
-                        "StockQuantityComing":int(produit.virtual_available),
+                        "StockQuantityComing":int(produit.virtual_available),  
+                        "ProductCombinationStocks": [
+                            {
+                            "ProductCombinationId": produit.produit_sah_id,
+                            "ProductCombinationBarcode": "sample string 1",
+                            "ProductCombinationSku": "sample string 2",
+                            "ProductCombinationRemoteId": 1,
+                            "StockQuantity": 1,
+                            "StockQuantityComing": 1,
+                            "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                            "SellerStockQuantity": 1,
+                            "AllowOutOfStockOrders": True
+                            }
+                        ],
+                        "AllowOutOfStockOrders": True
                     }
                     response = requests.put(url, headers=headers, json=values)
                     if response.status_code == 200:
