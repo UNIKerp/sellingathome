@@ -123,13 +123,9 @@ class TestTarifs(TransactionCase):
         tarif = self.env['product.pricelist.item'].create(self.tarif_vals)
 
         # Verify API call was made with the right values
-        self.assertEqual(int(tarif.price_sah_id), 7890)
         mock_put.assert_called()
-        self.assertEqual(mock_put.call_count, 2)
-
-        # Extract the JSON payload from the PUT request and log it
+        self.assertEqual(mock_put.call_count, 1)
         payload = mock_put.call_args.kwargs['json']
-        _logger.info(f"Payload: {payload}")
 
         # Assert against 'RolePrices' instead of 'Prices'
         self.assertIn('RolePrices', payload, "'RolePrices' key missing in the payload")

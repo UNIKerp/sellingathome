@@ -4,3 +4,5 @@ from . import config
 from . import tarifs
 from . import produit
 from . import stock
+from . import vendeur
+
