@@ -136,7 +136,7 @@ class ProduitSelligHome(models.Model):
                             "AllowOutOfStockOrders": True
                             }
                     ],
-                        "AllowOutOfStockOrders": True
+                    "AllowOutOfStockOrders": True
                     
                 }
                 response2 = requests.put(url2, headers=headers, json=values)
