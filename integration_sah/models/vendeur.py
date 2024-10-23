@@ -12,6 +12,7 @@ class vendeur(models.Model):
 
 
     def recuperation_vendeurs_sah_vers_odoo(self):
+        _logger.info('****************************************************')
         headers = self.env['authentication.sah'].establish_connection()
         url = 'https://demoapi.sellingathome.com/v1/Sellers'
         response = requests.get(url, headers=headers)
