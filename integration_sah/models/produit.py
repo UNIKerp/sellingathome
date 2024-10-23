@@ -10,6 +10,7 @@ class ProduitSelligHome(models.Model):
 
     produit_sah_id = fields.Integer("ID produit SAH")
 
+    # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
