@@ -19,7 +19,7 @@ class vendeur(models.Model):
             for data in datas:
                 contact = self.env['res.partner'].search([('id_client_sah','=',data['Id'])])
                 if contact:
-                    contact.write({
+                    vals = {
                         'id_client_sah':data['Id'],
                         'is_seller':True,
                         'active':data['IsActive'],
@@ -33,34 +33,24 @@ class vendeur(models.Model):
                         'city':data['City'],
                         'partner_latitude':data['Latitude'],
                         'partner_longitude':data['Longitude'],
-                        'country_code':data['CountryIso'],
                         'company_name':data['CompanyName'],
                         'lang':data['Language']['ISOValue'],
+                        'vat':data['CompanyVAT'],
                         # 'ImageUrl':data[''],
-                        # 'ActiveOnMapWidget':data[''],
                         # 'Status':data[''],
                         # 'StatusForever':data[''],
                         # 'CandidacyId':data[''],
-                        # 'AuthUrl':data[''],
-                        # 'Gender':data[''],
                         # 'EmailIsFlagged':data[''],
                         # 'Birthdate':data[''],
                         # 'BirthPlace':data[''],
-                        # 'PhoneTwoLetterISOCODE':data[''],
-                        # 'MobilePhoneTwoLetterISOCODE':data[''],
                         # 'ParentSeller':data[''],
                         # 'AnimatorSeller':data[''],
-                        # 'RemoteId':data[''],
-                        # 'StreetAddress3':data[''],
-                        # 'RemoteReference':data[''],
                         # 'CustomerAccount':data[''],
                         # 'NationalIdentificationNumber':data[''],
                         # 'IdentityCardNumber':data[''],
                         # 'Nationality':data[''],
                         # 'CompanyStatus':data[''],
                         # 'CompanyIdentificationNumber':data[''],
-                        'vat':data['CompanyVAT'],
-                        # 'RemoteLanguage':data[''],
                         # 'SocialContributionsType':data[''],
                         # 'StartContractDate':data[''],
                         # 'EndContractDate':data[''],
@@ -88,6 +78,8 @@ class vendeur(models.Model):
                         # 'MiniSiteUrl':data[''],
                         # 'MiniSiteUsername':data[''],
                         # 'MiniSiteIsActive':data[''],
-                    })
+                    }
+                    _logger.info('============== Maj des données des vendeurs %s  ===========',vals)
+                    contact.write(vals)
         else:
             _logger.info('Erreurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr: %s', response.text)
