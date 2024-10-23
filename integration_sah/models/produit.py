@@ -13,17 +13,18 @@ class ProduitSelligHome(models.Model):
 
     @api.model
     def create(self, vals):
-        # Create the product record in Odoo
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
         id_categ = ''
+        categ_parent =''
+        suivi_stock = 1 if res.type == 'consu' else 0
         if res.categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
-
-            # Check if the response was successful
+            
             if post_response_categ.status_code == 200:
                 response_data_categ = post_response_categ.json()
+                categ_parent = response_data_categ[0]['Id']
                 j=0
                 for c in response_data_categ:
                     CategoryLangs = c['CategoryLangs']
@@ -32,13 +33,27 @@ class ProduitSelligHome(models.Model):
                         if res.categ_id.name==nom_cat:
                             id_categ = c['Id']
                             j+=1
-                            _logger.info('=========================== %s',nom_cat)
-                _logger.info(j)
+                if j==0:
+                    create_category = {
+                        "Reference": res.categ_id.name,
+                        "ParentCategoryId": categ_parent,
+                        "IsPublished": True,
+                        "CategoryLangs": [
+                            {
+                                "Name": res.categ_id.name,
+                                "Description": 'None',
+                                "ISOValue": "fr",
+                            },
+                        ],
+                    }
+                    post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+                    if post_response_categ_create.status_code == 200:
+                        categ = post_response_categ_create.json()
+                        id_categ = categ['Id']
             else:
                 _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
-            url = "https://demoapi.sellingathome.com/v1/Products"
-            
 
+            url = "https://demoapi.sellingathome.com/v1/Products"        
             product_data = {
                 "ProductType": 5,
                 "Reference": res.default_code,
@@ -62,10 +77,9 @@ class ProduitSelligHome(models.Model):
                 # "Width": 1.1,
                 # "Height": 1.1,
                 "IsPublished": True,
-                # "IsVirtual": true,
+                # "IsVirtual": True,
                 # "UncommissionedProduct": true,
-                # "StockQuantity": int(res.qty_available) or 0.0,
-                # "InventoryMethod": 1,
+                "InventoryMethod": suivi_stock,
                 # "LowStockQuantity": 1,
                 # "AllowOutOfStockOrders": True,
                 # "WarehouseLocation": res.warehouse_id.id or '',
@@ -82,17 +96,13 @@ class ProduitSelligHome(models.Model):
                 ],
             }
 
-
             # Send POST request
             post_response = requests.post(url, json=product_data, headers=headers)
             
-            # Check if the response was successful
             if post_response.status_code == 200:
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
-                _logger.info('=========================== %s',product_id)
                 res.produit_sah_id = product_id
-                _logger.info('=========================== %s',response_data)
                 self.env['product.pricelist'].create({
                     'name':f'Tarif du produit {res.name}',
                     'price_list_sah_id':response_data['Prices'][0]['Id']
@@ -102,7 +112,7 @@ class ProduitSelligHome(models.Model):
         return res
 
 
-    def write(self, vals):
+    """def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
@@ -140,12 +150,32 @@ class ProduitSelligHome(models.Model):
                             "EcoTax": 8.1
                         }
                     ],
+                    # "RemoteId": "sample string 2",
+                    # "RemoteReference": "sample string 3",
+                    "Barcode": self.barcode,
+                    "Weight": self.weight,
+                    # "Length": 1.1,
+                    # "Width": 1.1,
+                    # "Height": 1.1,
+                    "IsPublished": True,
+                    # "IsVirtual": true,
+                    # "UncommissionedProduct": true,
+                    # "StockQuantity": int(res.qty_available) or 0.0,
+                    # "InventoryMethod": 1,
+                    # "LowStockQuantity": 1,
+                    # "AllowOutOfStockOrders": True,
+                    # "WarehouseLocation": res.warehouse_id.id or '',
                     'ProductLangs': [
                         {'Name': self.name, 
                         'Description': self.description, 
                         'ISOValue': 'fr'
                         }
                     ],
+                    # "Categories": [
+                    #     {
+                    #     "Id": id_categ,
+                    #     },
+                    # ],
                 }
                     
                 put_response = requests.put(url, json=product_data_upagate, headers=headers)
@@ -155,4 +185,4 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Error {put_response.status_code}: {put_response.text}")
                     
             rec = super(ProduitSelligHome, self).write(vals)
-            return rec
+            return rec"""
