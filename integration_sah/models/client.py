@@ -38,11 +38,7 @@ class ClientSAH(models.Model):
                 
                 print("########################",clients_sah['Id'])
                 client_odoo = self.env['res.partner'].search([('id_client_sah','=',clients_sah['Id'])])
-                if client_odoo:
-                    self.write({
-                        'id_client_sah':clients_sah['Id'],
-                    })
-                else:
+                if not client_odoo:
                     if clients_sah['CompanyName']:
                         campany = self.create({
                             'company_type':'company',
