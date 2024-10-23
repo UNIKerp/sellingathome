@@ -77,14 +77,14 @@ class ClientSAH(models.Model):
                             #'':clients_sah['Consent'],
                             #'':clients_sah['ConsentDt'],
                             #'':clients_sah['CustomQuestionAnswers'],
-                            
+
                             })
                     else:
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
                             'is_customer':True,
-                            'name':clients_sah['Firstname']+'  '+clients_sah['Lastname']],
+                            'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
                             'phone':clients_sah['Phone'],
                             'mobile':clients_sah['MobilePhone'],
