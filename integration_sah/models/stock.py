@@ -1,8 +1,26 @@
 # -*- coding: utf-8 -*-
+import base64
+import hashlib
+import hmac
+import io
 import logging
-from odoo import models, fields, api
+import lxml
+import random
+import re
 import requests
-from datetime import datetime
+import threading
+import werkzeug.urls
+from ast import literal_eval
+from dateutil.relativedelta import relativedelta
+from markupsafe import Markup
+from werkzeug.urls import url_join
+from PIL import Image, UnidentifiedImageError
+
+from odoo import api, fields, models, tools, _
+from odoo.addons.base_import.models.base_import import ImportValidationError
+from odoo.exceptions import UserError, ValidationError
+from odoo.osv import expression
+from odoo.tools.float_utils import float_round
 
 _logger = logging.getLogger(__name__)
 
