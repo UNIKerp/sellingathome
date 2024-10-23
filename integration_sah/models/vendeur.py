@@ -8,6 +8,8 @@ from datetime import datetime
 class vendeur(models.Model):
     _inherit = "res.partner"
 
+    id_vendeur_sah = fields.Char(string='Id vendeur SAH')
+
 
     def recuperation_vendeurs_sah_vers_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
@@ -17,11 +19,10 @@ class vendeur(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
-                contact = self.env['res.partner'].search([('id_client_sah','=',data['Id'])])
+                contact = self.env['res.partner'].search(['|','|',('email','=',data['Email']),('phone','=',data['Phone']),('mobile','=',data['MobilePhone'])],limit=1)
                 if contact:
                     vals = {
-                        'id_client_sah':data['Id'],
-                        'is_seller':True,
+                        'id_vendeur_sah':data['Id'],
                         'active':data['IsActive'],
                         'name':data['FirstName']+'  '+data['LastName'],
                         'email':data['Email'],
