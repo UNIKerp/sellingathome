@@ -10,6 +10,77 @@ class ProduitSelligHome(models.Model):
 
     produit_sah_id = fields.Integer("ID produit SAH")
 
+    def update_aticle_sah(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        url_produit = "https://demoapi.sellingathome.com/v1/Products"
+        get_response_produit = requests.get(url_produit, headers=headers)
+        if get_response_produit.status_code == 200:
+                response_data_produit = get_response_produit.json()
+                for identifiant in response_data_produit:
+                    identite_api = identifiant['Id']
+
+                    product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
+                
+                    if product_odoo:
+                        self.update_produit_dans_sah(product_odoo, headers)
+                    else:
+                        _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
+
+        else:
+            _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {get_response_produit.status_code}")
+
+    
+    def update_produit_dans_sah(self, product, headers):
+        """Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo"""
+        if product.produit_sah_id:
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
+            
+            # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
+            update_data = {
+               "ProductType": 5,
+                "Reference": product.default_code,
+                "Prices": [
+                    {
+                        "Id": product.produit_sah_id,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": product.name,
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": product.list_price,
+                        "PriceInclTax": product.list_price * (product.taxes_id.amount/100),
+                        "ProductCost": product.standard_price,
+                        "EcoTax": 8.1
+                    }
+                ],
+                # "RemoteId": "sample string 2",
+                # "RemoteReference": "sample string 3",
+                "Barcode": product.barcode,
+                "Weight": product.weight,
+                # "Length": 1.1,
+                # "Width": 1.1,
+                # "Height": 1.1,
+                "IsPublished": True,
+                # "IsVirtual": true,
+                # "UncommissionedProduct": true,
+                # "StockQuantity": int(res.qty_available) or 0.0,
+                # "InventoryMethod": 1,
+                # "LowStockQuantity": 1,
+                # "AllowOutOfStockOrders": True,
+                # "WarehouseLocation": res.warehouse_id.id or '',
+                'ProductLangs': [
+                    {'Name': product.name, 
+                    'Description': product.description, 
+                    'ISOValue': 'fr'
+                    }
+                ],
+            }
+            
+            put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
+            
+            if put_response_produit.status_code == 200:
+                _logger.info(f"Article {product.name} mis à jour avec succès sur l'API SAH")
+            else:
+                _logger.error(f"Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code}")
+
 
     @api.model
     def create(self, vals):
