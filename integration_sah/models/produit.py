@@ -10,6 +10,54 @@ class ProduitSelligHome(models.Model):
 
     produit_sah_id = fields.Integer("ID produit SAH")
 
+    def create_article_sah_odoo(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        url_produit = "https://demoapi.sellingathome.com/v1/Products"
+        
+        post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
+        
+        if post_response_produit.status_code == 200:
+            response_data_produit = post_response_produit.json()
+            _logger.info("Produits récupérés depuis l'API SAH")
+            
+            # Parcourir la liste des produits de l'API
+            for produit_api in response_data_produit:
+                sah_id = produit_api['Id']
+                reference = produit_api['Reference']
+                name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
+                description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
+                price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
+                barcode = produit_api.get('Barcode', False)
+                weight = produit_api.get('Weight', 0.0)
+
+                existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
+                
+                if not existing_product:
+                    if not barcode:
+                        barcode = False
+
+                    if barcode:
+                        product_with_same_barcode = self.env['product.template'].search([('barcode', '=', barcode)], limit=1)
+                        if product_with_same_barcode:
+                            _logger.warning(f"Code-barres {barcode} déjà attribué au produit {product_with_same_barcode.name}. Ignoré pour {name}.")
+                            barcode = False
+
+                    # Créer le produit dans Odoo
+                    self.env['product.template'].create({
+                        'name': name,
+                        'default_code': reference,
+                        'list_price': price,
+                        'description_sale': description,
+                        'barcode': barcode,
+                        'weight': weight,
+                        'produit_sah_id': sah_id,
+                    })
+                    _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
+                else:
+                    _logger.info(f"Produit déjà existant dans Odoo : {name} (ID SAH: {sah_id})")
+        else:
+            _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {post_response_produit.status_code}")
+
     def update_aticle_sah(self):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
@@ -29,11 +77,9 @@ class ProduitSelligHome(models.Model):
         else:
             _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {get_response_produit.status_code}")
 
-    
+    # Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo
     def update_produit_dans_sah(self, product, headers):
-        """Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo"""
         id_categ = ''
-        
         # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
         if product.categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
