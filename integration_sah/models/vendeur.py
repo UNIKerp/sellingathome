@@ -24,7 +24,7 @@ class vendeur(models.Model):
                     contact.write({
                         # 'active':data['IsActive'],
                         'is_seller':True,
-                        'name':data['FirstName']+'  '+data['LastName'],
+                        # 'name':data['FirstName']+'  '+data['LastName'],
                         # 'email':data['Email'],
                         # 'phone':data['Phone'],
                         # 'mobile':data['MobilePhone'],
