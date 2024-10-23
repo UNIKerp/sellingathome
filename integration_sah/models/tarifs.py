@@ -51,13 +51,9 @@ class Tarifs(models.Model):
                     
                 ]
             }
-
             response = requests.put(url, json=values, headers=headers)
-            
             if response.status_code == 200:
-                data = response.json()
-                res.price_sah_id = data['RolePrices'][0]['Id']
-                _logger.info('=============================== %s', data)
+                _logger.info('=============================== %s', response.json())
             else:
                 _logger.info('=============================== Error Response: %s', response.text)
 
