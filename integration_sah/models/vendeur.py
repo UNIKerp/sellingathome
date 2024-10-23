@@ -55,6 +55,15 @@ class vendeur(models.Model):
                         'country_code':data['CountryIso'],
                         'company_name':data['CompanyName'],
                         'lang':data['Language']['ISOValue'],
+                        # '':data[''],
+                        # '':data[''],
+                        # '':data[''],
+                        # '':data[''],
+                        # '':data[''],
+                        # '':data[''],
+                        # '':data[''],
+                        # '':data[''],
+                        # '':data[''],
 
                     })
             
