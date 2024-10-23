@@ -9,6 +9,7 @@
             <xpath expr="//span[@name='address_name']" position="before">
               <field name="id_client_sah" invisible="1"/>
               <field name="id_vendeur_sah" invisible="1"/>
+              <field name="is_seller"/>
             </xpath>
         </field>
       </record>

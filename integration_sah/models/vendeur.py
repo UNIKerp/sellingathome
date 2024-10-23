@@ -9,6 +9,7 @@ class vendeur(models.Model):
     _inherit = "res.partner"
 
     id_vendeur_sah = fields.Char(string='Id vendeur SAH')
+    is_seller = fields.Boolean(string='Est vendeur')
 
 
     def recuperation_vendeurs_sah_vers_odoo(self):
@@ -23,6 +24,7 @@ class vendeur(models.Model):
                     vals = {
                         'id_vendeur_sah':data['Id'],
                         'active':data['IsActive'],
+                        'is_seller':True,
                         'name':data['FirstName']+'  '+data['LastName'],
                         'email':data['Email'],
                         'phone':data['Phone'],
