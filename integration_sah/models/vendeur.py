@@ -22,9 +22,7 @@ class vendeur(models.Model):
                 contact = self.env['res.partner'].search([('id_vendeur_sah','=',data['Id'])])
                 if contact:
                     contact.write({
-                        'active':data['IsActive'],
                         'is_seller':True,
-                        'name':data['FirstName']+'  '+data['LastName'],
                         'email':data['Email'],
                         'phone':data['Phone'],
                         'mobile':data['MobilePhone'],
