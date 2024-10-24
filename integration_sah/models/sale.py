@@ -23,7 +23,6 @@ class SaleSAH(models.Model):
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
-                _logger.info('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
                 if not commandes_odoo and client_id:
                     commandes_odoo.create({
                         "id_order_sh":commande['Id'],
@@ -31,7 +30,7 @@ class SaleSAH(models.Model):
                         "partner_id":client_id.id,
                         "user_id":client_id.user_id,
                         'order_line': [(0, 0, {
-                            'product_id': self.get_product_id_by_sah_id(elt['ProductId']), 
+                            'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
                             'product_uom_qty': elt['Quantity'],
                             'price_unit': elt['UnitPrice'], 
                             'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
@@ -40,7 +39,6 @@ class SaleSAH(models.Model):
                       
                     })
                 elif commandes_odoo:
-                    _logger.info("poooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo")
                     commandes_odoo.write({
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
@@ -72,8 +70,3 @@ class SaleSAH(models.Model):
         
         return tax.id
 
-    def get_product_id_by_sah_id(self, sah_id):
-        product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
-        _logger.info("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffjjjjjjjjjjjjjj")
-        _logger.info(product.name)
-        return product.id if product else None  
