@@ -7,11 +7,10 @@
             <field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//sheet//div[@class='oe_title']" position="inside">
-                    <label for ="type_revendeur" groups="base.group_portal"/>
-                    <field name="type_revendeur" readonly="1" groups="base.group_portal" />
-                     <!-- invisible="groups_id != [(6, 0, [10])]" 
-                     field[@name='partner_id']
-                     -->
+                    <field name="sel_groups_1_10_11" invisible="1"/>
+                    <group>
+                        <field name="type_revendeur" readonly="1"  invisible="sel_groups_1_10_11 != 10"  />
+                    </group>
                 </xpath>
             </field>
         </record>

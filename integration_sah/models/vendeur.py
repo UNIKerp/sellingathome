@@ -49,7 +49,8 @@ class vendeur(models.Model):
                         'partner_latitude':data['Latitude'],
                         'partner_longitude':data['Longitude'],
                         'company_name':data['CompanyName'],
-                        'lang':data['Language']['ISOValue'],
+                        # 'lang':'fr_FR' if data['Language']['ISOValue']=='fr' else 'fr_FR',
+                        'lang':data['Language']['ISOValue']+'_'+data['Language']['ISOValue'].upper(),
                         'vat':data['CompanyVAT'],
                         # 'ImageUrl':data[''],
                         # 'Status':data[''],
@@ -94,7 +95,7 @@ class vendeur(models.Model):
                         # 'MiniSiteUsername':data[''],
                         # 'MiniSiteIsActive':data[''],
                     })
-                    print('RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR')
+                    print('RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',data['Language']['ISOValue'])
                 else:
                     type_revendeur = (
                         'vdi' if data['CompanyStatus'] == 15 else
@@ -119,7 +120,7 @@ class vendeur(models.Model):
                     'partner_latitude':data['Latitude'],
                     'partner_longitude':data['Longitude'],
                     'company_name':data['CompanyName'],
-                    # 'lang':data['Language']['ISOValue'],
+                    'lang':data['Language']['ISOValue']+'_'+data['Language']['ISOValue'].upper(),
                     'vat':data['CompanyVAT'],
                     # 'ImageUrl':data[''],
                     # 'Status':data[''],
