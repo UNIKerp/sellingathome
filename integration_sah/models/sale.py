@@ -53,6 +53,7 @@ class SaleSAH(models.Model):
                             'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
                             'product_uom_qty': elt['Quantity'],
                             'price_unit': elt['UnitPrice'], 
+                            'tax_id':elt['TaxRate'],
                         }) for elt in commande['Products']] ,
                         # "partner_shipping_id":delivery_address.id
                       
