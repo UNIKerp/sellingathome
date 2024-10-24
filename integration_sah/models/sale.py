@@ -30,12 +30,12 @@ class SaleSAH(models.Model):
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
                         "user_id":client_id.user_id,
-                        'order_line': [(0, 0, {
-                            'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
-                            'product_uom_qty': elt['Quantity'],
-                            'price_unit': elt['UnitPrice'], 
-                            'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
-                        }) for elt in commande['Products']] ,
+                        # 'order_line': [(0, 0, {
+                        #     'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
+                        #     'product_uom_qty': elt['Quantity'],
+                        #     'price_unit': elt['UnitPrice'], 
+                        #     'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
+                        # }) for elt in commande['Products']] ,
                         # "partner_shipping_id":delivery_address.id
                       
                     })
