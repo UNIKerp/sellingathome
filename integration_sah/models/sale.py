@@ -30,12 +30,12 @@ class SaleSAH(models.Model):
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
                         "user_id":client_id.user_id,
-                        # 'order_line': [(0, 0, {
-                        #     'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
-                        #     'product_uom_qty': elt['Quantity'],
-                        #     'price_unit': elt['UnitPrice'], 
-                        #     'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
-                        # }) for elt in commande['Products']] ,
+                        'order_line': [(0, 0, {
+                            'product_id': self.get_product_id_by_sah_id(elt['ProductId']), 
+                            'product_uom_qty': elt['Quantity'],
+                            'price_unit': elt['UnitPrice'], 
+                            'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
+                        }) for elt in commande['Products']] ,
                         # "partner_shipping_id":delivery_address.id
                       
                     })
@@ -72,3 +72,8 @@ class SaleSAH(models.Model):
         
         return tax.id
 
+    def get_product_id_by_sah_id(self, sah_id):
+        product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
+        _logger.info("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffjjjjjjjjjjjjjj")
+        _logger.info(product.name)
+        return product.id if product else None  
