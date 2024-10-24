@@ -45,7 +45,7 @@ class SaleSAH(models.Model):
                         'city':commande['City'],
 
                     })
-                   
+                break
               
         else:
             print(f"Erreur {response.status_code}: {response.text}")
