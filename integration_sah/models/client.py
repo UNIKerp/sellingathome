@@ -28,6 +28,7 @@ class ClientSAH(models.Model):
             clients_data = response2.json()
             for clients_sah in clients_data:
                 client_odoo = self.env['res.partner'].search([('id_client_sah','=',clients_sah['Id'])])
+                vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',clients_sah['SellerId'])])
                 if not client_odoo:
                     if clients_sah['CompanyName']:
                         campany = self.create({
@@ -38,6 +39,7 @@ class ClientSAH(models.Model):
                             pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])])
                         self.create({
                             'id_client_sah':clients_sah['Id'],
+                            'user_id':vendeur_id,
                             #'':clients_sah['Gender'],
                             'id_vendeur_sah':clients_sah['SellerId'],
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
@@ -74,6 +76,7 @@ class ClientSAH(models.Model):
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
+                            'user_id':vendeur_id,
                             'id_vendeur_sah':clients_sah['SellerId'],
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
