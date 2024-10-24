@@ -28,6 +28,7 @@ class ClientSAH(models.Model):
             clients_data = response2.json()
             for clients_sah in clients_data:
                 client_odoo = self.env['res.partner'].search([('id_client_sah','=',clients_sah['Id'])])
+                vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',clients_sah['SellerId'])])
                 if not client_odoo:
                     if clients_sah['CompanyName']:
                         campany = self.create({
@@ -38,8 +39,9 @@ class ClientSAH(models.Model):
                             pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])])
                         self.create({
                             'id_client_sah':clients_sah['Id'],
-                            #'':clients_sah['Gender'],vendeur
-                            'id_vendeur_sah':clients_sah['SellerId'],
+                            'user_id':vendeur_id,
+                            #'':clients_sah['Gender'],
+                            #'id_vendeur_sah':clients_sah['SellerId'],
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
                             'phone':clients_sah['Phone'],
@@ -74,7 +76,8 @@ class ClientSAH(models.Model):
                         self.create({
                             'id_client_sah':clients_sah['Id'],
                             #'':clients_sah['Gender'],
-                            'id_vendeur_sah':clients_sah['SellerId'],
+                            'user_id':vendeur_id,
+                            #'id_vendeur_sah':clients_sah['SellerId'],
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
                             'phone':clients_sah['Phone'],
@@ -105,6 +108,93 @@ class ClientSAH(models.Model):
             _logger.info("==================================Résultat: %s ==========================", json.dumps(clients_data, indent=4))
         else:
             _logger.info("==================================Erreur: %s ==========================",  response2.text)
+
+
+    def update_client_sah(self):
+        up_headers_client = self.env['authentication.sah'].establish_connection()
+        up_url_client = "https://demoapi.sellingathome.com/v1/Customers"
+        up_response2 = requests.get(up_url_client, headers=up_headers_client)
+        if up_response2.status_code == 200:
+            up_clients_data = up_response2.json()
+            for up_clients_sah in up_clients_data:
+                client_odoo = self.env['res.partner'].search([('id_client_sah','=',up_clients_sah['Id'])])
+                vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',up_clients_sah['SellerId'])])
+                if not client_odoo:
+                    if up_clients_sah['CompanyName']:
+                        campany = self.write({
+                            'company_type':'company',
+                            'name' :up_clients_sah['CompanyName'],
+                        })
+                        if up_clients_sah['CountryIso']:
+                            pays = self.env['res.country'].search([('code','=',up_clients_sah['CountryIso'])])
+                        self.write({
+                            'user_id':vendeur_id,
+                            #'':clients_sah['Gender'],
+                            #'id_vendeur_sah':up_clients_sah['SellerId'],
+                            
+                            'email':up_clients_sah['Email'],
+                            'phone':up_clients_sah['Phone'],
+                            'mobile':up_clients_sah['MobilePhone'],
+                            #'':clients_sah['Roles'],
+                            'ref':up_clients_sah['CustomerReference'],
+                            'parent_id':campany.name,
+                            #'':clients_sah['CompanyIdentificationNumber'],
+                            'vat':up_clients_sah['CompanyVAT'],
+                            #'':clients_sah['TaxExempt'],
+                            'street':up_clients_sah['StreetAddress'],
+                            'street2':up_clients_sah['StreetAddress2'],
+                            'zip':up_clients_sah['Postcode'],
+                            'city':up_clients_sah['City'],
+                            'country_id':pays.id,
+                            'partner_latitude':up_clients_sah['Latitude'],
+                            'partner_longitude':up_clients_sah['Longitude'],
+                            'country_code':up_clients_sah['CountryIso'],
+                            #'':clients_sah['BrandFields'],
+                            #'':clients_sah['SellerId'],
+                            #'':clients_sah['HostedMeeting'],
+                            #'':clients_sah['ParticipedMeeting'],
+                            #'':clients_sah['HasOrdered'],
+                            #'':clients_sah['Consent'],
+                            #'':clients_sah['ConsentDt'],
+                            #'':clients_sah['CustomQuestionAnswers'],
+
+                            })
+                    else:
+                        if up_clients_sah['CountryIso']:
+                            pays = self.env['res.country'].search([('code','=',up_clients_sah['CountryIso'])])
+                        self.write({
+                            #'':clients_sah['Gender'],
+                            'user_id':vendeur_id,
+                            #'id_vendeur_sah':up_clients_sah['SellerId'],
+                            'email':up_clients_sah['Email'],
+                            'phone':up_clients_sah['Phone'],
+                            'mobile':up_clients_sah['MobilePhone'],
+                            #'':clients_sah['Roles'],
+                            'ref':up_clients_sah['CustomerReference'],
+                            #'':clients_sah['CompanyIdentificationNumber'],
+                            'vat':up_clients_sah['CompanyVAT'],
+                            #'':clients_sah['TaxExempt'],
+                            'street':up_clients_sah['StreetAddress'],
+                            'street2':up_clients_sah['StreetAddress2'],
+                            'zip':up_clients_sah['Postcode'],
+                            'city':up_clients_sah['City'],
+                            'country_id':pays.id,
+                            'partner_latitude':up_clients_sah['Latitude'],
+                            'partner_longitude':up_clients_sah['Longitude'],
+                            'country_code':up_clients_sah['CountryIso'],
+                            #'':clients_sah['BrandFields'],
+                            #'':clients_sah['SellerId'],
+                            #'':clients_sah['HostedMeeting'],
+                            #'':clients_sah['ParticipedMeeting'],
+                            #'':clients_sah['HasOrdered'],
+                            #'':clients_sah['Consent'],
+                            #'':clients_sah['ConsentDt'],
+                            #'':clients_sah['CustomQuestionAnswers'],
+                        })
+            # 
+            _logger.info("==================================Résultat: %s ==========================", json.dumps(up_clients_data, indent=4))
+        else:
+            _logger.info("==================================Erreur: %s ==========================",  up_response2.text)   
 
 
    
