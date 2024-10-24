@@ -23,6 +23,7 @@ class SaleSAH(models.Model):
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
+                _logger.info('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
                 if not commandes_odoo and client_id:
                     commandes_odoo.create({
                         "id_order_sh":commande['Id'],
