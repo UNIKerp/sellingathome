@@ -23,6 +23,16 @@ class SaleSAH(models.Model):
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                 partner_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
                 if not commandes_odoo and partner_id:
+                    delivery_address = self.env['res.partner'].create({
+                        'type':"delivery",
+                        'name': commande['FirstName']+'  '+commande['LastName'], 
+                        'phone': commande['phone'],
+                        'mobile': commande['MobilePhone'], 
+                        'street':commande['StreetAddress'],
+                        'street2':commande['StreetAddress2'],
+                        'city':commande['City'],
+
+                    })
                     commandes_odoo.create({
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
@@ -35,18 +45,7 @@ class SaleSAH(models.Model):
                         "partner_shipping_id":delivery_address.id
                       
                     })
-                    delivery_address = self.env['res.partner'].create({
-                        'type':"delivery",
-                        'name': commande['FirstName']+'  '+commande['LastName'], 
-                        'phone': commande['phone'],
-                        'mobile': commande['MobilePhone'], 
-                        'street':commande['StreetAddress'],
-                        'street2':commande['StreetAddress2'],
-                        'city':commande['City'],
-
-                    })
-                break
-              
+                    break 
         else:
             print(f"Erreur {response.status_code}: {response.text}")
        
