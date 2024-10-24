@@ -18,8 +18,6 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             commandes_sah = response.json()
-            _logger.info("ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc")
-            _logger.info(commandes_sah)
             for commande in commandes_sah:
                 id_order = commande['Id']
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
