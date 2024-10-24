@@ -16,6 +16,9 @@ class ClientSAH(models.Model):
 
     id_client_sah = fields.Integer("ID client SAH", help="l'ID du client dans SAH")
     
+    _sql_constraints = [
+        ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"), ]
+
 
     def get_client_sah(self):
         headers_client = self.env['authentication.sah'].establish_connection()
