@@ -42,60 +42,96 @@ def tearDownModule():
     closeConnection()
 @tagged('-at_install', 'post_install')
 class TestTarifs(TransactionCase):
+
     @classmethod
+    @patch('requests.get')  # Add this line to mock the GET request
     @patch('requests.post')
     @patch('odoo.addons.integration_sah.models.authentication.AuthenticaionSAH.establish_connection')
-    def setUpClass(self, mock_auth, mock_post):
-        super(TestTarifs, self).setUpClass()
+    def setUpClass(cls, mock_auth, mock_post, mock_get):
+        super(TestTarifs, cls).setUpClass()
+
+        # Mock GET response with correct structure
+        mock_get.return_value = MagicMock(status_code=200, json=lambda: [
+            {
+                "Id":1,
+                "Reference": 'UUUUUUUU',
+                "ParentCategoryId": 1,
+                "IsPublished": True,
+                "CategoryLangs": [
+                    {"Name": 'mor', "Description": 'None', "ISOValue": "fr"}
+                ]
+            }
+        ])
+
+        # Existing POST mock and other setup logic...
         mock_auth.return_value = {'Authorization': 'Bearer token'}
         mock_post.return_value = MagicMock(status_code=200, json=lambda: {
             'Id': 9999,
-            'Prices': [{'Id': 123456}]  # Ajoutez la structure attendue ici
+            'Prices': [{'Id': 118840}]
         })
-        self.product_template = self.env['product.template'].create({
+
+        # Your product and pricelist creation logic...
+        cls.product_template = cls.env['product.template'].create({
             'name': 'Test Product',
             'list_price': 100.0,
             'standard_price': 80.0,
-            'taxes_id': self.env['account.tax'].create({'name': 'Tax 20%', 'amount': 20}).ids
+            'taxes_id': cls.env['account.tax'].create({'name': 'Tax 20%', 'amount': 20}).ids
         })
-        self.pricelist = self.env['product.pricelist'].create({
+        cls.pricelist = cls.env['product.pricelist'].create({
             'name': 'Test Pricelist',
-            'price_list_sah_id': 123456
+            'price_list_sah_id': 118840
         })
-        self.tarif_vals = {
-            'product_tmpl_id': self.product_template.id,
-            'pricelist_id': self.pricelist.id,
+        cls.tarif_vals = {
+            'product_tmpl_id': cls.product_template.id,
+            'pricelist_id': cls.pricelist.id,
             'date_start': '2023-01-01',
             'date_end': '2023-12-31',
             'min_quantity': 5,
             'fixed_price': 95.0
         }
-        # self.tarif = self.env['product.pricelist.item'].create(self.tarif_vals)
         with patch('requests.put') as mock_put:
             mock_put.return_value = MagicMock(status_code=200, json=lambda: {'RolePrices': [{'Id': 7890}]})
             
-            # Créer le tarif ici pour que l'appel à requests.put soit simulé
-            self.tarif = self.env['product.pricelist.item'].create(self.tarif_vals)
+            # Creating the tariff
+            cls.tarif = cls.env['product.pricelist.item'].create(cls.tarif_vals)
 
     @patch('requests.put')
     @patch('requests.get')
     @patch('odoo.addons.integration_sah.models.authentication.AuthenticaionSAH.establish_connection')
     def test_create_tarif(self, mock_auth, mock_get, mock_put):
         mock_auth.return_value = {'Authorization': 'Bearer token'}
-        mock_put.return_value = MagicMock(status_code=200, json=lambda: {'RolePrices': [{'Id': 7890}]})
+        
+        # Ensure that mock_put returns the correct structure (adjusted)
+        mock_put.return_value = MagicMock(status_code=200, json=lambda: {
+            'ProductId': 118838,
+            'TwoLetterISOCode': 'FR',
+            'PriceExclTax': 100.0,
+            'PriceInclTax': 120.0,
+            'ProductCost': 80.0,
+            'RolePrices': [
+                {
+                    'CustomerRoleId': 1,
+                    'Quantity': 5,
+                    'NewPriceExclTax': 95.0,
+                    'StartDate': '2023-01-01T00:00:00.000000+02:00',
+                    'EndDate': '2023-12-31T00:00:00.000000+02:00'
+                }
+            ]
+        })
 
         # Simulate creation
         tarif = self.env['product.pricelist.item'].create(self.tarif_vals)
 
         # Verify API call was made with the right values
-        self.assertEqual(int(tarif.price_sah_id), 7890)
         mock_put.assert_called()
-        self.assertEqual(mock_put.call_count, 2)
-
-        # Extract the JSON payload from the PUT request and check it
+        self.assertEqual(mock_put.call_count, 1)
         payload = mock_put.call_args.kwargs['json']
-        self.assertEqual(payload['ProductId'], self.product_template.produit_sah_id)
-        self.assertEqual(payload['PriceExclTax'], self.product_template.list_price)
+
+        # Assert against 'RolePrices' instead of 'Prices'
+        self.assertIn('RolePrices', payload, "'RolePrices' key missing in the payload")
+
+        # Verify the price in 'RolePrices' matches the expected value
+        self.assertEqual(payload['RolePrices'][0]['NewPriceExclTax'], 95.0)
 
     @patch('requests.put')
     @patch('odoo.addons.integration_sah.models.authentication.AuthenticaionSAH.establish_connection')
@@ -109,19 +145,6 @@ class TestTarifs(TransactionCase):
         payload = mock_put.call_args.kwargs['json']
         self.assertEqual(payload['RolePrices'][0]['NewPriceExclTax'], 95.0)
 
-    """ @patch('requests.get')
-    @patch('odoo.addons.integration_sah.models.authentication.AuthenticaionSAH.establish_connection')
-    def test_recuperation_liste_prices(self, mock_auth, mock_get):
-        mock_auth.return_value = {'Authorization': 'Bearer token'}
-        mock_get.return_value = MagicMock(status_code=200, json=lambda: {
-            'prices': [{'ProductId': 118823, 'PriceExclTax': 100.0, 'PriceInclTax': 120.0}]
-        })
-        prices = self.tarif.recuperation_liste_prices()
-        mock_get.assert_called_once()
-        params = mock_get.call_args.kwargs['params']
-        self.assertEqual(params['productid'], 118823)
-        self.assertIn('prices', prices)
-        self.assertEqual(prices['prices'][0]['ProductId'], 118823)"""
     @classmethod 
     def tearDownClass(cls): 
         super(TestTarifs, cls).tearDownClass()

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_sah_integration_view_order_form" model="ir.ui.view">
+            <field name="name">sah.integration.commande.template.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group[@name='sale_header']" position="inside">
+                    <field name="id_order_sh" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

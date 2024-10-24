@@ -79,7 +79,6 @@ class StockSAH(models.TransientModel):
                 if headers:
                     values = {
                         "ProductId":  produit.produit_sah_id,
-                        # "ProductId":118556,
                         "ProductReference": produit.default_code,
                         "StockQuantity": int(res.new_quantity),
                         "StockQuantityComing":int(produit.virtual_available),  
