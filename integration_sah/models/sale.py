@@ -54,14 +54,14 @@ class SaleSAH(models.Model):
                             'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
                             'product_uom_qty': elt['Quantity'],
                             'price_unit': elt['UnitPrice'], 
-                            'tax_id': [(6, 0, [tax_model.search([('amount', '=', elt['TaxRate'])], limit=1).id])] if tax_model.search([('amount', '=', elt['TaxRate'])], limit=1) else None,
+                            'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                         }) for elt in commande['Products']] ,
                         # "partner_shipping_id":delivery_address.id
                       
                     })
                     _logger.info('mppppppppppppppppppppppppppppppppppppppppppppppppppp')
                     _logger.info(commandes_odoo)
-                    break 
+                 
         else:
             print(f"Erreur {response.status_code}: {response.text}")
        
@@ -69,5 +69,18 @@ class SaleSAH(models.Model):
 
 
             
-
+    def _get_or_create_tax(self, tax_rate):
+        # Recherche la taxe par son montant
+        tax = self.env['account.tax'].search([('amount', '=', tax_rate)], limit=1)
+        
+        # Si la taxe n'existe pas, on la crée
+        if not tax:
+            tax = self.env['account.tax'].create({
+                'name': f'Taxe {tax_rate}%',
+                'amount': tax_rate,
+                # 'type_tax_use': 'sale',  # Ou 'purchase' selon l'utilisation
+                # 'price_include': False,  # Si les prix incluent ou non la taxe
+            })
+        
+        return tax.id
 
