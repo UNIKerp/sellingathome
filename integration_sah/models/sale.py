@@ -44,6 +44,7 @@ class SaleSAH(models.Model):
 
                     # })
                     # print("delivery_addressdelivery_addressdelivery_address",delivery_address)
+                    tax_model = self.env['account.tax']
                     commandes_odoo.create({
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
@@ -53,7 +54,7 @@ class SaleSAH(models.Model):
                             'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
                             'product_uom_qty': elt['Quantity'],
                             'price_unit': elt['UnitPrice'], 
-                            'tax_id':elt['TaxRate'],
+                            'tax_id': [(6, 0, [tax_model.search([('amount', '=', elt['TaxRate'])], limit=1).id])] if tax_model.search([('amount', '=', elt['TaxRate'])], limit=1) else None,
                         }) for elt in commande['Products']] ,
                         # "partner_shipping_id":delivery_address.id
                       
