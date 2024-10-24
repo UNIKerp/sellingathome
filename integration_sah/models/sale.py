@@ -18,17 +18,20 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             commandes_sah = response.json()
+            _logger.info("ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc")
+            _logger.info(commandes_sah)
             for commande in commandes_sah:
                 print('ppppppppppppppppppppppppppppppppppp',commande)
                 id_order = commande['Id']
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
-                partner_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
+                client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
+                # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
                 _logger.info("maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 _logger.info(commandes_odoo)
                 _logger.info("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
-                _logger.info(partner_id)
+                _logger.info(client_id)
                 _logger.info("partner_idpartner_idpartner_idpartner_idpartner_idpartner_id")
-                if not commandes_odoo and partner_id:
+                if not commandes_odoo and client_id:
                     print("tttttttttttttttttttttttttttttttttttttttt")
                     # delivery_address = self.env['res.partner'].create({
                     #     'type':"delivery",
@@ -44,7 +47,8 @@ class SaleSAH(models.Model):
                     commandes_odoo.create({
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
-                        "partner_id":partner_id.id,
+                        "partner_id":client_id.id,
+                        "user_id":client_id.user_id,
                         'order_line': [(0, 0, {
                             'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
                             'product_uom_qty': elt['Quantity'],
