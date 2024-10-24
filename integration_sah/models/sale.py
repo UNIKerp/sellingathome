@@ -28,7 +28,7 @@ class SaleSAH(models.Model):
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
-                        "user_id":client_id.user_id,
+                        # "user_id":client_id.user_id,
                         'order_line': [(0, 0, {
                             'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
                             'product_uom_qty': elt['Quantity'],
@@ -39,11 +39,10 @@ class SaleSAH(models.Model):
                       
                     })
                 elif commandes_odoo:
-                    _logger.info("poooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo")
                     commandes_odoo.write({
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
-                        "user_id":client_id.user_id,
+                        # "user_id":client_id.user_id,
                         'order_line': [(0, 0, {
                             'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
                             'product_uom_qty': elt['Quantity'],
