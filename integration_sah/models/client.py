@@ -132,7 +132,6 @@ class ClientSAH(models.Model):
                             pays = self.env['res.country'].search([('code','=',up_clients_sah['CountryIso'])])
                         up_client_odoo.write({
                             'user_id':vendeur_id,
-                            'name':up_clients_sah['Firstname']+'  '+up_clients_sah['Lastname'],
                             'email':up_clients_sah['Email'],
                             'phone':up_clients_sah['Phone'],
                             'mobile':up_clients_sah['MobilePhone'],
