@@ -38,7 +38,7 @@ class ClientSAH(models.Model):
                             pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])])
                         self.create({
                             'id_client_sah':clients_sah['Id'],
-                            #'':clients_sah['Gender'],
+                            #'':clients_sah['Gender'],vendeur
                             'id_vendeur_sah':clients_sah['SellerId'],
                             'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                             'email':clients_sah['Email'],
