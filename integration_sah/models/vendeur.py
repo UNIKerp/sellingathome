@@ -27,6 +27,7 @@ class vendeur(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
+                pays=self.env['res.country'].search([('code','=',data['CountryIso'])])
                 contact = self.env['res.users'].search([('login','=',data['Email'])])
                 if contact:
                     type_revendeur = (
@@ -36,7 +37,7 @@ class vendeur(models.Model):
                         'vendeur_domicile' if data['CompanyStatus'] == 10 else
                         None
                     )
-
+                    
                     contact.write({
                         'id_vendeur_sah':data['Id'],
                         'phone':data['Phone'],
@@ -49,7 +50,7 @@ class vendeur(models.Model):
                         'partner_latitude':data['Latitude'],
                         'partner_longitude':data['Longitude'],
                         'company_name':data['CompanyName'],
-                        # 'lang':'fr_FR' if data['Language']['ISOValue']=='fr' else 'fr_FR',
+                        'country_id':pays.id if pays else None,
                         'lang':data['Language']['ISOValue']+'_'+data['Language']['ISOValue'].upper(),
                         'vat':data['CompanyVAT'],
                         # 'ImageUrl':data[''],
@@ -120,6 +121,7 @@ class vendeur(models.Model):
                     'partner_latitude':data['Latitude'],
                     'partner_longitude':data['Longitude'],
                     'company_name':data['CompanyName'],
+                    'country_id':pays.id if pays else None,
                     'lang':data['Language']['ISOValue']+'_'+data['Language']['ISOValue'].upper(),
                     'vat':data['CompanyVAT'],
                     # 'ImageUrl':data[''],
