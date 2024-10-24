@@ -14,6 +14,7 @@
         'views/product.xml',
         'views/sale.xml',
         'views/client.xml',
+        'views/users.xml',
     ],
     'images':['static/description/icon.png',],
 }
