@@ -34,7 +34,9 @@ class SaleSAH(models.Model):
                             'product_uom_qty': elt['Quantity'],
                             'price_unit': elt['UnitPrice'], 
                             'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
-                        }) for elt in commande['Products']] ,
+                        }) for elt in commande['Products']
+                           if self.get_produit(elt['ProductId'])
+                        ] ,
                         # "partner_shipping_id":delivery_address.id
                         
                       
@@ -78,8 +80,5 @@ class SaleSAH(models.Model):
             product_id = produit.id
             _logger.info("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
             _logger.info(product_id)
-        else:
-            _logger.info("ce produit n'existe pas")
-
         return product_id
 
