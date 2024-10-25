@@ -34,7 +34,7 @@ class SaleSAH(models.Model):
                     if order:
                         for elt in commande['Products']:
                             if self.get_produit(elt['ProductId']):
-                                self.env['sale.odrer.line'].create({
+                                self.env['sale.order.line'].create({
                                 "order_id":order.id,
                                 'product_id':self.get_produit(elt['ProductId']),
                                 'product_uom_qty': elt['Quantity'],
