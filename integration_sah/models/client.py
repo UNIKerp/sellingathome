@@ -67,6 +67,7 @@ class ClientSAH(models.Model):
                         })
                 else:
                     self.write({
+                        'id_client_sah':clients_sah['Id'],
                         'user_id':vendeur_id.id or False,
                         #'':clients_sah['Gender'],
                         #'id_vendeur_sah':clients_sah['SellerId'],
