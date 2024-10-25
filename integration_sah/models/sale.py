@@ -39,6 +39,7 @@ class SaleSAH(models.Model):
                         
                       
                     })
+                    break
                 elif commandes_odoo:
                     commandes_odoo.write({
                         "name":commande['OrderRefCode'],
