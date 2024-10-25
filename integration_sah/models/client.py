@@ -66,7 +66,7 @@ class ClientSAH(models.Model):
 
                         })
                 else:
-                    self.write({
+                    client_odoo.write({
                         'id_client_sah':clients_sah['Id'],
                         'user_id':vendeur_id.id or False,
                         #'':clients_sah['Gender'],
