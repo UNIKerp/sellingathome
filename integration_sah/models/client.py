@@ -29,7 +29,7 @@ class ClientSAH(models.Model):
             for clients_sah in clients_data:
                 client_odoo = self.env['res.partner'].search(['|',('id_client_sah','=',clients_sah['Id']),('email','=',clients_sah['Email'])])
                 vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',clients_sah['SellerId'])])
-                campany = self.create({ 'company_type':'company','name' :clients_sah['CompanyName'], }).id if clients_sah['CompanyName'] else None
+                campany = self.create({ 'company_type':'company','name' :clients_sah['CompanyName']}).id if clients_sah['CompanyName'] else None
                 pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])]).id if clients_sah['CountryIso'] else None
                 if not client_odoo:
                     self.create({
@@ -66,7 +66,7 @@ class ClientSAH(models.Model):
 
                         })
                 else:
-                    self.create({
+                    self.write({
                         'user_id':vendeur_id.id or False,
                         #'':clients_sah['Gender'],
                         #'id_vendeur_sah':clients_sah['SellerId'],
