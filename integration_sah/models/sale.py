@@ -11,7 +11,6 @@ class SaleSAH(models.Model):
 
     id_order_sh = fields.Integer(string="ID commande SAH")
 
-
     def get_commande(self):
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'            
         headers = self.env['authentication.sah'].establish_connection()
@@ -36,8 +35,10 @@ class SaleSAH(models.Model):
                             'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                         }) for elt in commande['Products']] ,
                         # "partner_shipping_id":delivery_address.id
+                        
                       
                     })
+                    break
                 elif commandes_odoo:
                     commandes_odoo.write({
                         "name":commande['OrderRefCode'],
@@ -58,14 +59,10 @@ class SaleSAH(models.Model):
     def _get_or_create_tax(self, tax_rate):
         # Recherche la taxe par son montant
         tax = self.env['account.tax'].search([('amount', '=', tax_rate)], limit=1)
-        
-        # Si la taxe n'existe pas, on la crée
         if not tax:
             tax = self.env['account.tax'].create({
                 'name': f'Taxe {tax_rate}%',
                 'amount': tax_rate,
-                # 'type_tax_use': 'sale',  # Ou 'purchase' selon l'utilisation
-                # 'price_include': False,  # Si les prix incluent ou non la taxe
             })
         
         return tax.id
