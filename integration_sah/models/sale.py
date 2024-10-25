@@ -6,11 +6,15 @@ from datetime import datetime
 
 _logger = logging.getLogger(__name__)
 
+class SaleLineSAH(models.Model):
+    _inherit = "sale.order.line"
+
+    id_order_line_sh = fields.Integer(string="ID Line de Commande SAH", help="ID Line de Commande dans SAH")
+
 class SaleSAH(models.Model):
     _inherit = "sale.order"
 
-    id_order_sh = fields.Integer(string="ID commande SAH")
-
+    id_order_sh = fields.Integer(string="ID commande SAH", help="ID de la Commande dans SAH")
 
     def get_commande(self):
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'            
@@ -21,37 +25,69 @@ class SaleSAH(models.Model):
             for commande in commandes_sah:
                 id_order = commande['Id']
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
-                partner_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
-                if not commandes_odoo and partner_id:
-                    delivery_address = self.env['res.partner'].create({
-                        'type':"delivery",
-                        'name': commande['FirstName']+'  '+commande['LastName'], 
-                        'phone': commande['phone'],
-                        'mobile': commande['MobilePhone'], 
-                        'street':commande['StreetAddress'],
-                        'street2':commande['StreetAddress2'],
-                        'city':commande['City'],
-
-                    })
-                    commandes_odoo.create({
+                client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
+                # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
+                if not commandes_odoo and client_id:
+                    # p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id
+                    order = commandes_odoo.create({
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
-                        "partner_id":partner_id.id,
-                        'order_line': [(0, 0, {
-                            'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
-                            'product_uom_qty': elt['Quantity'],
-                            'price_unit': elt['UnitPrice'], 
-                        }) for elt in commande['Products']] ,
-                        "partner_shipping_id":delivery_address.id
-                      
+                        "partner_id":client_id.id,
+                        # "user_id":client_id.user_id,
+                        # "partner_shipping_id":delivery_address.id
                     })
-                    break 
+                    if order:
+                        for elt in commande['Products']:
+                            if self.get_produit(elt['ProductId'])!=0:
+                                self.env['sale.order.line'].create({
+                                "id_order_line_sh":elt["Id"],
+                                "name":self.get_produit(elt['ProductId']).name,
+                                "order_id":order.id,
+                                'product_template_id':self.get_produit(elt['ProductId']).id,
+                                'product_uom_qty': elt['Quantity'],
+                                'price_unit': elt['UnitPriceExcltax'], 
+                                'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
+                                })
+
+                elif commandes_odoo:
+                    commandes_odoo.write({ "name":commande['OrderRefCode'], "partner_id":client_id.id})
+                    for elt in commande['Products']:
+                        if self.get_produit(elt['ProductId'])!=0:
+                            j=0
+                            for l in commandes_odoo.order_line:
+                                if l.id_order_line_sh==elt["Id"]:
+                                    l.write({'product_uom_qty': elt['Quantity'],'price_unit': elt['UnitPriceExcltax'], 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])] })
+                                    j+=1
+                            if j==0:
+                                self.env['sale.order.line'].create({
+                                "id_order_line_sh":elt["Id"],
+                                "name":self.get_produit(elt['ProductId']).name,
+                                "order_id":commandes_odoo.id,
+                                'product_template_id':self.get_produit(elt['ProductId']).id,
+                                'product_uom_qty': elt['Quantity'],
+                                'price_unit': elt['UnitPriceExcltax'], 
+                                'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
+                                })
         else:
             print(f"Erreur {response.status_code}: {response.text}")
        
-
-
-
             
+    def _get_or_create_tax(self, tax_rate):
+        # Recherche la taxe par son montant
+        tax = self.env['account.tax'].search([('amount', '=', tax_rate)], limit=1)
+        if not tax:
+            tax = self.env['account.tax'].create({
+                'name': f'Taxe {tax_rate}%',
+                'amount': tax_rate,
+            })
+        
+        return tax.id
 
+
+    def get_produit(self,ProductId):
+        produit = self.env['product.template'].search([('produit_sah_id','=',ProductId)])
+        if produit: 
+            return produit
+        else:
+            return 0
 

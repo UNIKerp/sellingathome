@@ -30,6 +30,7 @@ class ProduitSelligHome(models.Model):
                 price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
                 barcode = produit_api.get('Barcode', False)
                 weight = produit_api.get('Weight', 0.0)
+                type_sah = produit_api.get('InventoryMethod')
 
                 existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
                 
@@ -52,6 +53,7 @@ class ProduitSelligHome(models.Model):
                         'barcode': barcode,
                         'weight': weight,
                         'produit_sah_id': sah_id,
+                        'is_storable' : True if type_sah == 1 else False
                     })
                     _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
                 else:
@@ -171,7 +173,7 @@ class ProduitSelligHome(models.Model):
 
 
 
-    @api.model
+    """@api.model
     def create(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
@@ -269,7 +271,7 @@ class ProduitSelligHome(models.Model):
                 })
             else:
                 _logger.info(f"Error {post_response.status_code}: {post_response.text}")
-        return res
+        return res"""
 
 
     def write(self, vals):

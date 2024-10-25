@@ -7,9 +7,9 @@
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
             <xpath expr="//span[@name='address_name']" position="before">
-              <field name="id_client_sah" invisible="1"/>
-              <field name="id_vendeur_sah" invisible="1"/>
-              <field name="is_seller"/>
+              <field name="id_client_sah" readonly="1"/>
+              <!-- <field name="id_vendeur_sah" readonly="1"/>
+              <field name="is_seller"/> -->
             </xpath>
         </field>
       </record>
