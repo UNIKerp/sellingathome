@@ -34,8 +34,8 @@ class SaleSAH(models.Model):
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
-                        "user_id":client_id.user_id , 
-                        "currency_id":Currency.id
+                        "currency_id":Currency.id,
+                        "user_id":client_id.user_id.id or False , 
                         # "partner_shipping_id":delivery_address.id
                     })
                     if order:
@@ -52,7 +52,7 @@ class SaleSAH(models.Model):
                                 })
 
                 elif commandes_odoo:
-                    commandes_odoo.write({ "name":commande['OrderRefCode'], "partner_id":client_id.id,"user_id":client_id.user_id})
+                    commandes_odoo.write({ "name":commande['OrderRefCode'], "partner_id":client_id.id, "currency_id":Currency.id,"user_id":client_id.user_id.id or False})
                     for elt in commande['Products']:
                         if self.get_produit(elt['ProductId'])!=0:
                             j=0
