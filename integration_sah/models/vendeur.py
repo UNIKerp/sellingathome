@@ -43,7 +43,7 @@ class vendeur(models.Model):
                         'vendeur_domicile' if data['CompanyStatus'] == 10 else
                         None
                     )
-                    
+                    _logger.info('@@@@@@@@ssssssssssss %s',data['Email'])
                     contact.write({
                         'id_vendeur_sah':data['Id'],
                         'phone':data['Phone'],
@@ -60,6 +60,7 @@ class vendeur(models.Model):
                         'country_id':pays.id if pays else None,
                         'lang':active_lang.code,
                         'vat':data['CompanyVAT'],
+                        'email': data['Email'],
                         # 'ImageUrl':data[''],
                         # 'Status':data[''],
                         # 'StatusForever':data[''],
@@ -130,6 +131,7 @@ class vendeur(models.Model):
                     'country_id':pays.id if pays else None,
                     'lang':active_lang.code,
                     'vat':data['CompanyVAT'],
+                    'email': data['Email'],
                     # 'ImageUrl':data[''],
                     # 'Status':data[''],
                     # 'StatusForever':data[''],
