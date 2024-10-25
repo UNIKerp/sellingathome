@@ -179,7 +179,7 @@ class ProduitSelligHome(models.Model):
         res = super(ProduitSelligHome, self).create(vals)
         id_categ = ''
         categ_parent =''
-        suivi_stock = 1 if res.type == 'consu' else 0
+        suivi_stock = 1 if res.is_storable == True else 0
         if res.categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
