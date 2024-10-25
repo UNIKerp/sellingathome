@@ -23,13 +23,14 @@ class SaleSAH(models.Model):
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
                 if not commandes_odoo and client_id:
+                    # p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id
                     commandes_odoo.create({
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
                         # "user_id":client_id.user_id,
                         'order_line': [(0, 0, {
-                            'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
+                            'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id if self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]) else 1, 
                             'product_uom_qty': elt['Quantity'],
                             'price_unit': elt['UnitPrice'], 
                             'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
@@ -61,7 +62,7 @@ class SaleSAH(models.Model):
         tax = self.env['account.tax'].search([('amount', '=', tax_rate)], limit=1)
         if not tax:
             tax = self.env['account.tax'].create({
-                'name': f'Taxe {tax_rate}%',
+                'name': f'Taxe {tax_rate}€',
                 'amount': tax_rate,
             })
         
