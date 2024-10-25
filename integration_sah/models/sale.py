@@ -45,7 +45,7 @@ class SaleSAH(models.Model):
                                 "order_id":order.id,
                                 'product_template_id':self.get_produit(elt['ProductId']).id,
                                 'product_uom_qty': elt['Quantity'],
-                                'price_unit': elt['UnitPrice'], 
+                                'price_unit': elt['UnitPriceExcltax'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
 
@@ -56,7 +56,7 @@ class SaleSAH(models.Model):
                             j=0
                             for l in commandes_odoo.order_line:
                                 if l.id_order_line_sh==elt["Id"]:
-                                    l.write({'product_uom_qty': elt['Quantity'],'price_unit': elt['UnitPrice'], 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])] })
+                                    l.write({'product_uom_qty': elt['Quantity'],'price_unit': elt['UnitPriceExcltax'], 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])] })
                                     j+=1
                             if j==0:
                                 self.env['sale.order.line'].create({
@@ -65,7 +65,7 @@ class SaleSAH(models.Model):
                                 "order_id":commandes_odoo.id,
                                 'product_template_id':self.get_produit(elt['ProductId']).id,
                                 'product_uom_qty': elt['Quantity'],
-                                'price_unit': elt['UnitPrice'], 
+                                'price_unit': elt['UnitPriceExcltax'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
         else:
