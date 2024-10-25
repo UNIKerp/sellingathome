@@ -30,7 +30,7 @@ class SaleSAH(models.Model):
                         "partner_id":client_id.id,
                         # "user_id":client_id.user_id,
                         'order_line': [(0, 0, {
-                            'product_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id if self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]) else 1, 
+                            'product_id':self.get_produit(elt['ProductId']),
                             'product_uom_qty': elt['Quantity'],
                             'price_unit': elt['UnitPrice'], 
                             'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
@@ -67,4 +67,16 @@ class SaleSAH(models.Model):
             })
         
         return tax.id
+
+
+    def get_produit(self,ProductId):
+        produit = self.env['product.template'].search([('produit_sah_id','=',ProductId)]).id
+        _logger.info("sayeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
+        _logger.info(produit)
+        product_id =""
+        if produit:
+            product_id = produit.id
+            _logger.info("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
+            _logger.info(product_id)
+        return product_id
 
