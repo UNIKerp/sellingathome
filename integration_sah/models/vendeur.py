@@ -27,8 +27,14 @@ class vendeur(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
+                print('PPPPPPPPP',data)
                 pays=self.env['res.country'].search([('code','=',data['CountryIso'])])
                 contact = self.env['res.users'].search([('login','=',data['Email'])])
+                active_lang = self.env['res.lang'].search([('iso_code','=',data['Language']['ISOValue'])], limit=1)
+                if active_lang:
+                    active_lang.write({
+                        'active':True
+                    })
                 if contact:
                     type_revendeur = (
                         'vdi' if data['CompanyStatus'] == 15 else
@@ -42,6 +48,7 @@ class vendeur(models.Model):
                         'id_vendeur_sah':data['Id'],
                         'phone':data['Phone'],
                         'type_revendeur':type_revendeur,
+                        'name':data['FirstName']+' '+data['LastName'],
                         'mobile':data['MobilePhone'],
                         'street':data['StreetAddress'],
                         'street2':data['StreetAddress2'],
@@ -51,7 +58,7 @@ class vendeur(models.Model):
                         'partner_longitude':data['Longitude'],
                         'company_name':data['CompanyName'],
                         'country_id':pays.id if pays else None,
-                        'lang':data['Language']['ISOValue']+'_'+data['Language']['ISOValue'].upper(),
+                        'lang':active_lang.code,
                         'vat':data['CompanyVAT'],
                         # 'ImageUrl':data[''],
                         # 'Status':data[''],
@@ -96,7 +103,6 @@ class vendeur(models.Model):
                         # 'MiniSiteUsername':data[''],
                         # 'MiniSiteIsActive':data[''],
                     })
-                    print('RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',data['Language']['ISOValue'])
                 else:
                     type_revendeur = (
                         'vdi' if data['CompanyStatus'] == 15 else
@@ -108,7 +114,7 @@ class vendeur(models.Model):
        
                     contact.create({
                     'id_vendeur_sah':data['Id'],
-                    'name':data['FirstName']+''+data['LastName'],
+                    'name':data['FirstName']+' '+data['LastName'],
                     'login':data['Email'],
                     'type_revendeur':type_revendeur,
                     'groups_id': [(6, 0, [self.env.ref('base.group_portal').id])],
@@ -122,7 +128,7 @@ class vendeur(models.Model):
                     'partner_longitude':data['Longitude'],
                     'company_name':data['CompanyName'],
                     'country_id':pays.id if pays else None,
-                    'lang':data['Language']['ISOValue']+'_'+data['Language']['ISOValue'].upper(),
+                    'lang':active_lang.code,
                     'vat':data['CompanyVAT'],
                     # 'ImageUrl':data[''],
                     # 'Status':data[''],
@@ -162,11 +168,11 @@ class vendeur(models.Model):
                     # 'GdprLastAcceptedDate':data[''],
                     # 'Photo':data[''],
                     # 'TimeZone':data[''],
-                    # 'Signature':data[''],
+                    # 'Signature':data[''],, limit=1, limit=1
                     # 'MiniSiteUrl':data[''],
                     # 'MiniSiteUsername':data[''],
                     # 'MiniSiteIsActive':data[''],
                 })
 
         else:
-            _logger.info("==================================Erreur: %s ==========================",  response2.text)
+            _logger.info("==================================Erreur: %s ==========================",  response.text)
