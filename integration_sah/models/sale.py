@@ -35,7 +35,7 @@ class SaleSAH(models.Model):
                             'price_unit': elt['UnitPrice'], 
                             'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                         }) for elt in commande['Products']
-                           if self.get_produit(elt['ProductId'])
+                           if self.get_produit(elt['ProductId']) else pass
                         ] ,
                         # "partner_shipping_id":delivery_address.id
                         
@@ -74,10 +74,6 @@ class SaleSAH(models.Model):
         produit = self.env['product.template'].search([('produit_sah_id','=',ProductId)])
         _logger.info("sayeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
         _logger.info(produit)
-        product_id =""
-        if produit:
-            product_id = produit.id
-            _logger.info("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
-            _logger.info(product_id)
-        return product_id
+        if produit: 
+            return produit.id
 
