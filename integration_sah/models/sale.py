@@ -35,7 +35,7 @@ class SaleSAH(models.Model):
                             'price_unit': elt['UnitPrice'], 
                             'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                         }) for elt in commande['Products']
-                           if self.get_produit(elt['ProductId']) else pass
+                           if self.get_produit(elt['ProductId'])
                         ] ,
                         # "partner_shipping_id":delivery_address.id
                         
