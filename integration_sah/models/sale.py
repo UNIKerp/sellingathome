@@ -63,7 +63,7 @@ class SaleSAH(models.Model):
         tax = self.env['account.tax'].search([('amount', '=', tax_rate)], limit=1)
         if not tax:
             tax = self.env['account.tax'].create({
-                'name': f'Taxe {tax_rate}€',
+                'name': f'Taxe {tax_rate}%',
                 'amount': tax_rate,
             })
         
