@@ -22,10 +22,11 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             commandes_sah = response.json()
-            for commande in commandes_sah:
+            for commande in commandes_sah:      
                 id_order = commande['Id']
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
+                Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
                 if not commandes_odoo and client_id:
                     # p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id
@@ -34,6 +35,7 @@ class SaleSAH(models.Model):
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
                         "user_id":client_id.user_id , 
+                        "currency_id":Currency.id
                         # "partner_shipping_id":delivery_address.id
                     })
                     if order:
