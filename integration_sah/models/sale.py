@@ -70,7 +70,7 @@ class SaleSAH(models.Model):
 
 
     def get_produit(self,ProductId):
-        produit = self.env['product.template'].search([('produit_sah_id','=',ProductId)]).id
+        produit = self.env['product.template'].search([('produit_sah_id','=',ProductId)])
         _logger.info("sayeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
         _logger.info(produit)
         product_id =""
@@ -78,5 +78,8 @@ class SaleSAH(models.Model):
             product_id = produit.id
             _logger.info("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
             _logger.info(product_id)
+        else:
+            _logger.info("ce produit n'existe pas")
+
         return product_id
 
