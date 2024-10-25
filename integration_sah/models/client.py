@@ -34,7 +34,7 @@ class ClientSAH(models.Model):
                 if not client_odoo:
                     self.create({
                         'id_client_sah':clients_sah['Id'],
-                        'user_id':vendeur_id,
+                        'user_id':vendeur_id.id or False,
                         #'':clients_sah['Gender'],
                         #'id_vendeur_sah':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
@@ -67,7 +67,7 @@ class ClientSAH(models.Model):
                         })
                 else:
                     self.create({
-                        'user_id':vendeur_id,
+                        'user_id':vendeur_id.id or False,
                         #'':clients_sah['Gender'],
                         #'id_vendeur_sah':clients_sah['SellerId'],
                         'email':clients_sah['Email'],
