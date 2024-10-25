@@ -33,27 +33,28 @@ class SaleSAH(models.Model):
                     })
                     if order:
                         for elt in commande['Products']:
-                            if self.get_produit(elt['ProductId']):
+                            if self.get_produit(elt['ProductId'])!=0:
                                 self.env['sale.order.line'].create({
+                                "name":self.get_produit(elt['ProductId']).name,
                                 "order_id":order.id,
-                                'product_template_id':self.get_produit(elt['ProductId']),
+                                'product_template_id':self.get_produit(elt['ProductId']).id,
                                 'product_uom_qty': elt['Quantity'],
                                 'price_unit': elt['UnitPrice'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
 
-                elif commandes_odoo:
-                    commandes_odoo.write({
-                        "name":commande['OrderRefCode'],
-                        "partner_id":client_id.id,
-                        # "user_id":client_id.user_id,
-                        'order_line': [(0, 0, {
-                            'product_template_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
-                            'product_uom_qty': elt['Quantity'],
-                            'price_unit': elt['UnitPrice'], 
-                            'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
-                        }) for elt in commande['Products']] ,
-                    })
+                # elif commandes_odoo:
+                #     commandes_odoo.write({
+                #         "name":commande['OrderRefCode'],
+                #         "partner_id":client_id.id,
+                #         # "user_id":client_id.user_id,
+                #         'order_line': [(0, 0, {
+                #             'product_template_id': self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id or 1, 
+                #             'product_uom_qty': elt['Quantity'],
+                #             'price_unit': elt['UnitPrice'], 
+                #             'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
+                #         }) for elt in commande['Products']] ,
+                #     })
 
         else:
             print(f"Erreur {response.status_code}: {response.text}")
@@ -73,8 +74,8 @@ class SaleSAH(models.Model):
 
     def get_produit(self,ProductId):
         produit = self.env['product.template'].search([('produit_sah_id','=',ProductId)])
-        _logger.info("sayeyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
-        _logger.info(produit)
         if produit: 
-            return produit.id
+            return produit
+        else:
+            return 0
 
