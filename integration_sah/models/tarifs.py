@@ -24,12 +24,12 @@ class Tarifs(models.Model):
         default_price_list = self.product_tmpl_id.default_list_price
         _logger.info("===========================%s",default_price_list)
         if default_list_price:
-            return default_list_price
+            return default_price_list
         else:
             return self.env['product.pricelist'].search([
                 '|', ('company_id', '=', False),
                 ('company_id', '=', self.env.company.id)], limit=1)
-                
+
     pricelist_id = fields.Many2one(
         comodel_name='product.pricelist',
         string="Pricelist",
