@@ -21,10 +21,11 @@ class Tarifs(models.Model):
     # redéfintion de la fonction _default_pricelist_id
     def _default_pricelist_id(self):
         _logger.info("============================")
-        default_price_list = self.product_tmpl_id.default_list_price
-        _logger.info("===========================%s===%s",default_price_list,self.product_tmpl_id)
-        if default_price_list:
-            return default_price_list
+        active_id = self.env.context.get('active_id')
+        product_id = self.env['product.template'].search([('id','=',active_id)])
+        _logger.info("===========================%s===%s",active_id,product_id)
+        if product_id and product_id.default_list_price:
+            return product_id.default_list_price
         else:
             return self.env['product.pricelist'].search([
                 '|', ('company_id', '=', False),
