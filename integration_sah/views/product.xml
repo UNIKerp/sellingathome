@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <field name="categ_id" position="after">
                     <field name="produit_sah_id" readonly='1'/>
-                    <field name="default_list_price" invisible='1'/>
+                    <field name="default_list_price"/>
                 </field>
             </field>
         </record>
