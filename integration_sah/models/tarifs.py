@@ -36,7 +36,7 @@ class Tarifs(models.Model):
         required=True,
         default=_default_pricelist_id)
 
-    @api.model_create_multi
+    @api.model
     def create(self, vals):
         res = super(Tarifs, self).create(vals)
         headers = self.env['authentication.sah'].establish_connection()
