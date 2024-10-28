@@ -22,7 +22,7 @@ class Tarifs(models.Model):
     def _default_pricelist_id(self):
         _logger.info("============================")
         default_price_list = self.product_tmpl_id.default_list_price
-        _logger.info("===========================%s===%s",default_price_list,self.product_tmpl_id.default_list_price)
+        _logger.info("===========================%s===%s",default_price_list,self.product_id.default_list_price)
         if default_price_list:
             return default_price_list
         else:
