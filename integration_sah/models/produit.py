@@ -138,18 +138,6 @@ class ProduitSelligHome(models.Model):
             update_data = {
                 "ProductType": 5,
                 "Reference": product.default_code,
-                "Prices": [
-                    {
-                        "Id": product.produit_sah_id,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": product.name,
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": product.list_price,
-                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
-                        "ProductCost": product.standard_price,
-                        "EcoTax": 8.1
-                    }
-                ],
                 "Barcode": product.barcode,
                 "Weight": product.weight,
                 "IsPublished": True,
