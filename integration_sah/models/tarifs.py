@@ -18,6 +18,16 @@ class Tarifs(models.Model):
 
     price_sah_id = fields.Char(string="ID Prix SAH")
 
+    # redéfintion de la fonction _default_pricelist_id
+    def _default_pricelist_id(self):
+        default_price_list = self.product_tmpl_id.default_list_price
+        if default_list_price:
+            return default_list_price
+        else:
+            return self.env['product.pricelist'].search([
+                '|', ('company_id', '=', False),
+                ('company_id', '=', self.env.company.id)], limit=1)
+
     @api.model_create_multi
     def create(self, vals):
         res = super(Tarifs, self).create(vals)
