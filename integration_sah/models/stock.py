@@ -113,7 +113,7 @@ class StockQuant(models.Model):
 
     @api.model
     def create(self,vals):
-        res = super(StockSAH,self).create(vals)
+        res = super(StockQuant,self).create(vals)
         if res.product_tmpl_id.is_storable:
             url = 'https://demoapi.sellingathome.com/v1/Stocks'
             headers = self.env['authentication.sah'].establish_connection()
