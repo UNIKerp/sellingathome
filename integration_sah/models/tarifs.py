@@ -84,6 +84,8 @@ class Tarifs(models.Model):
                     for elt in self.pricelist_id.item_ids
                 ]
             }
+            _logger.info('===================================================%s',self.pricelist_id)
+            _logger.info('=================================================== vals %s ==== %s',vals['pricelist_id'],vals['pricelist_id'].item_ids)
             response = requests.put(url, headers=headers, json=values)
             if response.status_code == 200:
                 _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
