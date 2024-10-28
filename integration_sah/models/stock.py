@@ -145,3 +145,38 @@ class StockQuant(models.Model):
                     print(f"Erreur {response.status_code}: {response.text}")
             
         return res
+
+
+    def write(self,vals):
+        res = super(StockQuant,self).write(vals)
+        if self.product_tmpl_id.is_storable:
+            url = 'https://demoapi.sellingathome.com/v1/Stocks'
+            headers = self.env['authentication.sah'].establish_connection()
+            if headers:
+                values = {
+                    "ProductId": self.product_tmpl_id.produit_sah_id,
+                    "ProductReference": self.product_tmpl_id.default_code,
+                    "StockQuantity": int(self.inventory_quantity_auto_apply),
+                    "StockQuantityComing":int(self.product_tmpl_id.virtual_available),  
+                    "ProductCombinationStocks": [
+                        {
+                        "ProductCombinationId": self.product_tmpl_id.produit_sah_id,
+                        "ProductCombinationBarcode": "sample string 1",
+                        "ProductCombinationSku": "sample string 2",
+                        "ProductCombinationRemoteId": 1,
+                        "StockQuantity": 1,
+                        "StockQuantityComing": 1,
+                        "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                        "SellerStockQuantity": 1,
+                        "AllowOutOfStockOrders": True
+                        }
+                    ],
+                    "AllowOutOfStockOrders": True
+                }
+                response = requests.put(url, headers=headers, json=values)
+                if response.status_code == 200:
+                    print(response.json())  
+                else:
+                    print(f"Erreur {response.status_code}: {response.text}")
+            
+        return res
