@@ -66,6 +66,7 @@ class Tarifs(models.Model):
 
 
     def write(self, vals):
+        res = super(Tarifs, self).write(vals)
         if vals:
             headers = self.env['authentication.sah'].establish_connection()
             price_list_id = str(self.pricelist_id.price_list_sah_id)
@@ -95,8 +96,6 @@ class Tarifs(models.Model):
                 _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
             else:
                 _logger.error('Erreur lors de la modification dans l\'API : %s', response.text)
-    
-        res = super(Tarifs, self).write(vals)
         return res
 
 
