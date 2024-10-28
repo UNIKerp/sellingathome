@@ -29,6 +29,13 @@ class Tarifs(models.Model):
             return self.env['product.pricelist'].search([
                 '|', ('company_id', '=', False),
                 ('company_id', '=', self.env.company.id)], limit=1)
+                
+    pricelist_id = fields.Many2one(
+        comodel_name='product.pricelist',
+        string="Pricelist",
+        index=True, ondelete='cascade',
+        required=True,
+        default=_default_pricelist_id)
 
     @api.model_create_multi
     def create(self, vals):
