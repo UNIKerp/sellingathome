@@ -11,11 +11,6 @@ class ProduitPriceList(models.Model):
 
     price_list_sah_id = fields.Char(string='Id Prix SAH')
 
-    def write(self,vals):
-        _logger.info("======================================= call function =========================")
-        res = super(ProduitPriceList, self).write(vals)
-        return res
-
 
 class Tarifs(models.Model):
 

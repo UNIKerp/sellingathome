@@ -9,6 +9,7 @@ class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
     produit_sah_id = fields.Integer("ID produit SAH")
+    default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
 
     # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):
@@ -265,10 +266,11 @@ class ProduitSelligHome(models.Model):
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
                 res.produit_sah_id = product_id
-                self.env['product.pricelist'].create({
+                default_list_price = self.env['product.pricelist'].create({
                     'name':f'Tarif du produit {res.name}',
                     'price_list_sah_id':response_data['Prices'][0]['Id']
                 })
+                res.default_list_price = default_list_price.id
             else:
                 _logger.info(f"Error {post_response.status_code}: {post_response.text}")
         return res
