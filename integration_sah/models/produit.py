@@ -11,6 +11,31 @@ class ProduitSelligHome(models.Model):
     produit_sah_id = fields.Integer("ID produit SAH")
     default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
 
+    # redéfinir la fonction open price list rules pour renseigner la liste par defaut
+    def open_pricelist_rules(self):
+        self.ensure_one()
+        domain = ['|',
+            ('product_tmpl_id', '=', self.id),
+            ('product_id', 'in', self.product_variant_ids.ids),
+            ('compute_price', '=', 'fixed'),
+        ]
+        return {
+            'name': _('Price Rules'),
+            'view_mode': 'list,form',
+            'views': [(self.env.ref('product.product_pricelist_item_tree_view_from_product').id, 'list')],
+            'res_model': 'product.pricelist.item',
+            'type': 'ir.actions.act_window',
+            'target': 'current',
+            'domain': domain,
+            'context': {
+                'default_product_tmpl_id': self.id,
+                'default_applied_on': '1_product',
+                'product_without_variants': self.product_variant_count == 1,
+                'search_default_visible': True,
+                'default_pricelist_id': self.default_list_price or False,
+            },
+        }
+
     # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
