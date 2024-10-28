@@ -64,7 +64,7 @@ class StockPickingSAH(models.Model):
                         _logger.info('=====================%s',response.text)
         return res
 
-class StockSAH(models.TransientModel):
+class StockSAH(models.Model):
     _inherit = "stock.change.product.qty"
 
     @api.model
