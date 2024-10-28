@@ -11,6 +11,11 @@ class ProduitPriceList(models.Model):
 
     price_list_sah_id = fields.Char(string='Id Prix SAH')
 
+    def write(self,vals):
+        _logger.info("======================================= call function =========================")
+        res = super(ProduitPriceList, self).write(vals)
+        return res
+
 
 class Tarifs(models.Model):
 
@@ -85,7 +90,6 @@ class Tarifs(models.Model):
                 ]
             }
             _logger.info('===================================================%s',self.pricelist_id)
-            _logger.info('=================================================== vals %s',vals.get('pricelist_id'))
             response = requests.put(url, headers=headers, json=values)
             if response.status_code == 200:
                 _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
