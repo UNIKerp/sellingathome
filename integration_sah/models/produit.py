@@ -45,7 +45,7 @@ class ProduitSelligHome(models.Model):
                             barcode = False
 
                     # Créer le produit dans Odoo
-                    self.env['product.template'].create({
+                    new_product = self.env['product.template'].create({
                         'name': name,
                         'default_code': reference,
                         'list_price': price,
@@ -55,6 +55,22 @@ class ProduitSelligHome(models.Model):
                         'produit_sah_id': sah_id,
                         'is_storable' : True if type_sah == 1 else False
                     })
+
+                    # Créer un élément de liste de prix associé
+                    price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
+                    if price_list:
+                        price_list = self.env['product.pricelist'].create({
+                            'name': 'SAH Liste de Prix',
+                            'currency_id': self.env.user.company_id.currency_id.id
+                        })
+                    
+                    self.env['product.pricelist.item'].create({
+                        'pricelist_id': price_list.id,
+                        'product_tmpl_id': new_product.id,
+                        'fixed_price': price,
+                    })
+                    _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
+
                     _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
                 else:
                     _logger.info(f"Produit déjà existant dans Odoo : {name} (ID SAH: {sah_id})")
