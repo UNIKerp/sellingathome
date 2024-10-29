@@ -12,7 +12,7 @@
                     <!-- <field name="vdi" string="VDI"/> -->
                 </div>
                 </xpath>
-                <xpath expr="//form/sheet/group[@name='sale_header']/group[@name='order_details']/fields[@name='payment_term_id']" position="after">
+                <xpath expr="//form/sheet/group[@name='sale_header']/group[@name='order_details']/field[@name='payment_term_id']" position="after">
                     <field name="vdi" string="VDI"/>
                 </xpath>
             </field>
