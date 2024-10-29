@@ -1,4 +1,4 @@
-from odoo import models, api, fields
+from odoo import models, api, fields,_
 import requests
 import json
 from datetime import date
@@ -9,6 +9,9 @@ class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
     produit_sah_id = fields.Integer("ID produit SAH")
+    default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
+
+    
 
     # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):
@@ -162,18 +165,6 @@ class ProduitSelligHome(models.Model):
                 "IsVirtual": virtual,
                 "InventoryMethod": suivi_stock,
                 "UncommissionedProduct": is_sale,
-                "Prices": [
-                    {
-                        "Id": product.produit_sah_id,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": product.name,
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": product.list_price,
-                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
-                        "ProductCost": product.standard_price,
-                        "EcoTax": 8.1
-                    }
-                ],
                 "Barcode": product.barcode,
                 "Weight": product.weight,
                 "IsPublished": est_publie,
@@ -361,10 +352,11 @@ class ProduitSelligHome(models.Model):
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
                 res.produit_sah_id = product_id
-                self.env['product.pricelist'].create({
+                default_list_price = self.env['product.pricelist'].create({
                     'name':f'Tarif du produit {res.name}',
                     'price_list_sah_id':response_data['Prices'][0]['Id']
                 })
+                res.default_list_price = default_list_price.id
             else:
                 _logger.info(f"Error {post_response.status_code}: {post_response.text}")
         return res
