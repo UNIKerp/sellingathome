@@ -15,6 +15,16 @@ class ClientSAH(models.Model):
 
 
     id_client_sah = fields.Integer("ID client SAH", help="l'ID du client dans SAH")
+    id_vendeur_sah = fields.Char(string='Id vendeur SAH')
+    type_revendeur = fields.Selection([
+        ('vendeur_domicile', 'VENDEUR À DOMICILE INDÉPENDANT'),
+        ('vdi', 'VDI INSCRIT AU RCS'),
+        ('auto_entrepreneur', 'AUTO-ENTREPRENEUR'),
+        ('agent_commercial', 'AGENT COMMERCIAL')
+    ], string='Type Revendeur')
+    vdi = fields.Many2one('res.partner',string="VDI")
+    client_sah=fields.Selection([('client','CLIENT'),('vdi','VDI')],string="Type Client")
+
     
     _sql_constraints = [
         ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"), ]

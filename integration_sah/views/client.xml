@@ -10,6 +10,10 @@
               <field name="id_client_sah" readonly="1"/>
               <!-- <field name="id_vendeur_sah" readonly="1"/>
               <field name="is_seller"/> -->
+              <field name="id_vendeur_sah" readonly="1"/> 
+              <field name="type_revendeur"/> 
+              <field name="vdi"/> 
+              <field name="client_sah"/> 
             </xpath>
         </field>
       </record>
