@@ -101,3 +101,8 @@ class ClientSAH(models.Model):
             _logger.info("==================================Résultat: %s ==========================", json.dumps(clients_data, indent=4))
         else:
             _logger.info("==================================Erreur: %s ==========================",  response2.text)
+
+
+    def test_job_queue(self):
+        _logger.info("==============ddddddddddddd============")
+        self.with_delay().get_update_client_sah()
