@@ -150,6 +150,7 @@ class ProduitSelligHome(models.Model):
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
             rupture_stock = bool(product.allow_out_of_stock_order)
             est_publie = bool(product.is_published)
+            is_sale = bool(product.sale_ok)
             virtual = product.type == 'service'
             des = product.description_ecommerce
             suivi_stock = 1 if product.is_storable == True else 0
@@ -160,6 +161,7 @@ class ProduitSelligHome(models.Model):
                 "AllowOutOfStockOrders": rupture_stock,
                 "IsVirtual": virtual,
                 "InventoryMethod": suivi_stock,
+                "UncommissionedProduct": is_sale,
                 "Prices": [
                     {
                         "Id": product.produit_sah_id,
@@ -238,6 +240,7 @@ class ProduitSelligHome(models.Model):
         est_publie = bool(res.is_published)
         virtual = res.type == 'service'
         rupture_stock = bool(res.allow_out_of_stock_order)
+        is_sale = bool(res.sale_ok)
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if res.is_storable == True else 0
@@ -301,7 +304,7 @@ class ProduitSelligHome(models.Model):
                 # "Height": 1.1,
                 "IsPublished": est_publie,
                 "IsVirtual": virtual,
-                # "UncommissionedProduct": true,
+                "UncommissionedProduct": is_sale,
                 "InventoryMethod": suivi_stock,
                 # "LowStockQuantity": 1,
                 "AllowOutOfStockOrders": rupture_stock,
