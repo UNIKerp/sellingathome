@@ -15,6 +15,7 @@ class SaleSAH(models.Model):
     _inherit = "sale.order"
 
     id_order_sh = fields.Integer(string="ID commande SAH", help="ID de la Commande dans SAH")
+    vdi = fields.Many2one('res.partner',string="vdi",help='le veudeur dans SAH')
 
     def get_commande(self):
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'            
@@ -22,10 +23,11 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             commandes_sah = response.json()
-            for commande in commandes_sah:
+            for commande in commandes_sah:      
                 id_order = commande['Id']
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
+                Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
                 if not commandes_odoo and client_id:
                     # p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id
@@ -33,7 +35,9 @@ class SaleSAH(models.Model):
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
-                        "user_id":client_id.user_id , 
+                        "currency_id":Currency.id,
+                        "user_id":client_id.user_id.id or False , 
+                        "vdi":client_id.user_id.id or False
                         # "partner_shipping_id":delivery_address.id
                     })
                     if order:
@@ -50,7 +54,7 @@ class SaleSAH(models.Model):
                                 })
 
                 elif commandes_odoo:
-                    commandes_odoo.write({ "name":commande['OrderRefCode'], "partner_id":client_id.id,"user_id":client_id.user_id})
+                    commandes_odoo.write({ "name":commande['OrderRefCode'], "partner_id":client_id.id, "currency_id":Currency.id,"user_id":client_id.user_id.id or False, "vdi":client_id.user_id.id or False})
                     for elt in commande['Products']:
                         if self.get_produit(elt['ProductId'])!=0:
                             j=0

@@ -45,7 +45,7 @@ class ProduitSelligHome(models.Model):
                             barcode = False
 
                     # Créer le produit dans Odoo
-                    self.env['product.template'].create({
+                    new_product = self.env['product.template'].create({
                         'name': name,
                         'default_code': reference,
                         'list_price': price,
@@ -55,6 +55,22 @@ class ProduitSelligHome(models.Model):
                         'produit_sah_id': sah_id,
                         'is_storable' : True if type_sah == 1 else False
                     })
+
+                    # Créer un élément de liste de prix associé
+                    price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
+                    if price_list:
+                        price_list = self.env['product.pricelist'].create({
+                            'name': 'SAH Liste de Prix',
+                            'currency_id': self.env.user.company_id.currency_id.id
+                        })
+                    
+                    self.env['product.pricelist.item'].create({
+                        'pricelist_id': price_list.id,
+                        'product_tmpl_id': new_product.id,
+                        'fixed_price': price,
+                    })
+                    _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
+
                     _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
                 else:
                     _logger.info(f"Produit déjà existant dans Odoo : {name} (ID SAH: {sah_id})")
@@ -132,9 +148,18 @@ class ProduitSelligHome(models.Model):
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
+            rupture_stock = bool(product.allow_out_of_stock_order)
+            est_publie = bool(product.is_published)
+            virtual = product.type == 'service'
+            des = product.description_ecommerce
+            suivi_stock = 1 if product.is_storable == True else 0
+
             update_data = {
                 "ProductType": 5,
                 "Reference": product.default_code,
+                "AllowOutOfStockOrders": rupture_stock,
+                "IsVirtual": virtual,
+                "InventoryMethod": suivi_stock,
                 "Prices": [
                     {
                         "Id": product.produit_sah_id,
@@ -149,7 +174,7 @@ class ProduitSelligHome(models.Model):
                 ],
                 "Barcode": product.barcode,
                 "Weight": product.weight,
-                "IsPublished": True,
+                "IsPublished": est_publie,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -162,6 +187,38 @@ class ProduitSelligHome(models.Model):
                         "Id": id_categ,
                     }
                 ],
+                "AdditionalInformations": {
+                    "description": [des],
+                },
+                "ProductRelatedProducts": [
+                    {
+                        "ProductId": product.id,
+                        "ProductRemoteId": str(related_product.id),
+                        "ProductReference": related_product.default_code,
+                        "IsDeleted": False
+                    } for related_product in product.accessory_product_ids
+                ],
+                "Combinations": [
+                    {
+                        "ProductAttributes": [
+                            {
+                                "AttributeId": value.attribute_id.id,
+                                "Attribute": value.attribute_id.name,
+                                "Value": value.name,
+                                "WeightAdjustement": product.weight,
+                                "ProductAttributeLangs": [
+                                    {
+                                        "Name": value.attribute_id.name,
+                                        "Value": value.name,
+                                        "ISOValue": 'fr'
+                                    }
+                                ]
+                            }
+                            for value in line.value_ids
+                        ]
+                    }
+                    for line in product.attribute_line_ids if line.value_ids
+                ]
             }
             
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
@@ -177,6 +234,10 @@ class ProduitSelligHome(models.Model):
     def create(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
+        des = res.description_ecommerce 
+        est_publie = bool(res.is_published)
+        virtual = res.type == 'service'
+        rupture_stock = bool(res.allow_out_of_stock_order)
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if res.is_storable == True else 0
@@ -238,12 +299,12 @@ class ProduitSelligHome(models.Model):
                 # "Length": 1.1,
                 # "Width": 1.1,
                 # "Height": 1.1,
-                "IsPublished": True,
-                # "IsVirtual": True,
+                "IsPublished": est_publie,
+                "IsVirtual": virtual,
                 # "UncommissionedProduct": true,
                 "InventoryMethod": suivi_stock,
                 # "LowStockQuantity": 1,
-                # "AllowOutOfStockOrders": True,
+                "AllowOutOfStockOrders": rupture_stock,
                 # "WarehouseLocation": res.warehouse_id.id or '',
                 'ProductLangs': [
                     {'Name': res.name,
@@ -256,6 +317,38 @@ class ProduitSelligHome(models.Model):
                     "Id": id_categ,
                     },
                 ],
+                "AdditionalInformations": {
+                    "description": [des],
+                },
+                "ProductRelatedProducts": [
+                    {
+                        "ProductId": res.id,
+                        "ProductRemoteId": str(related_product.id),
+                        "ProductReference": related_product.default_code,
+                        "IsDeleted": False
+                    } for related_product in res.accessory_product_ids
+                ],
+                "Combinations": [
+                    {
+                        "ProductAttributes": [
+                            {
+                                "AttributeId": value.attribute_id.id,
+                                "Attribute": value.attribute_id.name,
+                                "Value": value.name,
+                                "WeightAdjustement": res.weight,
+                                "ProductAttributeLangs": [
+                                    {
+                                        "Name": value.attribute_id.name,
+                                        "Value": value.name,
+                                        "ISOValue": 'fr'
+                                    }
+                                ]
+                            }
+                            for value in line.value_ids
+                        ]
+                    }
+                    for line in res.attribute_line_ids if line.value_ids
+                ]
             }
 
             # Send POST request
