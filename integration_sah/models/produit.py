@@ -198,6 +198,27 @@ class ProduitSelligHome(models.Model):
                         "IsDeleted": False
                     } for related_product in product.accessory_product_ids
                 ],
+                "Combinations": [
+                    {
+                        "ProductAttributes": [
+                            {
+                                "AttributeId": value.attribute_id.id,
+                                "Attribute": value.attribute_id.name,
+                                "Value": value.name,
+                                "WeightAdjustement": product.weight,
+                                "ProductAttributeLangs": [
+                                    {
+                                        "Name": value.attribute_id.name,
+                                        "Value": value.name,
+                                        "ISOValue": 'fr'
+                                    }
+                                ]
+                            }
+                            for value in line.value_ids
+                        ]
+                    }
+                    for line in product.attribute_line_ids if line.value_ids
+                ]
             }
             
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
@@ -307,6 +328,27 @@ class ProduitSelligHome(models.Model):
                         "IsDeleted": False
                     } for related_product in res.accessory_product_ids
                 ],
+                "Combinations": [
+                    {
+                        "ProductAttributes": [
+                            {
+                                "AttributeId": value.attribute_id.id,
+                                "Attribute": value.attribute_id.name,
+                                "Value": value.name,
+                                "WeightAdjustement": res.weight,
+                                "ProductAttributeLangs": [
+                                    {
+                                        "Name": value.attribute_id.name,
+                                        "Value": value.name,
+                                        "ISOValue": 'fr'
+                                    }
+                                ]
+                            }
+                            for value in line.value_ids
+                        ]
+                    }
+                    for line in res.attribute_line_ids if line.value_ids
+                ]
             }
 
             # Send POST request
