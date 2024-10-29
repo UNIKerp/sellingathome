@@ -360,7 +360,8 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
-            self.with_delay().update_produit_dans_sah(self, headers)
+            self.with_delay().update_aticle_sah()
+            #self.with_delay().update_produit_dans_sah(self, headers)
             if self.is_storable == True:
                 url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
                 values = {
