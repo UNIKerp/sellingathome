@@ -116,8 +116,8 @@ class ClientSAH(models.Model):
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
                         'ref_sah':ref_sah,
-                        #'':clients_sah['Gender'],
-                        #'id_vendeur_sah':clients_sah['SellerId'],
+                        'gender':clients_sah['Gender'],
+                        'sellerId':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
@@ -125,7 +125,7 @@ class ClientSAH(models.Model):
                         #'':clients_sah['Roles'],
                         'ref':clients_sah['CustomerReference'],
                         'parent_id':campany,
-                        #'':clients_sah['CompanyIdentificationNumber'],
+                        'companyIdentificationNumber':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
                         #'':clients_sah['TaxExempt'],
                         'street':clients_sah['StreetAddress'],
@@ -137,13 +137,13 @@ class ClientSAH(models.Model):
                         'partner_longitude':clients_sah['Longitude'],
                         'country_code':clients_sah['CountryIso'],
                         #'':clients_sah['BrandFields'],
-                        #'':clients_sah['SellerId'],
-                        #'':clients_sah['HostedMeeting'],
-                        #'':clients_sah['ParticipedMeeting'],
-                        #'':clients_sah['HasOrdered'],
-                        #'':clients_sah['Consent'],
-                        #'':clients_sah['ConsentDt'],
-                        #'':clients_sah['CustomQuestionAnswers'],
+                        'ref_vendeur':clients_sah['SellerId'],
+                        'hostedMeeting':clients_sah['HostedMeeting'],
+                        'participedMeeting':clients_sah['ParticipedMeeting'],
+                        'participedMeeting':clients_sah['HasOrdered'],
+                        'consent':clients_sah['Consent'],
+                        'ConsentDt':clients_sah['ConsentDt'],
+                        'CustomQuestionAnswers':clients_sah['CustomQuestionAnswers'],
 
                         })
                 else:
@@ -151,8 +151,8 @@ class ClientSAH(models.Model):
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
-                        #'':clients_sah['Gender'],
-                        #'id_vendeur_sah':clients_sah['SellerId'],
+                        'gender':clients_sah['Gender'],
+                        'ref_vendeur':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
@@ -160,7 +160,7 @@ class ClientSAH(models.Model):
                         #'':clients_sah['Roles'],
                         'ref':clients_sah['CustomerReference'],
                         'parent_id':campany,
-                        #'':clients_sah['CompanyIdentificationNumber'],
+                        'companyIdentificationNumber':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
                         #'':clients_sah['TaxExempt'],
                         'street':clients_sah['StreetAddr00:00ess'],
@@ -172,13 +172,13 @@ class ClientSAH(models.Model):
                         'partner_longitude':clients_sah['Longitude'],
                         'country_code':clients_sah['CountryIso'],
                         #'':clients_sah['BrandFields'],
-                        #'':clients_sah['SellerId'],
-                        #'':clients_sah['HostedMeeting'],
-                        #'':clients_sah['ParticipedMeeting'],
-                        #'':clients_sah['HasOrdered'],
-                        #'':clients_sah['Consent'],
-                        #'':clients_sah['ConsentDt'],
-                        #'':clients_sah['CustomQuestionAnswers'],
+                        'ref_vendeur':clients_sah['SellerId'],
+                        'hostedMeeting':clients_sah['HostedMeeting'],
+                        'hostedMeeting':clients_sah['ParticipedMeeting'],
+                        'hostedMeeting':clients_sah['HasOrdered'],
+                        'consent':clients_sah['Consent'],
+                        'ConsentDt':clients_sah['ConsentDt'],
+                        'CustomQuestionAnswers':clients_sah['CustomQuestionAnswers'],
 
                         })
             _logger.info("==================================Résultat: %s ==========================", json.dumps(clients_data, indent=4))
@@ -208,6 +208,12 @@ class ClientSAH(models.Model):
                         'vendeur_domicile' if data['CompanyStatus'] == 10 else
                         None
                     )
+                # gender = (
+                #         '3' if data['Gender'] == 0 else
+                #         '1' if data['Gender'] == 1 else
+                #         '2' if data['Gender'] == 2 else
+                #         None
+                #     )
                 if contact:
                     
                     _logger.info('@@@@@@@@ssssssssssss %s',data['Email'])
@@ -242,7 +248,7 @@ class ClientSAH(models.Model):
                         # 'IdentityCardNumber':data[''],
                         # 'Nationality':data[''],
                         # 'CompanyStatus':data[''],
-                        # 'CompanyIdentificationNumber':data[''],
+                        'companyIdentificationNumber':data['CompanyIdentificationNumber'],
                         # 'SocialContributionsType':data[''],
                         # 'StartContractDate':data[''],
                         # 'EndContractDate':data[''],
@@ -306,7 +312,7 @@ class ClientSAH(models.Model):
                     # 'IdentityCardNumber':data[''],
                     # 'Nationality':data[''],
                     # 'CompanyStatus':data[''],
-                    # 'CompanyIdentificationNumber':data[''],
+                    # 'companyIdentificationNumber':data['CompanyIdentificationNumber'],
                     # 'SocialContributionsType':data[''],
                     # 'StartContractDate':data[''],
                     # 'EndContractDate':data[''],
