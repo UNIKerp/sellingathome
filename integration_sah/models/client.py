@@ -52,7 +52,7 @@ class ClientSAH(models.Model):
     birthdate = fields.Date(string="Date de naissance du vendeur",help="Date de naissance du vendeur")
     birthPlace = fields.Char(string="Lieu de naissance du vendeur",help="Lieu de naissance du vendeur")
     parentSeller = fields.Integer(string="Vendeur parent rattaché au vendeur",help="Vendeur parent rattaché au vendeur")
-    animatorSeller = fields.Interger(string="Vendeur Animateur",help="Vendeur Animateur")
+    animatorSeller = fields.Integer(string="Vendeur Animateur",help="Vendeur Animateur")
     customerAccount = fields.Integer(string="ID de compte client du vendeur",help="ID de compte client du vendeur")
     nationalIdentificationNumber = fields.Char(string="Numéro d'identification national du vendeur",help="Numéro d'identification national du vendeur")
     identityCardNumber = fields.Char(string="Numéro de carte d'identité du vendeur",help="Numéro de carte d'identité du vendeur")
