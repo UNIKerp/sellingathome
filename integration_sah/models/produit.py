@@ -14,11 +14,11 @@ class ProduitSelligHome(models.Model):
     default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
     long_sah = fields.Float("Longueur Produit SAH", help="Longueur du produit dans SAH")
     haut_sah = fields.Float("Hauteur Produit SAH", help="Hauteur du produit dans SAH")
-    unitcapacity = fields.Char("Capacité Unitaire SAH", help="Capacité Unitaire dans SAH")
+    unitcapacity = fields.Char("Capacité Unitaire SAH", help="Capacité de l'unitaire du produit dans SAH")
     availableOnHostMinisites = fields.Boolean("Disponible Minisites hôtes SAH", help="Disponible de minisites hôtes dans SAH")
     discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
     discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
-    discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="BadgeEst Actif")
+    discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
 
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
