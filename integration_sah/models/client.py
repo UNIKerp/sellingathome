@@ -155,7 +155,7 @@ class ClientSAH(models.Model):
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
                         # 'title':gender,
-                        'ref_vendeur':clients_sah['SellerId'],
+                        # 'ref_vendeur':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
@@ -195,6 +195,7 @@ class ClientSAH(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
+                print('PPPPPPPPP',data)
                 print('PPPPPPPPP',data)
                 ref_sah= 'V'+str(data['Id'])
                 pays=self.env['res.country'].search([('code','=',data['CountryIso'])])
