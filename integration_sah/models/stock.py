@@ -25,7 +25,8 @@ from odoo.tools.float_utils import float_round
 _logger = logging.getLogger(__name__)
 
 class StockPickingSAH(models.Model):
-    _inherit = "stock.picking"
+    _inherit = "stock.picking" 
+
 
     def button_validate(self):
         res = super(StockPickingSAH,self).button_validate()
