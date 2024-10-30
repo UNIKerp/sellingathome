@@ -15,9 +15,9 @@
             </xpath>
             <xpath expr="//notebook/page[@name='internal_notes']" position="after">
             <page name="Nouveux champs" string="Nouveux champs">
+            <group>
               <field name="companyIdentificationNumber"/> 
-              <field name="sellerId"/> 
-              <field name="gender"/> 
+              <field name="sellerId"/>
               <field name="hostedMeeting"/> 
               <field name="participedMeeting"/> 
               <field name="hasOrdered"/> 
@@ -42,6 +42,7 @@
               <field name="miniSiteUrl"/> 
               <field name="signature"/> 
               <!-- <field name="timeZone"/>  -->
+            </group>
             </page>
             </xpath>
         </field>

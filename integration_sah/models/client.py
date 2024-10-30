@@ -30,11 +30,6 @@ class ClientSAH(models.Model):
         ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
         ]
     # les champs du client
-    gender = fields.Selection([
-            ('0','Mr'),
-            ('1' , 'Mrs'),
-            ('2' , 'Ms'),], string='Genre', help='Genre',
-        )
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
     sellerId = fields.Integer(string="Identifiant du vendeur principal du client",help="Identifiant du vendeur principal du client")
     hostedMeeting = fields.Boolean(string="A déjà accueilli une réunion",help="A déjà accueilli une réunion")
