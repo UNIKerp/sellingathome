@@ -62,7 +62,7 @@ class ClientSAH(models.Model):
     miniSiteUsername = fields.Char(string="Nom d'utilisateur du minisite",help="Nom d'utilisateur du minisite")
     miniSiteUrl = fields.Char(string='URL du mini-site',help=" URL du mini-site")
     signature = fields.Char(string='Signature du vendeur',help="Signature du vendeur")
-    timeZone = fields.Many2one('time.zone', string='vendeur TimeZone',help="vendeur TimeZone")
+    # timeZone = fields.Many2one('time.zone', string='vendeur TimeZone',help="vendeur TimeZone")
     photo = fields.Char(string='URL de la photo du vendeur',help="URL de la photo du vendeur")
     gdprLastAcceptedDate = fields.Date(string='Date de la dernière acceptation du RGPD',help="Date de la dernière acceptation du RGPD")
     authorizeSellerDeliveryModeOnEcommerce = fields.Boolean(string='Autoriser le mode de livraison du vendeur sur le commerce électronique',hel="Autoriser le mode de livraison du vendeur sur le commerce électronique")

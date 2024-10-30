@@ -41,7 +41,7 @@
               <field name="miniSiteUsername"/> 
               <field name="miniSiteUrl"/> 
               <field name="signature"/> 
-              <field name="timeZone"/> 
+              <!-- <field name="timeZone"/>  -->
             </page>
             </xpath>
         </field>
