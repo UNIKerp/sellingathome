@@ -89,8 +89,8 @@ class ClientSAH(models.Model):
 
 
     def copy(self, default=None):
-        default['ref_sah'] = None
-        
+        default['ref_sah'] = ''
+        default['id_client_sah'] =0
         # Appeler la méthode copy du parent pour créer la copie avec les valeurs par défaut
         return super(ClientSAH, self).copy(default)
     def get_update_client_sah(self):
