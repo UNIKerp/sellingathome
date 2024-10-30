@@ -105,21 +105,22 @@ class ClientSAH(models.Model):
                 vendeur_id = self.env['res.partner'].search([('ref_sah','=',ref_vendeur)])
                 campany = self.create({ 'company_type':'company','name' :clients_sah['CompanyName']}).id if clients_sah['CompanyName'] else None
                 pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])]).id if clients_sah['CountryIso'] else None 
-                # monsieur=self.env['res.partner.title'].search([('id','=',3)])
-                # mademaselle=self.env['res.partner.title'].search([('id','=',1)])
-                # madame=self.env['res.partner.title'].search([('id','=',2)])
-                # gender = (
-                #         monsieur.id if clients_sah['Gender'] == 0 else
-                #         mademaselle.id if clients_sah['Gender'] == 1 else
-                #         madame.id if clients_sah['Gender'] == 2 
-                #     )
+                monsieur=self.env['res.partner.title'].search([('id','=',3)])
+                mademaselle=self.env['res.partner.title'].search([('id','=',1)])
+                madame=self.env['res.partner.title'].search([('id','=',2)])
+                gender = (
+                        monsieur.id if clients_sah['Gender'] == 0 else
+                        mademaselle.id if clients_sah['Gender'] == 1 else
+                        madame.id if clients_sah['Gender'] == 2 else
+                        None
+                    )
                 if not client_odoo:
                     self.create({
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
                         'ref_sah':ref_sah,
-                        # 'title':gender,
+                        'title':gender,
                         'sellerId':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
@@ -140,7 +141,7 @@ class ClientSAH(models.Model):
                         'partner_longitude':clients_sah['Longitude'],
                         'country_code':clients_sah['CountryIso'],
                         #'':clients_sah['BrandFields'],
-                        'ref_vendeur':clients_sah['SellerId'],
+                        # 'ref_vendeur':clients_sah['SellerId'],
                         'hostedMeeting':clients_sah['HostedMeeting'],
                         'participedMeeting':clients_sah['ParticipedMeeting'],
                         'participedMeeting':clients_sah['HasOrdered'],
@@ -154,8 +155,8 @@ class ClientSAH(models.Model):
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
-                        # 'title':gender,
-                        'ref_vendeur':clients_sah['SellerId'],
+                        'title':gender,
+                        'sellerId':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
@@ -166,7 +167,7 @@ class ClientSAH(models.Model):
                         'companyIdentificationNumber':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
                         #'':clients_sah['TaxExempt'],
-                        'street':clients_sah['StreetAddr00:00ess'],
+                        'street':clients_sah['StreetAddress'],
                         'street2':clients_sah['StreetAddress2']+','+clients_sah['StreetAddress3'] if clients_sah['StreetAddress3']!="" else clients_sah['StreetAddress2'],
                         'zip':clients_sah['Postcode'],
                         'city':clients_sah['City'],
@@ -175,7 +176,7 @@ class ClientSAH(models.Model):
                         'partner_longitude':clients_sah['Longitude'],
                         'country_code':clients_sah['CountryIso'],
                         #'':clients_sah['BrandFields'],
-                        'ref_vendeur':clients_sah['SellerId'],
+                        # 'ref_vendeur':clients_sah['SellerId'],
                         'hostedMeeting':clients_sah['HostedMeeting'],
                         'hostedMeeting':clients_sah['ParticipedMeeting'],
                         'hostedMeeting':clients_sah['HasOrdered'],
@@ -241,7 +242,7 @@ class ClientSAH(models.Model):
                         'email': data['Email'],
                         # 'title':gender,
                         # 'ImageUrl':data[''],
-                        # 'Status':data[''],
+                        'status':data['Status'],
                         # 'StatusForever':data[''],
                         # 'CandidacyId':data[''],
                         # 'EmailIsFlagged':data[''],
@@ -305,7 +306,7 @@ class ClientSAH(models.Model):
                     'vat':data['CompanyVAT'],
                     'email': data['Email'],
                     # 'ImageUrl':data[''],
-                    # 'Status':data[''],
+                    'Status':data['Status'],
                     # 'StatusForever':data[''],
                     # 'CandidacyId':data[''],
                     # 'EmailIsFlagged':data[''],
@@ -318,7 +319,7 @@ class ClientSAH(models.Model):
                     # 'IdentityCardNumber':data[''],
                     # 'Nationality':data[''],
                     # 'CompanyStatus':data[''],
-                    # 'companyIdentificationNumber':data['CompanyIdentificationNumber'],
+                    'companyIdentificationNumber':data['CompanyIdentificationNumber'],
                     # 'SocialContributionsType':data[''],
                     # 'StartContractDate':data[''],
                     # 'EndContractDate':data[''],
