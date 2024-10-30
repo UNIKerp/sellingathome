@@ -175,7 +175,7 @@ class ClientSAH(models.Model):
                         'partner_longitude':clients_sah['Longitude'],
                         'country_code':clients_sah['CountryIso'],
                         #'':clients_sah['BrandFields'],
-                        'ref_vendeur':clients_sah['SellerId'],
+                        # 'ref_vendeur':clients_sah['SellerId'],
                         'hostedMeeting':clients_sah['HostedMeeting'],
                         'hostedMeeting':clients_sah['ParticipedMeeting'],
                         'hostedMeeting':clients_sah['HasOrdered'],
