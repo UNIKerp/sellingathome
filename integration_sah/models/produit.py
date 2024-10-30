@@ -100,13 +100,11 @@ class ProduitSelligHome(models.Model):
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
         get_response_produit = requests.get(url_produit, headers=headers)
         if get_response_produit.status_code == 200:
-            _logger.warning("SUCCCCCCCESSSSS")
             response_data_produit = get_response_produit.json()
             for identifiant in response_data_produit:
                 identite_api = identifiant['Id']
 
                 product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
-                _logger.warning("SUCCCCCCCESSSSS 111111111111")
                 if product_odoo:
                     self.update_produit_dans_sah(product_odoo, headers)
                 else:
@@ -120,12 +118,10 @@ class ProduitSelligHome(models.Model):
         id_categ = ''
         # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
         if product.categ_id:
-            _logger.warning("SUCCCCCCCESSSSS 222222222")
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
             
             if post_response_categ.status_code == 200:
-                _logger.warning("SUCCCCCCCESSSSS 33333333333333")
                 response_data_categ = post_response_categ.json()
                 categ_parent = response_data_categ[0]['Id']
                 j = 0
@@ -166,49 +162,27 @@ class ProduitSelligHome(models.Model):
         
         # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
-            _logger.warning("SUCCCCCCCESSSSS 444444444444444444")
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
-            rupture_stock = bool(product.allow_out_of_stock_order)
-            est_publie = bool(product.is_published)
-            is_sale = bool(product.sale_ok)
-            virtual = product.type == 'service'
-            # des = product.description_ecommerce
-            suivi_stock = 1 if product.is_storable == True else 0
-
-            # discount_start_date = product.discountStartDate
-            # discount_end_date = product.discountEndDate
-            # user_timezone = self.env.user.tz or 'UTC'
-
-            # if discount_start_date:
-            #     discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
-            #     discount_start_date_iso = discount_start_date_utc.isoformat()
-            # else:
-            #     discount_start_date_iso = None
-
-            # if discount_end_date:
-            #     discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
-            #     discount_end_date_iso = discount_end_date_utc.isoformat()
-            # else:
-            #     discount_end_date_iso = None
-
             update_data = {
                 "ProductType": 5,
                 "Reference": product.default_code,
-                "AllowOutOfStockOrders": rupture_stock,
-                "IsVirtual": virtual,
-                "InventoryMethod": suivi_stock,
-                "UncommissionedProduct": is_sale,
+                # "Prices": [
+                #     {
+                #         "Id": product.produit_sah_id,
+                #         "BrandTaxRate": 2.1,
+                #         "BrandTaxName": product.name,
+                #         "TwoLetterISOCode": "FR",
+                #         "PriceExclTax": product.list_price,
+                #         "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
+                #         "ProductCost": product.standard_price,
+                #         "EcoTax": 8.1
+                #     }
+                # ],
                 "Barcode": product.barcode,
                 "Weight": product.weight,
-                "IsPublished": est_publie,
-                # "AvailableOnSellerMinisites": product.availableOnHostMinisites,
-                # "DiscountEndDate": discount_end_date_iso,
-                # "DiscountStartDate": discount_start_date_iso,
-                # "Length": product.long_sah,
-                # "Width": 1.1,
-                # "Height": product.haut_sah,
+                "IsPublished": True,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -220,17 +194,6 @@ class ProduitSelligHome(models.Model):
                     {
                         "Id": id_categ,
                     }
-                ],
-                # "AdditionalInformations": {
-                #     "description": [des],
-                # },
-                "ProductRelatedProducts": [
-                    {
-                        "ProductId": product.id,
-                        "ProductRemoteId": str(related_product.id),
-                        "ProductReference": related_product.default_code,
-                        "IsDeleted": False
-                    } for related_product in product.accessory_product_ids
                 ],
                 "Combinations": [
                     {
@@ -251,10 +214,10 @@ class ProduitSelligHome(models.Model):
                             for value in line.value_ids
                         ]
                     }
-                    for line in product.attribute_line_ids
+                    for line in product.attribute_line_ids if line.value_ids
                 ]
             }
-            _logger.warning("SUCCCCCCCESSSSS 555555555555")
+            
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             
             if put_response_produit.status_code == 200:
