@@ -173,21 +173,21 @@ class ProduitSelligHome(models.Model):
             # des = product.description_ecommerce
             suivi_stock = 1 if product.is_storable == True else 0
 
-            discount_start_date = product.discountStartDate
-            discount_end_date = product.discountEndDate
-            user_timezone = self.env.user.tz or 'UTC'
+            # discount_start_date = product.discountStartDate
+            # discount_end_date = product.discountEndDate
+            # user_timezone = self.env.user.tz or 'UTC'
 
-            if discount_start_date:
-                discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
-                discount_start_date_iso = discount_start_date_utc.isoformat()
-            else:
-                discount_start_date_iso = None
+            # if discount_start_date:
+            #     discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
+            #     discount_start_date_iso = discount_start_date_utc.isoformat()
+            # else:
+            #     discount_start_date_iso = None
 
-            if discount_end_date:
-                discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
-                discount_end_date_iso = discount_end_date_utc.isoformat()
-            else:
-                discount_end_date_iso = None
+            # if discount_end_date:
+            #     discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
+            #     discount_end_date_iso = discount_end_date_utc.isoformat()
+            # else:
+            #     discount_end_date_iso = None
 
             update_data = {
                 "ProductType": 5,
@@ -199,12 +199,12 @@ class ProduitSelligHome(models.Model):
                 "Barcode": product.barcode,
                 "Weight": product.weight,
                 "IsPublished": est_publie,
-                "AvailableOnSellerMinisites": product.availableOnHostMinisites,
-                "DiscountEndDate": discount_end_date_iso,
-                "DiscountStartDate": discount_start_date_iso,
-                "Length": product.long_sah,
+                # "AvailableOnSellerMinisites": product.availableOnHostMinisites,
+                # "DiscountEndDate": discount_end_date_iso,
+                # "DiscountStartDate": discount_start_date_iso,
+                # "Length": product.long_sah,
                 # "Width": 1.1,
-                "Height": product.haut_sah,
+                # "Height": product.haut_sah,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -421,6 +421,7 @@ class ProduitSelligHome(models.Model):
 
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
+        rec = super(ProduitSelligHome, self).write(vals)
         if vals:
             ### Modification stock
             job_kwargs = {
@@ -457,5 +458,5 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Erreur {response2.status_code}: {response2.text}")
      
                     
-            rec = super(ProduitSelligHome, self).write(vals)
+            
             return rec
