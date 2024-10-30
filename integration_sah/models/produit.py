@@ -247,7 +247,7 @@ class ProduitSelligHome(models.Model):
                             for value in line.value_ids
                         ]
                     }
-                    for line in product.attribute_line_ids if line.value_ids
+                    for line in product.attribute_line_ids
                 ]
             }
             
