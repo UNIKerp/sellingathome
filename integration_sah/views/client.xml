@@ -30,6 +30,18 @@
                 <field name="remoteStatus"/>
                 <field name="startContractDate"/> 
                 <field name="authorizeSellerDeliveryModeOnEcommerce"/> 
+                <field name="sellerId"/>  
+                <field name="candidacyId"/> 
+                <field name="parentSeller"/> 
+                <field name="animatorSeller"/> 
+                <field name="brand"/> 
+                <field name="socialContributionsType"/> 
+                <field name="customerAccount"/> 
+                <field name="birthdate"/> 
+                <field name="birthPlace"/> 
+                <field name="startActivityDate"/> 
+                <field name="endContractDate"/> 
+                <field name="gdprLastAcceptedDate"/> 
               </group>
               <group>
                 <field name="status"/> 
@@ -57,20 +69,6 @@
                 <field name="companyIdentificationNumbervendeur"/> 
                 <field name="companyIdentificationNumber"/>
                 <field name="CustomQuestionAnswers"/> 
-              </group>
-              <group>
-                <field name="sellerId"/>  
-                <field name="candidacyId"/> 
-                <field name="parentSeller"/> 
-                <field name="animatorSeller"/> 
-                <field name="brand"/> 
-                <field name="socialContributionsType"/> 
-                <field name="customerAccount"/> 
-                <field name="birthdate"/> 
-                <field name="birthPlace"/> 
-                <field name="startActivityDate"/> 
-                <field name="endContractDate"/> 
-                <field name="gdprLastAcceptedDate"/> 
               </group>
             </group>
             </page>
