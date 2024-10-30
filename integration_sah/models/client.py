@@ -82,7 +82,7 @@ class ClientSAH(models.Model):
     startActivityDate = fields.Date(string='Date de début du contrat du vendeur',help="Date de début du contrat du vendeur")
     endContractDate = fields.Date(string='Date de fin du contrat du vendeur',help="Date de fin du contrat du vendeur")
     startContractDate = fields.Boolean(string='Le mini-site est actif',help="Le mini-site est actif")
-    socialContributionsType = fields.Integer(string='Type de cotisations sociales du vendeur',string='Type de cotisations sociales du vendeur')
+    socialContributionsType = fields.Integer(string='Type de cotisations sociales du vendeur',help='Type de cotisations sociales du vendeur')
     companyRCSNumber = fields.Char(string='Numéro RCS de la société vendeuse',help="Numéro RCS de la société vendeuse")
     companyVAT = fields.Char(string='TVA de la société vendeuse',help="TVA de la société vendeuse")
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
