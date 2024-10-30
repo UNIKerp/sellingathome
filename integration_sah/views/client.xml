@@ -12,11 +12,7 @@
               <field name="client_sah" /> 
               <field name="type_revendeur" invisible="client_sah == 'client'"/> 
               <field name="vdi_id" invisible="client_sah == 'vdi'"  domain="[('client_sah','=','vdi')]"/> 
-<<<<<<< HEAD
-              
-=======
               <field name="title" /> 
->>>>>>> 0c7bc255cc58b0c26ee22b654eac0bfe967f63eb
             </xpath>
             <xpath expr="//notebook/page[@name='internal_notes']" position="after">
             <page name="Information SAH" string="Information SAH">
