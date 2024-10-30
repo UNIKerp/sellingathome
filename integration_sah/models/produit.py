@@ -100,16 +100,17 @@ class ProduitSelligHome(models.Model):
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
         get_response_produit = requests.get(url_produit, headers=headers)
         if get_response_produit.status_code == 200:
-                response_data_produit = get_response_produit.json()
-                for identifiant in response_data_produit:
-                    identite_api = identifiant['Id']
+            _logger.warning("SUCCCCCCCESSSSS")
+            response_data_produit = get_response_produit.json()
+            for identifiant in response_data_produit:
+                identite_api = identifiant['Id']
 
-                    product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
-                
-                    if product_odoo:
-                        self.update_produit_dans_sah(product_odoo, headers)
-                    else:
-                        _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
+                product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
+                _logger.warning("SUCCCCCCCESSSSS 111111111111")
+                if product_odoo:
+                    self.update_produit_dans_sah(product_odoo, headers)
+                else:
+                    _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
 
         else:
             _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {get_response_produit.status_code}")
@@ -119,10 +120,12 @@ class ProduitSelligHome(models.Model):
         id_categ = ''
         # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
         if product.categ_id:
+            _logger.warning("SUCCCCCCCESSSSS 222222222")
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
             
             if post_response_categ.status_code == 200:
+                _logger.warning("SUCCCCCCCESSSSS 33333333333333")
                 response_data_categ = post_response_categ.json()
                 categ_parent = response_data_categ[0]['Id']
                 j = 0
@@ -163,6 +166,7 @@ class ProduitSelligHome(models.Model):
         
         # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
+            _logger.warning("SUCCCCCCCESSSSS 444444444444444444")
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
@@ -173,21 +177,21 @@ class ProduitSelligHome(models.Model):
             # des = product.description_ecommerce
             suivi_stock = 1 if product.is_storable == True else 0
 
-            discount_start_date = product.discountStartDate
-            discount_end_date = product.discountEndDate
-            user_timezone = self.env.user.tz or 'UTC'
+            # discount_start_date = product.discountStartDate
+            # discount_end_date = product.discountEndDate
+            # user_timezone = self.env.user.tz or 'UTC'
 
-            if discount_start_date:
-                discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
-                discount_start_date_iso = discount_start_date_utc.isoformat()
-            else:
-                discount_start_date_iso = None
+            # if discount_start_date:
+            #     discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
+            #     discount_start_date_iso = discount_start_date_utc.isoformat()
+            # else:
+            #     discount_start_date_iso = None
 
-            if discount_end_date:
-                discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
-                discount_end_date_iso = discount_end_date_utc.isoformat()
-            else:
-                discount_end_date_iso = None
+            # if discount_end_date:
+            #     discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
+            #     discount_end_date_iso = discount_end_date_utc.isoformat()
+            # else:
+            #     discount_end_date_iso = None
 
             update_data = {
                 "ProductType": 5,
@@ -199,12 +203,12 @@ class ProduitSelligHome(models.Model):
                 "Barcode": product.barcode,
                 "Weight": product.weight,
                 "IsPublished": est_publie,
-                "AvailableOnSellerMinisites": product.availableOnHostMinisites,
-                "DiscountEndDate": discount_end_date_iso,
-                "DiscountStartDate": discount_start_date_iso,
-                "Length": product.long_sah,
+                # "AvailableOnSellerMinisites": product.availableOnHostMinisites,
+                # "DiscountEndDate": discount_end_date_iso,
+                # "DiscountStartDate": discount_start_date_iso,
+                # "Length": product.long_sah,
                 # "Width": 1.1,
-                "Height": product.haut_sah,
+                # "Height": product.haut_sah,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -247,10 +251,10 @@ class ProduitSelligHome(models.Model):
                             for value in line.value_ids
                         ]
                     }
-                    for line in product.attribute_line_ids if line.value_ids
+                    for line in product.attribute_line_ids
                 ]
             }
-            
+            _logger.warning("SUCCCCCCCESSSSS 555555555555")
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             
             if put_response_produit.status_code == 200:
@@ -316,14 +320,12 @@ class ProduitSelligHome(models.Model):
             if discount_start_date:
                 discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
                 discount_start_date_iso = discount_start_date_utc.isoformat()
-                _logger.info("discount_start_date_iso %s",discount_start_date_iso)
             else:
                 discount_start_date_iso = None
 
             if discount_end_date:
                 discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
                 discount_end_date_iso = discount_end_date_utc.isoformat()
-                _logger.info("discount_end_date_iso %s",discount_end_date_iso)
             else:
                 discount_end_date_iso = None
 
@@ -421,15 +423,15 @@ class ProduitSelligHome(models.Model):
         return res
 
 
-    """def write(self, vals):
+    def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
+        rec = super(ProduitSelligHome, self).write(vals)
         if vals:
             ### Modification stock
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
-            objet = self.env['product.template']
-            objet.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
             if self.is_storable == True:
                 url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
                 values = {
@@ -460,5 +462,5 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Erreur {response2.status_code}: {response2.text}")
      
                     
-            rec = super(ProduitSelligHome, self).write(vals)
-            return rec"""
+            
+            return rec
