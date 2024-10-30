@@ -2,6 +2,8 @@ from odoo import models, api, fields,_
 import requests
 import json
 from datetime import date
+from datetime import datetime
+import pytz
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -168,8 +170,24 @@ class ProduitSelligHome(models.Model):
             est_publie = bool(product.is_published)
             is_sale = bool(product.sale_ok)
             virtual = product.type == 'service'
-            des = product.description_ecommerce
+            # des = product.description_ecommerce
             suivi_stock = 1 if product.is_storable == True else 0
+
+            discount_start_date = product.discountStartDate
+            discount_end_date = product.discountEndDate
+            user_timezone = self.env.user.tz or 'UTC'
+
+            if discount_start_date:
+                discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
+                discount_start_date_iso = discount_start_date_utc.isoformat()
+            else:
+                discount_start_date_iso = None
+
+            if discount_end_date:
+                discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
+                discount_end_date_iso = discount_end_date_utc.isoformat()
+            else:
+                discount_end_date_iso = None
 
             update_data = {
                 "ProductType": 5,
@@ -181,6 +199,12 @@ class ProduitSelligHome(models.Model):
                 "Barcode": product.barcode,
                 "Weight": product.weight,
                 "IsPublished": est_publie,
+                "AvailableOnSellerMinisites": product.availableOnHostMinisites,
+                "DiscountEndDate": discount_end_date_iso,
+                "DiscountStartDate": discount_start_date_iso,
+                "Length": product.long_sah,
+                # "Width": 1.1,
+                "Height": product.haut_sah,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -193,9 +217,9 @@ class ProduitSelligHome(models.Model):
                         "Id": id_categ,
                     }
                 ],
-                "AdditionalInformations": {
-                    "description": [des],
-                },
+                # "AdditionalInformations": {
+                #     "description": [des],
+                # },
                 "ProductRelatedProducts": [
                     {
                         "ProductId": product.id,
@@ -240,14 +264,14 @@ class ProduitSelligHome(models.Model):
     def create(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
-        des = res.description_ecommerce 
+        # des = res.description_ecommerce 
         est_publie = bool(res.is_published)
         virtual = res.type == 'service'
         rupture_stock = bool(res.allow_out_of_stock_order)
         is_sale = bool(res.sale_ok)
         id_categ = ''
         categ_parent =''
-        suivi_stock = 1 if res.is_storable == True else 0
+        # suivi_stock = 1 if res.is_storable == True else 0
         if res.categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
@@ -283,7 +307,26 @@ class ProduitSelligHome(models.Model):
             else:
                 _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
 
-            url = "https://demoapi.sellingathome.com/v1/Products"        
+            url = "https://demoapi.sellingathome.com/v1/Products"   
+
+            discount_start_date = res.discountStartDate
+            discount_end_date = res.discountEndDate
+            user_timezone = self.env.user.tz or 'UTC'
+
+            if discount_start_date:
+                discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
+                discount_start_date_iso = discount_start_date_utc.isoformat()
+                _logger.info("discount_start_date_iso %s",discount_start_date_iso)
+            else:
+                discount_start_date_iso = None
+
+            if discount_end_date:
+                discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
+                discount_end_date_iso = discount_end_date_utc.isoformat()
+                _logger.info("discount_end_date_iso %s",discount_end_date_iso)
+            else:
+                discount_end_date_iso = None
+
             product_data = {
                 "ProductType": 5,
                 "Reference": res.default_code,
@@ -303,15 +346,18 @@ class ProduitSelligHome(models.Model):
                 # "RemoteReference": "sample string 3",
                 "Barcode": res.barcode,
                 "Weight": res.weight,
-                # "Length": 1.1,
+                "Length": res.long_sah,
                 # "Width": 1.1,
-                # "Height": 1.1,
+                "Height": res.haut_sah,
                 "IsPublished": est_publie,
                 "IsVirtual": virtual,
                 "UncommissionedProduct": is_sale,
-                "InventoryMethod": suivi_stock,
+                # "InventoryMethod": suivi_stock,
                 # "LowStockQuantity": 1,
                 "AllowOutOfStockOrders": rupture_stock,
+                "AvailableOnSellerMinisites": res.availableOnHostMinisites,
+                "DiscountEndDate": discount_end_date_iso,
+                "DiscountStartDate": discount_start_date_iso,
                 # "WarehouseLocation": res.warehouse_id.id or '',
                 'ProductLangs': [
                     {'Name': res.name,
@@ -324,9 +370,9 @@ class ProduitSelligHome(models.Model):
                     "Id": id_categ,
                     },
                 ],
-                "AdditionalInformations": {
-                    "description": [des],
-                },
+                # "AdditionalInformations": {
+                #     "description": [des],
+                # },
                 "ProductRelatedProducts": [
                     {
                         "ProductId": res.id,
