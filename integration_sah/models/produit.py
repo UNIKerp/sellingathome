@@ -100,12 +100,13 @@ class ProduitSelligHome(models.Model):
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
         get_response_produit = requests.get(url_produit, headers=headers)
         if get_response_produit.status_code == 200:
+            _logger.warning("SUCCCCCCCESSSSS")
                 response_data_produit = get_response_produit.json()
                 for identifiant in response_data_produit:
                     identite_api = identifiant['Id']
 
                     product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
-                
+                    _logger.warning("SUCCCCCCCESSSSS 111111111111")
                     if product_odoo:
                         self.update_produit_dans_sah(product_odoo, headers)
                     else:
@@ -119,10 +120,12 @@ class ProduitSelligHome(models.Model):
         id_categ = ''
         # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
         if product.categ_id:
+            _logger.warning("SUCCCCCCCESSSSS 222222222")
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
             
             if post_response_categ.status_code == 200:
+                _logger.warning("SUCCCCCCCESSSSS 33333333333333")
                 response_data_categ = post_response_categ.json()
                 categ_parent = response_data_categ[0]['Id']
                 j = 0
@@ -163,6 +166,7 @@ class ProduitSelligHome(models.Model):
         
         # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
+            _logger.warning("SUCCCCCCCESSSSS 444444444444444444")
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
@@ -250,7 +254,7 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids
                 ]
             }
-            
+            _logger.warning("SUCCCCCCCESSSSS 555555555555")
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             
             if put_response_produit.status_code == 200:
