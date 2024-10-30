@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Integration Selling at home",
-    'version': '18.0.1.0.0',
+    'version': '18.0.2.0.0',
     'depends': ["stock","contacts",'sale_management'],
     "author":"Unikerp",
     "website" : "www.unikerp.com",
@@ -14,7 +14,6 @@
         'views/product.xml',
         'views/sale.xml',
         'views/client.xml',
-        'views/users.xml',
     ],
     'images':['static/description/icon.png',],
 }

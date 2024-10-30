@@ -7,13 +7,11 @@
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
             <xpath expr="//span[@name='address_name']" position="before">
-              <field name="id_client_sah" readonly="1"/>
-              <!-- <field name="id_vendeur_sah" readonly="1"/>
-              <field name="is_seller"/> -->
-              <field name="id_vendeur_sah" readonly="1"/> 
-              <field name="type_revendeur"/> 
-              <field name="vdi"/> 
-              <field name="client_sah"/> 
+              <field name="id_client_sah" readonly="1" invisible="client_sah == 'vdi' or not id_client_sah"/>
+              <field name="id_vendeur_sah" readonly="1" invisible="client_sah == 'client' or not id_vendeur_sah"/> 
+              <field name="client_sah" /> 
+              <field name="type_revendeur" invisible="client_sah == 'client'"/> 
+              <field name="vdi_id" invisible="client_sah == 'vdi'"  domain="[('client_sah','=','vdi')]"/> 
             </xpath>
         </field>
       </record>
