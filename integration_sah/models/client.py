@@ -88,6 +88,7 @@ class ClientSAH(models.Model):
                         'client_sah':'client',
                         #'':clients_sah['Gender'],
                         #'id_vendeur_sah':clients_sah['SellerId'],
+                        'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
                         'mobile':clients_sah['MobilePhone'],
