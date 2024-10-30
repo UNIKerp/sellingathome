@@ -155,7 +155,7 @@ class ClientSAH(models.Model):
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
                         # 'title':gender,
-                        'ref_vendeur':clients_sah['SellerId'],
+                        # 'ref_vendeur':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
