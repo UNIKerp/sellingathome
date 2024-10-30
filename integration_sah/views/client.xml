@@ -29,6 +29,7 @@
                 <field name="createCustomerAccount"/> 
                 <field name="remoteStatus"/>
                 <field name="startContractDate"/> 
+                <field name="authorizeSellerDeliveryModeOnEcommerce"/> 
               </group>
               <group>
                 <field name="status"/> 
@@ -41,7 +42,6 @@
                 <field name="signature"/> 
                 <!-- <field name="timeZone"/>  -->
                 <field name="photo"/> 
-                <field name="authorizeSellerDeliveryModeOnEcommerce"/> 
                 <field name="bankAccountOwner"/> 
                 <field name="bankingDomiciliation"/> 
                 <field name="bankName"/> 
@@ -52,8 +52,6 @@
                 <field name="accountWicketCode"/> 
                 <field name="accountBankCode"/> 
                 <field name="additionalInformations"/> 
-                <field name="brand"/> 
-                <field name="socialContributionsType"/> 
                 <field name="companyRCSNumber"/> 
                 <field name="companyVAT"/>
                 <field name="companyIdentificationNumbervendeur"/> 
@@ -65,6 +63,8 @@
                 <field name="candidacyId"/> 
                 <field name="parentSeller"/> 
                 <field name="animatorSeller"/> 
+                <field name="brand"/> 
+                <field name="socialContributionsType"/> 
                 <field name="customerAccount"/> 
                 <field name="birthdate"/> 
                 <field name="birthPlace"/> 
