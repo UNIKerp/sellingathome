@@ -30,7 +30,71 @@ class ClientSAH(models.Model):
         ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
         ]
     
+    Gender = fields.Selection([
+            ('0','Mr'),
+            ('1' , 'Mrs'),
+            ('2' , 'Ms'),], string='Genre', help='Genre',
+        )
+    companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
+    sellerId = fields.Integer(string="Identifiant du vendeur principal du client",help="Identifiant du vendeur principal du client")
+    hostedMeeting = fields.Boolean(string="A déjà accueilli une réunion",help="A déjà accueilli une réunion")
+    ParticipedMeeting = fields.Boolean(string="A déjà participé à une réunion",help="A déjà participé à une réunion")
+    hasOrdered = fields.Boolean(string='A déjà commandé',help='A déjà commandé')
+    consent = fields.Boolean(string='Consentement du client',help='Consentement du client')
+    ConsentDt = fields.Boolean(string="date du Consentement du client",help="date du Consentement du client")
+    CustomQuestionAnswers = fields.Char(string='Réponses en question',help="Réponses en question")
 
+    status = fields.Char(string='Nom du statut',help='Nom du statut')
+    Statut_pour_toujours = fields.Char(string="Statut permanent",help='Statut permanent')
+    isActive = fields.Boolean(string='Vendeur Actif',help='Vendeur Actif')
+    candidacyId =fields.Integer(string="ID de candidature",help='ID de candidature')
+    emailIsFlagged = fields.Boolean(string="État de l'e-mail du vendeur",help="État de l'e-mail du vendeur")
+    birthdate = fields.Date(string="Date de naissance du vendeur",help="Date de naissance du vendeur")
+    birthPlace = fields.Char(string="Lieu de naissance du vendeur",help="Lieu de naissance du vendeur")
+    parentSeller = fields.Integer(string="Vendeur parent rattaché au vendeur",help="Vendeur parent rattaché au vendeur")
+    animatorSeller = fields.Integer(string="Vendeur Animateur",help="Vendeur Animateur")
+    customerAccount = fields.Integer(string="ID de compte client du vendeur",help="ID de compte client du vendeur")
+    nationalIdentificationNumber = fields.Char(string="Numéro d'identification national du vendeur",help="Numéro d'identification national du vendeur")
+    identityCardNumber = fields.Char(string="Numéro de carte d'identité du vendeur",help="Numéro de carte d'identité du vendeur")
+    nationalité =fields.Char(string="Nationalité du vendeur",help="Nationalité du vendeur")
+    miniSiteIsActive = fields.Boolean(string='Le mini-site est actif',help="Le mini-site est actif")
+    miniSiteUsername = fields.Char(string="Nom d'utilisateur du minisite",help="Nom d'utilisateur du minisite")
+    miniSiteUrl = fields.Char(string='URL du mini-site',help=" URL du mini-site")
+    signature = fields.Char(string='Signature du vendeur',help="Signature du vendeur")
+    timeZone = fields.Many2one('time.zone', string='vendeur TimeZone',help="vendeur TimeZone")
+    photo = fields.Char(string='URL de la photo du vendeur',help="URL de la photo du vendeur")
+    gdprLastAcceptedDate = fields.Date(string='Date de la dernière acceptation du RGPD',help="Date de la dernière acceptation du RGPD")
+    authorizeSellerDeliveryModeOnEcommerce = fields.Boolean(string='Autoriser le mode de livraison du vendeur sur le commerce électronique',hel="Autoriser le mode de livraison du vendeur sur le commerce électronique")
+    gdprAccepted = fields.Boolean(string='Accepté par le RGPD',help="Accepté par le RGPD")
+    bankAccountOwner = fields.Char(string='Titulaire du compte bancaire',help="Titulaire du compte bancaire")
+    bankingDomiciliation = fields.Char(string='Domiciliation bancaire',help="Domiciliation bancaire")
+    bankName = fields.Char(string='Nom de la banque',help="Nom de la banque")
+    accountSwiftCode = fields.Char(string='Code Swift du compte',help="Code Swift du compte")
+    accountIban = fields.Char(string='Compte Iban',help='Compte Iban')
+    accountKey = fields.Char(string='Clé de compte',help="Clé de compte")
+    accountNumber = fields.Char(string='Numéro de compte',help="Numéro de compte")
+    accountWicketCode = fields.Char(string='Code de guichet de compte',help="Code de guichet de compte")
+    accountBankCode = fields.Char(string='Code bancaire du compte',help="Code bancaire du compte")
+    additionalInformations = fields.Text(string='Informations complémentaires du vendeur',help="Informations complémentaires du vendeur")
+    brand = fields.Integer(string='Marque attachée au vendeur',help="Marque attachée au vendeur")
+    createCustomerAccount = fields.Boolean(string='Créer un compte client pour le vendeur',help="Créer un compte client pour le vendeur")
+    remoteStatus = fields.Boolean(string='Le mini-site est actif',help="Le mini-site est actif")
+    startActivityDate = fields.Date(string='Date de début du contrat du vendeur',help="Date de début du contrat du vendeur")
+    endContractDate = fields.Date(string='Date de fin du contrat du vendeur',help="Date de fin du contrat du vendeur")
+    startContractDate = fields.Boolean(string='Le mini-site est actif',help="Le mini-site est actif")
+    socialContributionsType = fields.Integer(string='Type de cotisations sociales du vendeur',help='Type de cotisations sociales du vendeur')
+    companyRCSNumber = fields.Char(string='Numéro RCS de la société vendeuse',help="Numéro RCS de la société vendeuse")
+    companyVAT = fields.Char(string='TVA de la société vendeuse',help="TVA de la société vendeuse")
+    companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
+
+
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['ref_sah'] = ''
+        default['id_client_sah'] = 0
+        default['id_vendeur_sah'] = 0
+        # Appeler la méthode copy du parent pour créer la copie avec les valeurs par défaut
+        return super(ClientSAH, self).copy(default)
     def get_update_client_sah(self):
         headers_client = self.env['authentication.sah'].establish_connection()
         url_client = "https://demoapi.sellingathome.com/v1/Customers"
