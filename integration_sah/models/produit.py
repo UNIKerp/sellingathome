@@ -75,19 +75,19 @@ class ProduitSelligHome(models.Model):
                     })
 
                     # Créer un élément de liste de prix associé
-                    price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
-                    if price_list:
-                        price_list = self.env['product.pricelist'].create({
-                            'name': 'SAH Liste de Prix',
-                            'currency_id': self.env.user.company_id.currency_id.id
-                        })
+                    # price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
+                    # if price_list:
+                    #     price_list = self.env['product.pricelist'].create({
+                    #         'name': 'SAH Liste de Prix',
+                    #         'currency_id': self.env.user.company_id.currency_id.id
+                    #     })
                     
-                    self.env['product.pricelist.item'].create({
-                        'pricelist_id': price_list.id,
-                        'product_tmpl_id': new_product.id,
-                        'fixed_price': price,
-                    })
-                    _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
+                    # self.env['product.pricelist.item'].create({
+                    #     'pricelist_id': price_list.id,
+                    #     'product_tmpl_id': new_product.id,
+                    #     'fixed_price': price,
+                    # })
+                    # _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
 
                     _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
                 else:
@@ -316,14 +316,12 @@ class ProduitSelligHome(models.Model):
             if discount_start_date:
                 discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
                 discount_start_date_iso = discount_start_date_utc.isoformat()
-                _logger.info("discount_start_date_iso %s",discount_start_date_iso)
             else:
                 discount_start_date_iso = None
 
             if discount_end_date:
                 discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
                 discount_end_date_iso = discount_end_date_utc.isoformat()
-                _logger.info("discount_end_date_iso %s",discount_end_date_iso)
             else:
                 discount_end_date_iso = None
 

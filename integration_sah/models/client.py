@@ -155,7 +155,7 @@ class ClientSAH(models.Model):
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
                         # 'title':gender,
-                        'ref_vendeur':clients_sah['SellerId'],
+                        # 'ref_vendeur':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
@@ -166,7 +166,7 @@ class ClientSAH(models.Model):
                         'companyIdentificationNumber':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
                         #'':clients_sah['TaxExempt'],
-                        'street':clients_sah['StreetAddr00:00ess'],
+                        'street':clients_sah['StreetAddress'],
                         'street2':clients_sah['StreetAddress2']+','+clients_sah['StreetAddress3'] if clients_sah['StreetAddress3']!="" else clients_sah['StreetAddress2'],
                         'zip':clients_sah['Postcode'],
                         'city':clients_sah['City'],
@@ -175,7 +175,7 @@ class ClientSAH(models.Model):
                         'partner_longitude':clients_sah['Longitude'],
                         'country_code':clients_sah['CountryIso'],
                         #'':clients_sah['BrandFields'],
-                        'ref_vendeur':clients_sah['SellerId'],
+                        # 'ref_vendeur':clients_sah['SellerId'],
                         'hostedMeeting':clients_sah['HostedMeeting'],
                         'hostedMeeting':clients_sah['ParticipedMeeting'],
                         'hostedMeeting':clients_sah['HasOrdered'],
@@ -195,6 +195,7 @@ class ClientSAH(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
+                print('PPPPPPPPP',data)
                 print('PPPPPPPPP',data)
                 ref_sah= 'V'+str(data['Id'])
                 pays=self.env['res.country'].search([('code','=',data['CountryIso'])])
