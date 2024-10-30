@@ -211,14 +211,14 @@ class ClientSAH(models.Model):
                         'vendeur_domicile' if data['CompanyStatus'] == 10 else
                         None
                     )
-                monsieur=self.env['res.partner.tite'].search([('id','=',3)])
-                mademaselle=self.env['res.partner.tite'].search([('id','=',1)])
-                madame=self.env['res.partner.tite'].search([('id','=',2)])
-                gender = (
-                        monsieur.id if data['Gender'] == 0 else
-                        mademaselle.id if data['Gender'] == 1 else
-                        madame.id if data['Gender'] == 2 
-                    )
+                # monsieur=self.env['res.partner.tite'].search([('id','=',3)])
+                # mademaselle=self.env['res.partner.tite'].search([('id','=',1)])
+                # madame=self.env['res.partner.tite'].search([('id','=',2)])
+                # gender = (
+                #         monsieur.id if data['Gender'] == 0 else
+                #         mademaselle.id if data['Gender'] == 1 else
+                #         madame.id if data['Gender'] == 2 
+                #     )
                 if contact:
                     
                     _logger.info('@@@@@@@@ssssssssssss %s',data['Email'])
