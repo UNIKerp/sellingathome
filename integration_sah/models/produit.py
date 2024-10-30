@@ -377,19 +377,19 @@ class ProduitSelligHome(models.Model):
                     "ProductReference": self.default_code,
                     "StockQuantity": int(self.qty_available),
                     "StockQuantityComing":int(self.virtual_available),
-                    "ProductCombinationStocks": [
-                            {
-                            "ProductCombinationId": self.produit_sah_id,
-                            "ProductCombinationBarcode": "sample string 1",
-                            "ProductCombinationSku": "sample string 2",
-                            "ProductCombinationRemoteId": 1,
-                            "StockQuantity": 1,
-                            "StockQuantityComing": 1,
-                            "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
-                            "SellerStockQuantity": 1,
-                            "AllowOutOfStockOrders": True
-                            }
-                    ],
+                    # "ProductCombinationStocks": [
+                    #         {
+                    #         "ProductCombinationId": self.produit_sah_id,
+                    #         "ProductCombinationBarcode": "sample string 1",
+                    #         "ProductCombinationSku": "sample string 2",
+                    #         "ProductCombinationRemoteId": 1,
+                    #         "StockQuantity": 1,
+                    #         "StockQuantityComing": 1,
+                    #         "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                    #         "SellerStockQuantity": 1,
+                    #         "AllowOutOfStockOrders": True
+                    #         }
+                    # ],
                     "AllowOutOfStockOrders": True
                     
                 }
