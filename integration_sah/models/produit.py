@@ -11,7 +11,13 @@ class ProduitSelligHome(models.Model):
     produit_sah_id = fields.Integer("ID produit SAH")
     default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
 
-    
+    _sql_constraints = [
+        ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
+        
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['produit_sah_id'] = 0
+        return super(ProduitSelligHome, self).copy(default)
 
     # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):

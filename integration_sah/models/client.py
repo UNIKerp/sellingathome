@@ -25,11 +25,7 @@ class ClientSAH(models.Model):
     vdi_id = fields.Many2one('res.partner',string="VDI", help="VDI ratacher au contact")
     client_sah=fields.Selection([('client','CLIENT'),('vdi','VDI')], string="Type Client" , help="si c'est un client ou un vdi")
     ref_sah = fields.Char('')
-    _sql_constraints = [
-        ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"),
-        ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
-        ]
-    # les champs du client
+   
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
     sellerId = fields.Integer(string="Identifiant du vendeur principal du client",help="Identifiant du vendeur principal du client")
     hostedMeeting = fields.Boolean(string="A déjà accueilli une réunion",help="A déjà accueilli une réunion")
@@ -83,7 +79,11 @@ class ClientSAH(models.Model):
     companyVAT = fields.Char(string='TVA de la société vendeuse',help="TVA de la société vendeuse")
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
 
-
+    _sql_constraints = [
+        ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"),
+        ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
+        ]
+    
     def copy(self, default=None):
         default = dict(default or {})
         default['ref_sah'] = ''
