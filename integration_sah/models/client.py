@@ -104,14 +104,22 @@ class ClientSAH(models.Model):
                 ref_sah ='C'+str(clients_sah['Id'])
                 vendeur_id = self.env['res.partner'].search([('ref_sah','=',ref_vendeur)])
                 campany = self.create({ 'company_type':'company','name' :clients_sah['CompanyName']}).id if clients_sah['CompanyName'] else None
-                pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])]).id if clients_sah['CountryIso'] else None
+                pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])]).id if clients_sah['CountryIso'] else None 
+                monsieur=self.env['res.partner.tite'].search([('id','=',3)])
+                mademaselle=self.env['res.partner.tite'].search([('id','=',1)])
+                madame=self.env['res.partner.tite'].search([('id','=',2)])
+                gender = (
+                        monsieur.id if clients_sah['Gender'] == 0 else
+                        mademaselle.id if clients_sah['Gender'] == 1 else
+                        madame.id if clients_sah['Gender'] == 2 
+                    )
                 if not client_odoo:
                     self.create({
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
                         'ref_sah':ref_sah,
-                        'gender':clients_sah['Gender'],
+                        'title':gender,
                         'sellerId':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
@@ -146,7 +154,7 @@ class ClientSAH(models.Model):
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
-                        'gender':clients_sah['Gender'],
+                        'title':gender,
                         'ref_vendeur':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
@@ -203,12 +211,14 @@ class ClientSAH(models.Model):
                         'vendeur_domicile' if data['CompanyStatus'] == 10 else
                         None
                     )
-                # gender = (
-                #         '3' if data['Gender'] == 0 else
-                #         '1' if data['Gender'] == 1 else
-                #         '2' if data['Gender'] == 2 else
-                #         None
-                #     )
+                monsieur=self.env['res.partner.tite'].search([('id','=',3)])
+                mademaselle=self.env['res.partner.tite'].search([('id','=',1)])
+                madame=self.env['res.partner.tite'].search([('id','=',2)])
+                gender = (
+                        monsieur.id if data['Gender'] == 0 else
+                        mademaselle.id if data['Gender'] == 1 else
+                        madame.id if data['Gender'] == 2 
+                    )
                 if contact:
                     
                     _logger.info('@@@@@@@@ssssssssssss %s',data['Email'])
@@ -229,6 +239,7 @@ class ClientSAH(models.Model):
                         'lang':active_lang.code,
                         'vat':data['CompanyVAT'],
                         'email': data['Email'],
+                        'title':gender
                         # 'ImageUrl':data[''],
                         # 'Status':data[''],
                         # 'StatusForever':data[''],
