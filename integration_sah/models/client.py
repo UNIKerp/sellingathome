@@ -25,16 +25,7 @@ class ClientSAH(models.Model):
     vdi_id = fields.Many2one('res.partner',string="VDI", help="VDI ratacher au contact")
     client_sah=fields.Selection([('client','CLIENT'),('vdi','VDI')], string="Type Client" , help="si c'est un client ou un vdi")
     ref_sah = fields.Char('')
-    _sql_constraints = [
-        ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"),
-        ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
-        ]
-    # les champs du client
-    gender = fields.Selection([
-            ('0','Mr'),
-            ('1' , 'Mrs'),
-            ('2' , 'Ms'),], string='Genre', help='Genre',
-        )
+   
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
     sellerId = fields.Integer(string="Identifiant du vendeur principal du client",help="Identifiant du vendeur principal du client")
     hostedMeeting = fields.Boolean(string="A déjà accueilli une réunion",help="A déjà accueilli une réunion")
@@ -62,7 +53,7 @@ class ClientSAH(models.Model):
     miniSiteUsername = fields.Char(string="Nom d'utilisateur du minisite",help="Nom d'utilisateur du minisite")
     miniSiteUrl = fields.Char(string='URL du mini-site',help=" URL du mini-site")
     signature = fields.Char(string='Signature du vendeur',help="Signature du vendeur")
-    timeZone = fields.Many2one('time.zone', string='vendeur TimeZone',help="vendeur TimeZone")
+    # timeZone = fields.Many2one('time.zone', string='vendeur TimeZone',help="vendeur TimeZone")
     photo = fields.Char(string='URL de la photo du vendeur',help="URL de la photo du vendeur")
     gdprLastAcceptedDate = fields.Date(string='Date de la dernière acceptation du RGPD',help="Date de la dernière acceptation du RGPD")
     authorizeSellerDeliveryModeOnEcommerce = fields.Boolean(string='Autoriser le mode de livraison du vendeur sur le commerce électronique',hel="Autoriser le mode de livraison du vendeur sur le commerce électronique")
@@ -86,9 +77,13 @@ class ClientSAH(models.Model):
     socialContributionsType = fields.Integer(string='Type de cotisations sociales du vendeur',help='Type de cotisations sociales du vendeur')
     companyRCSNumber = fields.Char(string='Numéro RCS de la société vendeuse',help="Numéro RCS de la société vendeuse")
     companyVAT = fields.Char(string='TVA de la société vendeuse',help="TVA de la société vendeuse")
-    companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
+    companyIdentificationNumbervendeur= fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
 
-
+    _sql_constraints = [
+        ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"),
+        ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
+        ]
+    
     def copy(self, default=None):
         default = dict(default or {})
         default['ref_sah'] = ''
