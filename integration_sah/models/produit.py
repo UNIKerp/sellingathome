@@ -260,7 +260,7 @@ class ProduitSelligHome(models.Model):
 
 
 
-    @api.model
+    """@api.model
     def create(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
@@ -418,10 +418,10 @@ class ProduitSelligHome(models.Model):
                 res.default_list_price = default_list_price.id
             else:
                 _logger.info(f"Error {post_response.status_code}: {post_response.text}")
-        return res
+        return res"""
 
 
-    def write(self, vals):
+    """def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
@@ -461,4 +461,4 @@ class ProduitSelligHome(models.Model):
      
                     
             rec = super(ProduitSelligHome, self).write(vals)
-            return rec
+            return rec"""
