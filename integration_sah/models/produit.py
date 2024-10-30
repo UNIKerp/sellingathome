@@ -10,8 +10,21 @@ class ProduitSelligHome(models.Model):
 
     produit_sah_id = fields.Integer("ID produit SAH")
     default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
+    long_sah = fields.Float("Longueur Produit SAH")
+    haut_sah = fields.Float("Hauteur Produit SAH")
+    unitcapacity = fields.Char("Capacité Unitaire SAH")
+    availableOnHostMinisites = fields.Boolean("Disponible Minisites hôtes SAH")
+    discountEndDate = fields.Datetime("Date Fin SAH")
+    discountStartDate = fields.Datetime("Date debut SAH")
+    discountBadgeIsActive = fields.Boolean("BadgeEst Actif")
 
-    
+    _sql_constraints = [
+        ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
+        
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['produit_sah_id'] = 0
+        return super(ProduitSelligHome, self).copy(default)
 
     # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):
