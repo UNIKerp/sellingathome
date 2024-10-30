@@ -29,7 +29,7 @@ class ClientSAH(models.Model):
         ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"),
         ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
         ]
-
+    
 
     def get_update_client_sah(self):
         headers_client = self.env['authentication.sah'].establish_connection()
@@ -98,7 +98,7 @@ class ClientSAH(models.Model):
                         #'':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
                         #'':clients_sah['TaxExempt'],
-                        'street':clients_sah['StreetAddress'],
+                        'street':clients_sah['StreetAddr00:00ess'],
                         'street2':clients_sah['StreetAddress2']+','+clients_sah['StreetAddress3'] if clients_sah['StreetAddress3']!="" else clients_sah['StreetAddress2'],
                         'zip':clients_sah['Postcode'],
                         'city':clients_sah['City'],
