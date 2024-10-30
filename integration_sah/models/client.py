@@ -105,14 +105,14 @@ class ClientSAH(models.Model):
                 vendeur_id = self.env['res.partner'].search([('ref_sah','=',ref_vendeur)])
                 campany = self.create({ 'company_type':'company','name' :clients_sah['CompanyName']}).id if clients_sah['CompanyName'] else None
                 pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])]).id if clients_sah['CountryIso'] else None 
-                monsieur=self.env['res.partner.title'].search([('id','=',3)])
-                mademaselle=self.env['res.partner.title'].search([('id','=',1)])
-                madame=self.env['res.partner.title'].search([('id','=',2)])
-                gender = (
-                        monsieur.id if clients_sah['Gender'] == 0 else
-                        mademaselle.id if clients_sah['Gender'] == 1 else
-                        madame.id if clients_sah['Gender'] == 2 
-                    )
+                # monsieur=self.env['res.partner.title'].search([('id','=',3)])
+                # mademaselle=self.env['res.partner.title'].search([('id','=',1)])
+                # madame=self.env['res.partner.title'].search([('id','=',2)])
+                # gender = (
+                #         monsieur.id if clients_sah['Gender'] == 0 else
+                #         mademaselle.id if clients_sah['Gender'] == 1 else
+                #         madame.id if clients_sah['Gender'] == 2 
+                #     )
                 if not client_odoo:
                     self.create({
                         'id_client_sah':clients_sah['Id'],
