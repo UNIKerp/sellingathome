@@ -167,7 +167,7 @@ class ProduitSelligHome(models.Model):
             
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
             rupture_stock = bool(product.allow_out_of_stock_order)
-            est_publie = bool(product.is_published)
+            # est_publie = bool(product.is_published)
             is_sale = bool(product.sale_ok)
             virtual = product.type == 'service'
             # des = product.description_ecommerce
@@ -198,7 +198,7 @@ class ProduitSelligHome(models.Model):
                 "UncommissionedProduct": is_sale,
                 "Barcode": product.barcode,
                 "Weight": product.weight,
-                "IsPublished": est_publie,
+                # "IsPublished": est_publie,
                 "AvailableOnSellerMinisites": product.availableOnHostMinisites,
                 "DiscountEndDate": discount_end_date_iso,
                 "DiscountStartDate": discount_start_date_iso,
@@ -265,7 +265,7 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
         # des = res.description_ecommerce 
-        est_publie = bool(res.is_published)
+        # est_publie = bool(res.is_published)
         virtual = res.type == 'service'
         rupture_stock = bool(res.allow_out_of_stock_order)
         is_sale = bool(res.sale_ok)
@@ -349,7 +349,7 @@ class ProduitSelligHome(models.Model):
                 "Length": res.long_sah,
                 # "Width": 1.1,
                 "Height": res.haut_sah,
-                "IsPublished": est_publie,
+                # "IsPublished": est_publie,
                 "IsVirtual": virtual,
                 "UncommissionedProduct": is_sale,
                 # "InventoryMethod": suivi_stock,
