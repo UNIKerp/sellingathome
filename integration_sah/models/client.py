@@ -53,7 +53,7 @@ class ClientSAH(models.Model):
     birthdate = fields.Date(string="Date de naissance du vendeur",help="Date de naissance du vendeur")
     birthPlace = fields.Char(string="Lieu de naissance du vendeur",help="Lieu de naissance du vendeur")
     parentSeller = fields.Integer(string="Vendeur parent rattaché au vendeur",help="Vendeur parent rattaché au vendeur")
-    animatorSeller = fields.Interger(string="Vendeur Animateur",help="Vendeur Animateur")
+    animatorSeller = fields.Integer(string="Vendeur Animateur",help="Vendeur Animateur")
     customerAccount = fields.Integer(string="ID de compte client du vendeur",help="ID de compte client du vendeur")
     nationalIdentificationNumber = fields.Char(string="Numéro d'identification national du vendeur",help="Numéro d'identification national du vendeur")
     identityCardNumber = fields.Char(string="Numéro de carte d'identité du vendeur",help="Numéro de carte d'identité du vendeur")
@@ -89,6 +89,13 @@ class ClientSAH(models.Model):
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
 
 
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['ref_sah'] = ''
+        default['id_client_sah'] = 0
+        default['id_vendeur_sah'] = 0
+        # Appeler la méthode copy du parent pour créer la copie avec les valeurs par défaut
+        return super(ClientSAH, self).copy(default)
     def get_update_client_sah(self):
         headers_client = self.env['authentication.sah'].establish_connection()
         url_client = "https://demoapi.sellingathome.com/v1/Customers"
@@ -156,7 +163,7 @@ class ClientSAH(models.Model):
                         #'':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
                         #'':clients_sah['TaxExempt'],
-                        'street':clients_sah['StreetAddress'],
+                        'street':clients_sah['StreetAddr00:00ess'],
                         'street2':clients_sah['StreetAddress2']+','+clients_sah['StreetAddress3'] if clients_sah['StreetAddress3']!="" else clients_sah['StreetAddress2'],
                         'zip':clients_sah['Postcode'],
                         'city':clients_sah['City'],
