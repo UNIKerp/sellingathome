@@ -239,7 +239,7 @@ class ClientSAH(models.Model):
                         'lang':active_lang.code,
                         'vat':data['CompanyVAT'],
                         'email': data['Email'],
-                        'title':gender,
+                        # 'title':gender,
                         # 'ImageUrl':data[''],
                         # 'Status':data[''],
                         # 'StatusForever':data[''],
