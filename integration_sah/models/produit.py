@@ -316,14 +316,12 @@ class ProduitSelligHome(models.Model):
             if discount_start_date:
                 discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
                 discount_start_date_iso = discount_start_date_utc.isoformat()
-                _logger.info("discount_start_date_iso %s",discount_start_date_iso)
             else:
                 discount_start_date_iso = None
 
             if discount_end_date:
                 discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
                 discount_end_date_iso = discount_end_date_utc.isoformat()
-                _logger.info("discount_end_date_iso %s",discount_end_date_iso)
             else:
                 discount_end_date_iso = None
 
@@ -421,7 +419,7 @@ class ProduitSelligHome(models.Model):
         return res
 
 
-    """def write(self, vals):
+    def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
@@ -461,4 +459,4 @@ class ProduitSelligHome(models.Model):
      
                     
             rec = super(ProduitSelligHome, self).write(vals)
-            return rec"""
+            return rec
