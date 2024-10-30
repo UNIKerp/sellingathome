@@ -166,7 +166,7 @@ class ClientSAH(models.Model):
                         'companyIdentificationNumber':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
                         #'':clients_sah['TaxExempt'],
-                        'street':clients_sah['StreetAddr00:00ess'],
+                        'street':clients_sah['StreetAddress'],
                         'street2':clients_sah['StreetAddress2']+','+clients_sah['StreetAddress3'] if clients_sah['StreetAddress3']!="" else clients_sah['StreetAddress2'],
                         'zip':clients_sah['Postcode'],
                         'city':clients_sah['City'],
