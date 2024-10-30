@@ -197,6 +197,7 @@ class ClientSAH(models.Model):
             datas = response.json()
             for data in datas:
                 print('PPPPPPPPP',data)
+                print('PPPPPPPPP',data)
                 ref_sah= 'V'+str(data['Id'])
                 pays=self.env['res.country'].search([('code','=',data['CountryIso'])])
                 contact = self.env['res.partner'].search([('ref_sah','=',ref_sah)])

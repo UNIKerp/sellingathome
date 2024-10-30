@@ -75,19 +75,19 @@ class ProduitSelligHome(models.Model):
                     })
 
                     # Créer un élément de liste de prix associé
-                    price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
-                    if price_list:
-                        price_list = self.env['product.pricelist'].create({
-                            'name': 'SAH Liste de Prix',
-                            'currency_id': self.env.user.company_id.currency_id.id
-                        })
+                    # price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
+                    # if price_list:
+                    #     price_list = self.env['product.pricelist'].create({
+                    #         'name': 'SAH Liste de Prix',
+                    #         'currency_id': self.env.user.company_id.currency_id.id
+                    #     })
                     
-                    self.env['product.pricelist.item'].create({
-                        'pricelist_id': price_list.id,
-                        'product_tmpl_id': new_product.id,
-                        'fixed_price': price,
-                    })
-                    _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
+                    # self.env['product.pricelist.item'].create({
+                    #     'pricelist_id': price_list.id,
+                    #     'product_tmpl_id': new_product.id,
+                    #     'fixed_price': price,
+                    # })
+                    # _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
 
                     _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
                 else:
@@ -421,14 +421,15 @@ class ProduitSelligHome(models.Model):
         return res
 
 
-    def write(self, vals):
+    """def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
-            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            objet = self.env['product.template']
+            objet.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
             if self.is_storable == True:
                 url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
                 values = {
@@ -460,4 +461,4 @@ class ProduitSelligHome(models.Model):
      
                     
             rec = super(ProduitSelligHome, self).write(vals)
-            return rec
+            return rec"""
