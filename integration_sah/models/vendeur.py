@@ -9,6 +9,7 @@ class vendeur(models.Model):
     _inherit = "res.users"
 
     id_vendeur_sah = fields.Char(string='Id vendeur SAH')
+   
     type_revendeur = fields.Selection([
         ('vendeur_domicile', 'VENDEUR À DOMICILE INDÉPENDANT'),
         ('vdi', 'VDI INSCRIT AU RCS'),
