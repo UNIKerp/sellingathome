@@ -29,8 +29,8 @@ class ClientSAH(models.Model):
         ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"),
         ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
         ]
-    
-    Gender = fields.Selection([
+    # les champs du client
+    gender = fields.Selection([
             ('0','Mr'),
             ('1' , 'Mrs'),
             ('2' , 'Ms'),], string='Genre', help='Genre',
@@ -38,12 +38,13 @@ class ClientSAH(models.Model):
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
     sellerId = fields.Integer(string="Identifiant du vendeur principal du client",help="Identifiant du vendeur principal du client")
     hostedMeeting = fields.Boolean(string="A déjà accueilli une réunion",help="A déjà accueilli une réunion")
-    ParticipedMeeting = fields.Boolean(string="A déjà participé à une réunion",help="A déjà participé à une réunion")
+    participedMeeting = fields.Boolean(string="A déjà participé à une réunion",help="A déjà participé à une réunion")
     hasOrdered = fields.Boolean(string='A déjà commandé',help='A déjà commandé')
     consent = fields.Boolean(string='Consentement du client',help='Consentement du client')
     ConsentDt = fields.Boolean(string="date du Consentement du client",help="date du Consentement du client")
     CustomQuestionAnswers = fields.Char(string='Réponses en question',help="Réponses en question")
 
+    # Les champs du du vendeur
     status = fields.Char(string='Nom du statut',help='Nom du statut')
     Statut_pour_toujours = fields.Char(string="Statut permanent",help='Statut permanent')
     isActive = fields.Boolean(string='Vendeur Actif',help='Vendeur Actif')
@@ -56,7 +57,7 @@ class ClientSAH(models.Model):
     customerAccount = fields.Integer(string="ID de compte client du vendeur",help="ID de compte client du vendeur")
     nationalIdentificationNumber = fields.Char(string="Numéro d'identification national du vendeur",help="Numéro d'identification national du vendeur")
     identityCardNumber = fields.Char(string="Numéro de carte d'identité du vendeur",help="Numéro de carte d'identité du vendeur")
-    nationalité =fields.Char(string="Nationalité du vendeur",help="Nationalité du vendeur")
+    nationalite =fields.Char(string="Nationalité du vendeur",help="Nationalité du vendeur")
     miniSiteIsActive = fields.Boolean(string='Le mini-site est actif',help="Le mini-site est actif")
     miniSiteUsername = fields.Char(string="Nom d'utilisateur du minisite",help="Nom d'utilisateur du minisite")
     miniSiteUrl = fields.Char(string='URL du mini-site',help=" URL du mini-site")

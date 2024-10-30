@@ -14,9 +14,35 @@
               <field name="vdi_id" invisible="client_sah == 'vdi'"  domain="[('client_sah','=','vdi')]"/> 
             </xpath>
             <xpath expr="//notebook/page[@name='internal_notes']" position="after">
-              <page name="Nouveux champs" string="Nouveux champs">
-                        
-              </page>
+            <page name="Nouveux champs" string="Nouveux champs">
+              <field name="companyIdentificationNumber"/> 
+              <field name="sellerId"/> 
+              <field name="gender"/> 
+              <field name="hostedMeeting"/> 
+              <field name="participedMeeting"/> 
+              <field name="hasOrdered"/> 
+              <field name="consent"/> 
+              <field name="ConsentDt"/> 
+              <field name="CustomQuestionAnswers"/> 
+              <field name="status"/> 
+              <field name="Statut_pour_toujours"/> 
+              <field name="isActive"/> 
+              <field name="candidacyId"/> 
+              <field name="emailIsFlagged"/> 
+              <field name="birthdate"/> 
+              <field name="birthPlace"/> 
+              <field name="parentSeller"/> 
+              <field name="animatorSeller"/> 
+              <field name="customerAccount"/> 
+              <field name="nationalIdentificationNumber"/> 
+              <field name="identityCardNumber"/> 
+              <field name="nationalite"/> 
+              <field name="miniSiteIsActive"/> 
+              <field name="miniSiteUsername"/> 
+              <field name="miniSiteUrl"/> 
+              <field name="signature"/> 
+              <field name="timeZone"/> 
+            </page>
             </xpath>
         </field>
       </record>
