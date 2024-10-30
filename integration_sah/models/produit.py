@@ -100,16 +100,15 @@ class ProduitSelligHome(models.Model):
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
         get_response_produit = requests.get(url_produit, headers=headers)
         if get_response_produit.status_code == 200:
-                response_data_produit = get_response_produit.json()
-                for identifiant in response_data_produit:
-                    identite_api = identifiant['Id']
+            response_data_produit = get_response_produit.json()
+            for identifiant in response_data_produit:
+                identite_api = identifiant['Id']
 
-                    product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
-                
-                    if product_odoo:
-                        self.update_produit_dans_sah(product_odoo, headers)
-                    else:
-                        _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
+                product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
+                if product_odoo:
+                    self.update_produit_dans_sah(product_odoo, headers)
+                else:
+                    _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
 
         else:
             _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {get_response_produit.status_code}")
@@ -165,7 +164,6 @@ class ProduitSelligHome(models.Model):
         if product.produit_sah_id:
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
-            # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
             rupture_stock = bool(product.allow_out_of_stock_order)
             est_publie = bool(product.is_published)
             is_sale = bool(product.sale_ok)
@@ -247,10 +245,10 @@ class ProduitSelligHome(models.Model):
                             for value in line.value_ids
                         ]
                     }
-                    for line in product.attribute_line_ids if line.value_ids
+                    for line in product.attribute_line_ids
                 ]
             }
-            
+            _logger.warning("SUCCCCCCCESSSSS 555555555555")
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             
             if put_response_produit.status_code == 200:

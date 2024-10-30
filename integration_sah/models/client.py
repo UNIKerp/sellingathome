@@ -105,32 +105,31 @@ class ClientSAH(models.Model):
                 vendeur_id = self.env['res.partner'].search([('ref_sah','=',ref_vendeur)])
                 campany = self.create({ 'company_type':'company','name' :clients_sah['CompanyName']}).id if clients_sah['CompanyName'] else None
                 pays = self.env['res.country'].search([('code','=',clients_sah['CountryIso'])]).id if clients_sah['CountryIso'] else None 
-                # monsieur=self.env['res.partner.title'].search([('id','=',3)])
-                # mademaselle=self.env['res.partner.title'].search([('id','=',1)])
-                # madame=self.env['res.partner.title'].search([('id','=',2)])
-                # gender = (
-                #         monsieur.id if clients_sah['Gender'] == 0 else
-                #         mademaselle.id if clients_sah['Gender'] == 1 else
-                #         madame.id if clients_sah['Gender'] == 2 
-                #     )
+                monsieur=self.env['res.partner.title'].search([('id','=',3)])
+                mademaselle=self.env['res.partner.title'].search([('id','=',1)])
+                madame=self.env['res.partner.title'].search([('id','=',2)])
+                gender = (
+                        monsieur.id if clients_sah['Gender'] == 0 else
+                        mademaselle.id if clients_sah['Gender'] == 1 else
+                        madame.id if clients_sah['Gender'] == 2 else
+                        None
+                    )
                 if not client_odoo:
                     self.create({
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
                         'ref_sah':ref_sah,
-                        # 'title':gender,
+                        'title':gender,
                         'sellerId':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
                         'mobile':clients_sah['MobilePhone'],
-                        #'':clients_sah['Roles'],
                         'ref':clients_sah['CustomerReference'],
                         'parent_id':campany,
                         'companyIdentificationNumber':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
-                        #'':clients_sah['TaxExempt'],
                         'street':clients_sah['StreetAddress'],
                         'street2':clients_sah['StreetAddress2']+','+clients_sah['StreetAddress3'] if clients_sah['StreetAddress3']!="" else clients_sah['StreetAddress2'],
                         'zip':clients_sah['Postcode'],
@@ -139,8 +138,6 @@ class ClientSAH(models.Model):
                         'partner_latitude':clients_sah['Latitude'],
                         'partner_longitude':clients_sah['Longitude'],
                         'country_code':clients_sah['CountryIso'],
-                        #'':clients_sah['BrandFields'],
-                        'ref_vendeur':clients_sah['SellerId'],
                         'hostedMeeting':clients_sah['HostedMeeting'],
                         'participedMeeting':clients_sah['ParticipedMeeting'],
                         'participedMeeting':clients_sah['HasOrdered'],
@@ -154,18 +151,16 @@ class ClientSAH(models.Model):
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
-                        # 'title':gender,
-                        # 'ref_vendeur':clients_sah['SellerId'],
+                        'title':gender,
+                        'sellerId':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'email':clients_sah['Email'],
                         'phone':clients_sah['Phone'],
                         'mobile':clients_sah['MobilePhone'],
-                        #'':clients_sah['Roles'],
                         'ref':clients_sah['CustomerReference'],
                         'parent_id':campany,
                         'companyIdentificationNumber':clients_sah['CompanyIdentificationNumber'],
                         'vat':clients_sah['CompanyVAT'],
-                        #'':clients_sah['TaxExempt'],
                         'street':clients_sah['StreetAddress'],
                         'street2':clients_sah['StreetAddress2']+','+clients_sah['StreetAddress3'] if clients_sah['StreetAddress3']!="" else clients_sah['StreetAddress2'],
                         'zip':clients_sah['Postcode'],
@@ -174,8 +169,6 @@ class ClientSAH(models.Model):
                         'partner_latitude':clients_sah['Latitude'],
                         'partner_longitude':clients_sah['Longitude'],
                         'country_code':clients_sah['CountryIso'],
-                        #'':clients_sah['BrandFields'],
-                        # 'ref_vendeur':clients_sah['SellerId'],
                         'hostedMeeting':clients_sah['HostedMeeting'],
                         'hostedMeeting':clients_sah['ParticipedMeeting'],
                         'hostedMeeting':clients_sah['HasOrdered'],
@@ -212,17 +205,15 @@ class ClientSAH(models.Model):
                         'vendeur_domicile' if data['CompanyStatus'] == 10 else
                         None
                     )
-                # monsieur=self.env['res.partner.tite'].search([('id','=',3)])
-                # mademaselle=self.env['res.partner.tite'].search([('id','=',1)])
-                # madame=self.env['res.partner.tite'].search([('id','=',2)])
-                # gender = (
-                #         monsieur.id if data['Gender'] == 0 else
-                #         mademaselle.id if data['Gender'] == 1 else
-                #         madame.id if data['Gender'] == 2 
-                #     )
+                monsieur=self.env['res.partner.title'].search([('id','=',3)])
+                mademaselle=self.env['res.partner.title'].search([('id','=',1)])
+                madame=self.env['res.partner.title'].search([('id','=',2)])
+                gender = (
+                        monsieur.id if data['Gender'] == 0 else
+                        mademaselle.id if data['Gender'] == 1 else
+                        madame.id if data['Gender'] == 2 else None
+                    )
                 if contact:
-                    
-                    _logger.info('@@@@@@@@ssssssssssss %s',data['Email'])
                     contact.write({
                         'client_sah':'vdi',
                         'phone':data['Phone'],
@@ -238,51 +229,50 @@ class ClientSAH(models.Model):
                         'company_name':data['CompanyName'],
                         'country_id':pays.id if pays else None,
                         'lang':active_lang.code,
-                        'vat':data['CompanyVAT'],
                         'email': data['Email'],
-                        # 'title':gender,
-                        # 'ImageUrl':data[''],
-                        # 'Status':data[''],
-                        # 'StatusForever':data[''],
-                        # 'CandidacyId':data[''],
-                        # 'EmailIsFlagged':data[''],
-                        # 'Birthdate':data[''],
-                        # 'BirthPlace':data[''],
-                        # 'ParentSeller':data[''],
-                        # 'AnimatorSeller':data[''],
-                        # 'CustomerAccount':data[''],
-                        # 'NationalIdentificationNumber':data[''],
-                        # 'IdentityCardNumber':data[''],
-                        # 'Nationality':data[''],
-                        # 'CompanyStatus':data[''],
+                        'isActive':data['IsActive'],
+                        'title':gender,
+                        'status':data['Status'],
+                        'Statut_pour_toujours':data['StatusForever'],
+                        'candidacyId':data['CandidacyId'],
+                        'emailIsFlagged':data['EmailIsFlagged'],
+                        'birthdate':data['Birthdate'],
+                        'birthPlace':data['BirthPlace'],
+                        'parentSeller':data['ParentSeller'],
+                        'animatorSeller':data['AnimatorSeller'],
+                        'customerAccount':data['CustomerAccount'],
+                        'nationalIdentificationNumber':data['NationalIdentificationNumber'],
+                        'identityCardNumber':data['IdentityCardNumber'],
+                        'nationalite':data['Nationality'],
                         'companyIdentificationNumber':data['CompanyIdentificationNumber'],
-                        # 'SocialContributionsType':data[''],
-                        # 'StartContractDate':data[''],
-                        # 'EndContractDate':data[''],
-                        # 'StartActivityDate':data[''],
-                        # 'RemoteStatus':data[''],
-                        # 'CreateCustomerAccount':data[''],
-                        # 'Brand':data[''],
-                        # 'Roles':data[''],
-                        # 'AdditionalInformations':data[''],
-                        # 'AccountBankCode':data[''],
-                        # 'AccountWicketCode':data[''],
-                        # 'AccountNumber':data[''],
-                        # 'AccountKey':data[''],
-                        # 'AccountIban'('id_vendeur_sah','=',data['Id']),:data[''],
-                        # 'AccountSwiftCode':data[''],
-                        # 'BankName':data[''],
-                        # 'BankingDomiciliation':data[''],
-                        # 'BankAccountOwner':data[''],
-                        # 'GdprAccepted':data[''],
-                        # 'AuthorizeSellerDeliveryModeOnEcommerce':data[''],
-                        # 'GdprLastAcceptedDate':data[''],
-                        # 'Photo':data[''],
-                        # 'TimeZone':data[''],
-                        # 'Signature':data[''],
-                        # 'MiniSiteUrl':data[''],
-                        # 'MiniSiteUsername':data[''],
-                        # 'MiniSiteIsActive':data[''],
+                        'socialContributionsType':data['SocialContributionsType'],
+                        'startContractDate':data['StartContractDate'],
+                        'endContractDate':data['EndContractDate'],
+                        'startActivityDate':data['StartActivityDate'],
+                        'remoteStatus':data['RemoteStatus'],
+                        'createCustomerAccount':data['CreateCustomerAccount'],
+                        'brand':data['Brand'],
+                        'additionalInformations':data['AdditionalInformations'],
+                        'accountBankCode':data['AccountBankCode'],
+                        'accountWicketCode':data['AccountWicketCode'],
+                        'accountNumber':data['AccountNumber'],
+                        'accountKey':data['AccountKey'],
+                        'accountIban':data['AccountIban'],
+                        'accountSwiftCode':data['AccountSwiftCode'],
+                        'bankName':data['BankName'],
+                        'bankingDomiciliation':data['BankingDomiciliation'],
+                        'bankAccountOwner':data['BankAccountOwner'],
+                        'gdprAccepted':data['GdprAccepted'],
+                        'authorizeSellerDeliveryModeOnEcommerce':data['AuthorizeSellerDeliveryModeOnEcommerce'],
+                        'gdprLastAcceptedDate':data['GdprLastAcceptedDate'],
+                        'photo':data['Photo'],
+                        'companyIdentificationNumbervendeur':data['CompanyIdentificationNumber'],
+                        'signature':data['Signature'],
+                        'miniSiteUrl':data['MiniSiteUrl'],
+                        'miniSiteUsername':data['MiniSiteUsername'],
+                        'miniSiteIsActive':data['MiniSiteIsActive'],
+                        'companyRCSNumber':data['CompanyRCSNumber'],
+                        'companyVAT':data['CompanyVAT'],
                     })
                 else:
        
@@ -303,50 +293,49 @@ class ClientSAH(models.Model):
                     'company_name':data['CompanyName'],
                     'country_id':pays.id if pays else None,
                     'lang':active_lang.code,
-                    'vat':data['CompanyVAT'],
                     'email': data['Email'],
-                    # 'ImageUrl':data[''],
-                    # 'Status':data[''],
-                    # 'StatusForever':data[''],
-                    # 'CandidacyId':data[''],
-                    # 'EmailIsFlagged':data[''],
-                    # 'Birthdate':data[''],
-                    # 'BirthPlace':data[''],
-                    # 'ParentSeller':data[''],
-                    # 'AnimatorSeller':data[''],
-                    # 'CustomerAccount':data[''],
-                    # 'NationalIdentificationNumber':data[''],
-                    # 'IdentityCardNumber':data[''],
-                    # 'Nationality':data[''],
+                    'Status':data['Status'],
+                    'candidacyId':data['CandidacyId'],
+                    'emailIsFlagged':data['EmailIsFlagged'],
+                    'birthdate':data['Birthdate'],
+                    'birthPlace':data['BirthPlace'],
+                    'parentSeller':data['ParentSeller'],
+                    'animatorSeller':data['AnimatorSeller'],
+                    'customerAccount':data['CustomerAccount'],
+                    'nationalIdentificationNumber':data['NationalIdentificationNumber'],
+                    'identityCardNumber':data['IdentityCardNumber'],
+                    'nationalite':data['Nationality'],
                     # 'CompanyStatus':data[''],
-                    # 'companyIdentificationNumber':data['CompanyIdentificationNumber'],
-                    # 'SocialContributionsType':data[''],
-                    # 'StartContractDate':data[''],
-                    # 'EndContractDate':data[''],
-                    # 'StartActivityDate':data[''],
-                    # 'RemoteStatus':data[''],
-                    # 'CreateCustomerAccount':data[''],
-                    # 'Brand':data[''],
-                    # 'Roles':data[''],
-                    # 'AdditionalInformations':data[''],
-                    # 'AccountBankCode':data[''],
-                    # 'AccountWicketCode':data[''],
-                    # 'AccountNumber':data[''],
-                    # 'AccountKey':data[''],
-                    # 'AccountIban':data[''],
-                    # 'AccountSwiftCode':data[''],
-                    # 'BankName':data[''],
-                    # 'BankingDomiciliation':data[''],
-                    # 'BankAccountOwner':data[''],
-                    # 'GdprAccepted':data[''],
-                    # 'AuthorizeSellerDeliveryModeOnEcommerce':data[''],
-                    # 'GdprLastAcceptedDate':data[''],
-                    # 'Photo':data[''],
-                    # 'TimeZone':data[''],
-                    # 'Signature':data[''],, limit=1, limit=1
-                    # 'MiniSiteUrl':data[''],
-                    # 'MiniSiteUsername':data[''],
-                    # 'MiniSiteIsActive':data[''],
+                    'companyIdentificationNumber':data['CompanyIdentificationNumber'],
+                    'socialContributionsType':data['SocialContributionsType'],
+                    'startContractDate':data['StartContractDate'],
+                    'endContractDate':data['EndContractDate'],
+                    'startActivityDate':data['StartActivityDate'],
+                    'remoteStatus':data['RemoteStatus'],
+                    'createCustomerAccount':data['CreateCustomerAccount'],
+                    'brand':data['Brand'],
+                    'additionalInformations':data['AdditionalInformations'],
+                    'accountBankCode':data['AccountBankCode'],
+                    'accountWicketCode':data['AccountWicketCode'],
+                    'accountNumber':data['AccountNumber'],
+                    'accountKey':data['AccountKey'],
+                    'accountIban':data['AccountIban'],
+                    'accountSwiftCode':data['AccountSwiftCode'],
+                    'bankName':data['BankName'],
+                    'bankingDomiciliation':data['BankingDomiciliation'],
+                    'bankAccountOwner':data['BankAccountOwner'],
+                    'gdprAccepted':data['GdprAccepted'],
+                    'authorizeSellerDeliveryModeOnEcommerce':data['AuthorizeSellerDeliveryModeOnEcommerce'],
+                    'gdprLastAcceptedDate':data['GdprLastAcceptedDate'],
+                    'photo':data['Photo'],
+                    'signature':data['Signature'],
+                    'miniSiteUrl':data['MiniSiteUrl'],
+                    'miniSiteUsername':data['MiniSiteUsername'],
+                    'miniSiteIsActive':data['MiniSiteIsActive'],
+                    'companyRCSNumber':data['CompanyRCSNumber'],
+                    'companyVAT':data['CompanyVAT'],
+                    'companyIdentificationNumbervendeur':data['CompanyIdentificationNumber'],
+                    'isActive':data['IsActive'],
                 })
 
         else:
