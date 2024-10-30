@@ -89,6 +89,7 @@ class ClientSAH(models.Model):
 
 
     def copy(self, default=None):
+        default = dict(default or {})
         default['ref_sah'] = ''
         default['id_client_sah'] =0
         # Appeler la méthode copy du parent pour créer la copie avec les valeurs par défaut
