@@ -1,4 +1,4 @@
-from odoo import models, api, fields
+from odoo import models, api, fields,_
 import requests
 import json
 from datetime import date
@@ -9,6 +9,9 @@ class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
     produit_sah_id = fields.Integer("ID produit SAH")
+    default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
+
+    
 
     # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):
@@ -150,6 +153,7 @@ class ProduitSelligHome(models.Model):
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
             rupture_stock = bool(product.allow_out_of_stock_order)
             est_publie = bool(product.is_published)
+            is_sale = bool(product.sale_ok)
             virtual = product.type == 'service'
             des = product.description_ecommerce
             suivi_stock = 1 if product.is_storable == True else 0
@@ -160,18 +164,7 @@ class ProduitSelligHome(models.Model):
                 "AllowOutOfStockOrders": rupture_stock,
                 "IsVirtual": virtual,
                 "InventoryMethod": suivi_stock,
-                "Prices": [
-                    {
-                        "Id": product.produit_sah_id,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": product.name,
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": product.list_price,
-                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
-                        "ProductCost": product.standard_price,
-                        "EcoTax": 8.1
-                    }
-                ],
+                "UncommissionedProduct": is_sale,
                 "Barcode": product.barcode,
                 "Weight": product.weight,
                 "IsPublished": est_publie,
@@ -238,6 +231,7 @@ class ProduitSelligHome(models.Model):
         est_publie = bool(res.is_published)
         virtual = res.type == 'service'
         rupture_stock = bool(res.allow_out_of_stock_order)
+        is_sale = bool(res.sale_ok)
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if res.is_storable == True else 0
@@ -301,7 +295,7 @@ class ProduitSelligHome(models.Model):
                 # "Height": 1.1,
                 "IsPublished": est_publie,
                 "IsVirtual": virtual,
-                # "UncommissionedProduct": true,
+                "UncommissionedProduct": is_sale,
                 "InventoryMethod": suivi_stock,
                 # "LowStockQuantity": 1,
                 "AllowOutOfStockOrders": rupture_stock,
@@ -358,10 +352,11 @@ class ProduitSelligHome(models.Model):
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
                 res.produit_sah_id = product_id
-                self.env['product.pricelist'].create({
+                default_list_price = self.env['product.pricelist'].create({
                     'name':f'Tarif du produit {res.name}',
                     'price_list_sah_id':response_data['Prices'][0]['Id']
                 })
+                res.default_list_price = default_list_price.id
             else:
                 _logger.info(f"Error {post_response.status_code}: {post_response.text}")
         return res
@@ -371,6 +366,10 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         if vals:
             ### Modification stock
+            job_kwargs = {
+                'description': 'Mise à jour du produit dans SAH',
+            }
+            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
             if self.is_storable == True:
                 url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
                 values = {

@@ -18,7 +18,25 @@ class Tarifs(models.Model):
 
     price_sah_id = fields.Char(string="ID Prix SAH")
 
-    @api.model_create_multi
+    # redéfintion de la fonction _default_pricelist_id
+    def _default_pricelist_id(self):
+        active_id = self.env.context.get('active_id')
+        product_id = self.env['product.template'].search([('id','=',active_id)])
+        if product_id and product_id.default_list_price:
+            return product_id.default_list_price
+        else:
+            return self.env['product.pricelist'].search([
+                '|', ('company_id', '=', False),
+                ('company_id', '=', self.env.company.id)], limit=1)
+
+    pricelist_id = fields.Many2one(
+        comodel_name='product.pricelist',
+        string="Pricelist",
+        index=True, ondelete='cascade',
+        required=True,
+        default=_default_pricelist_id)
+
+    @api.model
     def create(self, vals):
         res = super(Tarifs, self).create(vals)
         headers = self.env['authentication.sah'].establish_connection()
@@ -61,6 +79,7 @@ class Tarifs(models.Model):
 
 
     def write(self, vals):
+        res = super(Tarifs, self).write(vals)
         if vals:
             headers = self.env['authentication.sah'].establish_connection()
             price_list_id = str(self.pricelist_id.price_list_sah_id)
@@ -84,27 +103,10 @@ class Tarifs(models.Model):
                     for elt in self.pricelist_id.item_ids
                 ]
             }
+            _logger.info('===================================================%s',self.pricelist_id)
             response = requests.put(url, headers=headers, json=values)
             if response.status_code == 200:
                 _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
             else:
                 _logger.error('Erreur lors de la modification dans l\'API : %s', response.text)
-    
-        res = super(Tarifs, self).write(vals)
         return res
-
-
-
-    def recuperation_liste_prices(self):
-        api_url = "https://demoapi.sellingathome.com/v1/Prices"
-        headers = self.env['authentication.sah'].establish_connection()
-        params = {
-            "productid": 118823
-        }
-        response = requests.get(api_url, headers=headers, params=params)
-        if response.status_code == 200:
-            prices = response.json()
-            _logger.info('=========================== %s', prices)
-        else:
-            _logger.error('Erreur lors de la récupération des prix: %s - %s', response.status_code, response.text)
-
