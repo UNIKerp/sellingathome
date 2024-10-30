@@ -10,15 +10,15 @@ _logger = logging.getLogger(__name__)
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
-    produit_sah_id = fields.Integer("ID produit SAH")
+    produit_sah_id = fields.Integer("ID produit SAH", help="l'ID du produit dans SAH")
     default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
-    long_sah = fields.Float("Longueur Produit SAH")
-    haut_sah = fields.Float("Hauteur Produit SAH")
-    unitcapacity = fields.Char("Capacité Unitaire SAH")
-    availableOnHostMinisites = fields.Boolean("Disponible Minisites hôtes SAH")
-    discountEndDate = fields.Datetime("Date Fin SAH")
-    discountStartDate = fields.Datetime("Date debut SAH")
-    discountBadgeIsActive = fields.Boolean("BadgeEst Actif")
+    long_sah = fields.Float("Longueur Produit SAH", help="Longueur du produit dans SAH")
+    haut_sah = fields.Float("Hauteur Produit SAH", help="Hauteur du produit dans SAH")
+    unitcapacity = fields.Char("Capacité Unitaire SAH", help="Capacité de l'unitaire du produit dans SAH")
+    availableOnHostMinisites = fields.Boolean("Disponible Minisites hôtes SAH", help="Disponible de minisites hôtes dans SAH")
+    discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
+    discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
+    discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
 
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
