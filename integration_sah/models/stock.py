@@ -42,19 +42,19 @@ class StockPickingSAH(models.Model):
                         "ProductReference":  line.product_id.product_tmpl_id.default_code,
                         "StockQuantity": int(qty_available),
                         "StockQuantityComing":int(virtual_available),
-                        "ProductCombinationStocks": [
-                            {
-                            "ProductCombinationId": line.product_id.product_tmpl_id.produit_sah_id,
-                            "ProductCombinationBarcode": "sample string 1",
-                            "ProductCombinationSku": "sample string 2",
-                            "ProductCombinationRemoteId": 1,
-                            "StockQuantity": 1,
-                            "StockQuantityComing": 1,
-                            "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
-                            "SellerStockQuantity": 1,
-                            "AllowOutOfStockOrders": True
-                            }
-                        ],
+                        # "ProductCombinationStocks": [
+                        #     {
+                        #     "ProductCombinationId": line.product_id.product_tmpl_id.produit_sah_id,
+                        #     "ProductCombinationBarcode": "sample string 1",
+                        #     "ProductCombinationSku": "sample string 2",
+                        #     "ProductCombinationRemoteId": 1,
+                        #     "StockQuantity": 1,
+                        #     "StockQuantityComing": 1,
+                        #     "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                        #     "SellerStockQuantity": 1,
+                        #     "AllowOutOfStockOrders": True
+                        #     }
+                        # ],
                         "AllowOutOfStockOrders": True
                         
                     }
@@ -83,19 +83,19 @@ class StockSAH(models.TransientModel):
                         "ProductReference": produit.default_code,
                         "StockQuantity": int(res.new_quantity),
                         "StockQuantityComing":int(produit.virtual_available),  
-                        "ProductCombinationStocks": [
-                            {
-                            "ProductCombinationId": produit.produit_sah_id,
-                            "ProductCombinationBarcode": "sample string 1",
-                            "ProductCombinationSku": "sample string 2",
-                            "ProductCombinationRemoteId": 1,
-                            "StockQuantity": 1,
-                            "StockQuantityComing": 1,
-                            "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
-                            "SellerStockQuantity": 1,
-                            "AllowOutOfStockOrders": True
-                            }
-                        ],
+                        # "ProductCombinationStocks": [
+                        #     {
+                        #     "ProductCombinationId": produit.produit_sah_id,
+                        #     "ProductCombinationBarcode": "sample string 1",
+                        #     "ProductCombinationSku": "sample string 2",
+                        #     "ProductCombinationRemoteId": 1,
+                        #     "StockQuantity": 1,
+                        #     "StockQuantityComing": 1,
+                        #     "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                        #     "SellerStockQuantity": 1,
+                        #     "AllowOutOfStockOrders": True
+                        #     }
+                        # ],
                         "AllowOutOfStockOrders": True
                     }
                     response = requests.put(url, headers=headers, json=values)
@@ -124,19 +124,19 @@ class StockQuant(models.Model):
                     "ProductReference": res.product_tmpl_id.default_code,
                     "StockQuantity": int(res.inventory_quantity_auto_apply),
                     "StockQuantityComing":int(res.product_tmpl_id.virtual_available),  
-                    "ProductCombinationStocks": [
-                        {
-                        "ProductCombinationId": res.product_tmpl_id.produit_sah_id,
-                        "ProductCombinationBarcode": "sample string 1",
-                        "ProductCombinationSku": "sample string 2",
-                        "ProductCombinationRemoteId": 1,
-                        "StockQuantity": 1,
-                        "StockQuantityComing": 1,
-                        "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
-                        "SellerStockQuantity": 1,
-                        "AllowOutOfStockOrders": True
-                        }
-                    ],
+                    # "ProductCombinationStocks": [
+                    #     {
+                    #     "ProductCombinationId": res.product_tmpl_id.produit_sah_id,
+                    #     "ProductCombinationBarcode": "sample string 1",
+                    #     "ProductCombinationSku": "sample string 2",
+                    #     "ProductCombinationRemoteId": 1,
+                    #     "StockQuantity": 1,
+                    #     "StockQuantityComing": 1,
+                    #     "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                    #     "SellerStockQuantity": 1,
+                    #     "AllowOutOfStockOrders": True
+                    #     }
+                    # ],
                     "AllowOutOfStockOrders": True
                 }
                 response = requests.put(url, headers=headers, json=values)
@@ -159,19 +159,19 @@ class StockQuant(models.Model):
                     "ProductReference": self.product_tmpl_id.default_code,
                     "StockQuantity": int(self.inventory_quantity_auto_apply),
                     "StockQuantityComing":int(self.product_tmpl_id.virtual_available),  
-                    "ProductCombinationStocks": [
-                        {
-                        "ProductCombinationId": self.product_tmpl_id.produit_sah_id,
-                        "ProductCombinationBarcode": "sample string 1",
-                        "ProductCombinationSku": "sample string 2",
-                        "ProductCombinationRemoteId": 1,
-                        "StockQuantity": 1,
-                        "StockQuantityComing": 1,
-                        "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
-                        "SellerStockQuantity": 1,
-                        "AllowOutOfStockOrders": True
-                        }
-                    ],
+                    # "ProductCombinationStocks": [
+                    #     {
+                    #     "ProductCombinationId": self.product_tmpl_id.produit_sah_id,
+                    #     "ProductCombinationBarcode": "sample string 1",
+                    #     "ProductCombinationSku": "sample string 2",
+                    #     "ProductCombinationRemoteId": 1,
+                    #     "StockQuantity": 1,
+                    #     "StockQuantityComing": 1,
+                    #     "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                    #     "SellerStockQuantity": 1,
+                    #     "AllowOutOfStockOrders": True
+                    #     }
+                    # ],
                     "AllowOutOfStockOrders": True
                 }
                 response = requests.put(url, headers=headers, json=values)
