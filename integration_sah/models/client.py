@@ -100,12 +100,12 @@ class ClientSAH(models.Model):
         job_kwargs_sellers = {
             "description": "Mise à jour et création de nouveaux vendeurs s'ils existent de SAH vers Odoo",
         }
-        job_kwargs_sellers = {
+        job_kwargs_commandes = {
             "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
         }
         self.with_delay(**job_kwargs_sellers).recuperation_vendeurs_sah_vers_odoo()
         self.with_delay(**job_kwargs_customers).get_update_client_sah()
-        self.env['sale.order'].with_delay(**job_kwargs_customers).get_commande()
+        self.env['sale.order'].with_delay(**job_kwargs_commandes).get_commande()
         
     def get_update_client_sah(self):
         _logger.info("======================= Debut de mise à jour des clients")
