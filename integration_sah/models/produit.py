@@ -403,28 +403,12 @@ class ProduitSelligHome(models.Model):
                     "ProductReference": self.default_code,
                     "StockQuantity": int(self.qty_available),
                     "StockQuantityComing":int(self.virtual_available),
-                    # "ProductCombinationStocks": [
-                    #         {
-                    #         "ProductCombinationId": self.produit_sah_id,
-                    #         "ProductCombinationBarcode": "sample string 1",
-                    #         "ProductCombinationSku": "sample string 2",
-                    #         "ProductCombinationRemoteId": 1,
-                    #         "StockQuantity": 1,
-                    #         "StockQuantityComing": 1,
-                    #         "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
-                    #         "SellerStockQuantity": 1,
-                    #         "AllowOutOfStockOrders": True
-                    #         }
-                    # ],
                     "AllowOutOfStockOrders": True
                     
                 }
                 response2 = requests.put(url2, headers=headers, json=values)
                 if response2.status_code == 200:
-                    _logger.info("************************%s",self.virtual_available)  
+                    _logger.info(self.virtual_available)  
                 else:
                     _logger.info(f"Erreur {response2.status_code}: {response2.text}")
-     
-                    
-            
-            return rec
+        return rec
