@@ -11,13 +11,30 @@ class SaleLineSAH(models.Model):
 
     id_order_line_sh = fields.Integer(string="ID Line de Commande SAH", help="ID Line de Commande dans SAH")
 
+    _sql_constraints = [
+        ('id_order_line_sh_uniq', 'unique (id_order_line_sh)', "ID linr de commande SAH exists deja!"), ]
+    
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['id_order_line_sh'] = 0
+        return super(SaleLineSAH, self).copy(default)
+
 class SaleSAH(models.Model):
     _inherit = "sale.order"
 
     id_order_sh = fields.Integer(string="ID commande SAH", help="ID de la Commande dans SAH")
     vdi = fields.Many2one('res.partner',string="vdi",help='le veudeur dans SAH')
+    
+    _sql_constraints = [
+        ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
+    
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['id_order_sh'] = 0
+        return super(SaleSAH, self).copy(default)
 
     def get_commande(self):
+        _logger.info("======================= Debut de mise à jour des commandes")
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'            
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
@@ -35,10 +52,8 @@ class SaleSAH(models.Model):
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
-                        "currency_id":Currency.id,
-                        "user_id":client_id.user_id.id or False , 
-                        "vdi":client_id.user_id.id or False
-                        # "partner_shipping_id":delivery_address.id
+                        "currency_id":Currency.id, 
+                        "vdi":client_id.vdi_id.id or False
                     })
                     if order:
                         for elt in commande['Products']:
@@ -54,7 +69,7 @@ class SaleSAH(models.Model):
                                 })
 
                 elif commandes_odoo:
-                    commandes_odoo.write({ "name":commande['OrderRefCode'], "partner_id":client_id.id, "currency_id":Currency.id,"user_id":client_id.user_id.id or False, "vdi":client_id.user_id.id or False})
+                    commandes_odoo.write({ "name":commande['OrderRefCode'], "partner_id":client_id.id, "currency_id":Currency.id, "vdi":client_id.vdi_id.id or False})
                     for elt in commande['Products']:
                         if self.get_produit(elt['ProductId'])!=0:
                             j=0
@@ -73,7 +88,8 @@ class SaleSAH(models.Model):
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
         else:
-            print(f"Erreur {response.status_code}: {response.text}")
+            _logger.info(f"Erreur {response.status_code}: {response.text}")
+        _logger.info("======================= Fin de mise à jour des commandes")
        
             
     def _get_or_create_tax(self, tax_rate):

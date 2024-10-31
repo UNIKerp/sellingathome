@@ -2,16 +2,31 @@ from odoo import models, api, fields,_
 import requests
 import json
 from datetime import date
+from datetime import datetime
+import pytz
 import logging
 _logger = logging.getLogger(__name__)
 
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
-    produit_sah_id = fields.Integer("ID produit SAH")
+    produit_sah_id = fields.Integer("ID produit SAH", help="l'ID du produit dans SAH")
     default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
+    long_sah = fields.Float("Longueur Produit SAH", help="Longueur du produit dans SAH")
+    haut_sah = fields.Float("Hauteur Produit SAH", help="Hauteur du produit dans SAH")
+    unitcapacity = fields.Char("Capacité Unitaire SAH", help="Capacité de l'unitaire du produit dans SAH")
+    availableOnHostMinisites = fields.Boolean("Disponible Minisites hôtes SAH", help="Disponible de minisites hôtes dans SAH")
+    discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
+    discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
+    discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
 
-    
+    _sql_constraints = [
+        ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
+        
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['produit_sah_id'] = 0
+        return super(ProduitSelligHome, self).copy(default)
 
     # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):
@@ -60,19 +75,19 @@ class ProduitSelligHome(models.Model):
                     })
 
                     # Créer un élément de liste de prix associé
-                    price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
-                    if price_list:
-                        price_list = self.env['product.pricelist'].create({
-                            'name': 'SAH Liste de Prix',
-                            'currency_id': self.env.user.company_id.currency_id.id
-                        })
+                    # price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
+                    # if price_list:
+                    #     price_list = self.env['product.pricelist'].create({
+                    #         'name': 'SAH Liste de Prix',
+                    #         'currency_id': self.env.user.company_id.currency_id.id
+                    #     })
                     
-                    self.env['product.pricelist.item'].create({
-                        'pricelist_id': price_list.id,
-                        'product_tmpl_id': new_product.id,
-                        'fixed_price': price,
-                    })
-                    _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
+                    # self.env['product.pricelist.item'].create({
+                    #     'pricelist_id': price_list.id,
+                    #     'product_tmpl_id': new_product.id,
+                    #     'fixed_price': price,
+                    # })
+                    # _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
 
                     _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
                 else:
@@ -85,22 +100,22 @@ class ProduitSelligHome(models.Model):
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
         get_response_produit = requests.get(url_produit, headers=headers)
         if get_response_produit.status_code == 200:
-                response_data_produit = get_response_produit.json()
-                for identifiant in response_data_produit:
-                    identite_api = identifiant['Id']
+            response_data_produit = get_response_produit.json()
+            for identifiant in response_data_produit:
+                identite_api = identifiant['Id']
 
-                    product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
-                
-                    if product_odoo:
-                        self.update_produit_dans_sah(product_odoo, headers)
-                    else:
-                        _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
+                product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
+                if product_odoo:
+                    self.update_produit_dans_sah(product_odoo, headers)
+                else:
+                    _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
 
         else:
             _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {get_response_produit.status_code}")
 
     # Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo
     def update_produit_dans_sah(self, product, headers):
+        _logger.info("======================= Debut de mise à jour de l'Article")
         id_categ = ''
         # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
         if product.categ_id:
@@ -151,23 +166,24 @@ class ProduitSelligHome(models.Model):
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
             # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
-            rupture_stock = bool(product.allow_out_of_stock_order)
-            est_publie = bool(product.is_published)
-            is_sale = bool(product.sale_ok)
-            virtual = product.type == 'service'
-            des = product.description_ecommerce
-            suivi_stock = 1 if product.is_storable == True else 0
-
             update_data = {
                 "ProductType": 5,
                 "Reference": product.default_code,
-                "AllowOutOfStockOrders": rupture_stock,
-                "IsVirtual": virtual,
-                "InventoryMethod": suivi_stock,
-                "UncommissionedProduct": is_sale,
+                "Prices": [
+                    {
+                        "Id": product.produit_sah_id,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": product.name,
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": product.list_price,
+                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
+                        "ProductCost": product.standard_price,
+                        "EcoTax": 8.1
+                    }
+                ],
                 "Barcode": product.barcode,
                 "Weight": product.weight,
-                "IsPublished": est_publie,
+                "IsPublished": True,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -179,17 +195,6 @@ class ProduitSelligHome(models.Model):
                     {
                         "Id": id_categ,
                     }
-                ],
-                "AdditionalInformations": {
-                    "description": [des],
-                },
-                "ProductRelatedProducts": [
-                    {
-                        "ProductId": product.id,
-                        "ProductRemoteId": str(related_product.id),
-                        "ProductReference": related_product.default_code,
-                        "IsDeleted": False
-                    } for related_product in product.accessory_product_ids
                 ],
                 "Combinations": [
                     {
@@ -221,20 +226,20 @@ class ProduitSelligHome(models.Model):
             else:
                 _logger.error(f"Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code}")
 
-
+        _logger.info("======================= Fin de mise à jour de l'Article")
 
     @api.model
     def create(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         res = super(ProduitSelligHome, self).create(vals)
-        des = res.description_ecommerce 
+        # des = res.description_ecommerce 
         est_publie = bool(res.is_published)
         virtual = res.type == 'service'
         rupture_stock = bool(res.allow_out_of_stock_order)
         is_sale = bool(res.sale_ok)
         id_categ = ''
         categ_parent =''
-        suivi_stock = 1 if res.is_storable == True else 0
+        # suivi_stock = 1 if res.is_storable == True else 0
         if res.categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
@@ -270,7 +275,24 @@ class ProduitSelligHome(models.Model):
             else:
                 _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
 
-            url = "https://demoapi.sellingathome.com/v1/Products"        
+            url = "https://demoapi.sellingathome.com/v1/Products"   
+
+            discount_start_date = res.discountStartDate
+            discount_end_date = res.discountEndDate
+            user_timezone = self.env.user.tz or 'UTC'
+
+            if discount_start_date:
+                discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
+                discount_start_date_iso = discount_start_date_utc.isoformat()
+            else:
+                discount_start_date_iso = None
+
+            if discount_end_date:
+                discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
+                discount_end_date_iso = discount_end_date_utc.isoformat()
+            else:
+                discount_end_date_iso = None
+
             product_data = {
                 "ProductType": 5,
                 "Reference": res.default_code,
@@ -290,15 +312,18 @@ class ProduitSelligHome(models.Model):
                 # "RemoteReference": "sample string 3",
                 "Barcode": res.barcode,
                 "Weight": res.weight,
-                # "Length": 1.1,
+                "Length": res.long_sah,
                 # "Width": 1.1,
-                # "Height": 1.1,
+                "Height": res.haut_sah,
                 "IsPublished": est_publie,
                 "IsVirtual": virtual,
                 "UncommissionedProduct": is_sale,
-                "InventoryMethod": suivi_stock,
+                # "InventoryMethod": suivi_stock,
                 # "LowStockQuantity": 1,
                 "AllowOutOfStockOrders": rupture_stock,
+                "AvailableOnSellerMinisites": res.availableOnHostMinisites,
+                "DiscountEndDate": discount_end_date_iso,
+                "DiscountStartDate": discount_start_date_iso,
                 # "WarehouseLocation": res.warehouse_id.id or '',
                 'ProductLangs': [
                     {'Name': res.name,
@@ -311,9 +336,9 @@ class ProduitSelligHome(models.Model):
                     "Id": id_categ,
                     },
                 ],
-                "AdditionalInformations": {
-                    "description": [des],
-                },
+                # "AdditionalInformations": {
+                #     "description": [des],
+                # },
                 "ProductRelatedProducts": [
                     {
                         "ProductId": res.id,
@@ -364,12 +389,13 @@ class ProduitSelligHome(models.Model):
 
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
+        rec = super(ProduitSelligHome, self).write(vals)
         if vals:
+            job_kwargs = {
+                'description': 'Mise à jour du produit dans SAH',
+            }
+            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
             ### Modification stock
-            # job_kwargs = {
-            #     'description': 'Mise à jour du produit dans SAH',
-            # }
-            # self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
             if self.is_storable == True:
                 url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
                 values = {
@@ -377,19 +403,19 @@ class ProduitSelligHome(models.Model):
                     "ProductReference": self.default_code,
                     "StockQuantity": int(self.qty_available),
                     "StockQuantityComing":int(self.virtual_available),
-                    "ProductCombinationStocks": [
-                            {
-                            "ProductCombinationId": self.produit_sah_id,
-                            "ProductCombinationBarcode": "sample string 1",
-                            "ProductCombinationSku": "sample string 2",
-                            "ProductCombinationRemoteId": 1,
-                            "StockQuantity": 1,
-                            "StockQuantityComing": 1,
-                            "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
-                            "SellerStockQuantity": 1,
-                            "AllowOutOfStockOrders": True
-                            }
-                    ],
+                    # "ProductCombinationStocks": [
+                    #         {
+                    #         "ProductCombinationId": self.produit_sah_id,
+                    #         "ProductCombinationBarcode": "sample string 1",
+                    #         "ProductCombinationSku": "sample string 2",
+                    #         "ProductCombinationRemoteId": 1,
+                    #         "StockQuantity": 1,
+                    #         "StockQuantityComing": 1,
+                    #         "StockQuantityComingAt": "2024-10-22T13:46:02.7937593+02:00",
+                    #         "SellerStockQuantity": 1,
+                    #         "AllowOutOfStockOrders": True
+                    #         }
+                    # ],
                     "AllowOutOfStockOrders": True
                     
                 }
@@ -400,5 +426,5 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Erreur {response2.status_code}: {response2.text}")
      
                     
-            rec = super(ProduitSelligHome, self).write(vals)
+            
             return rec
