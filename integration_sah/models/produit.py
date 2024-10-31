@@ -228,163 +228,163 @@ class ProduitSelligHome(models.Model):
 
         _logger.info("======================= Fin de mise à jour de l'Article")
 
-    # @api.model
-    # def create(self, vals):
-    #     headers = self.env['authentication.sah'].establish_connection()
-    #     res = super(ProduitSelligHome, self).create(vals)
-    #     # des = res.description_ecommerce 
-    #     est_publie = bool(res.is_published)
-    #     virtual = res.type == 'service'
-    #     rupture_stock = bool(res.allow_out_of_stock_order)
-    #     is_sale = bool(res.sale_ok)
-    #     id_categ = ''
-    #     categ_parent =''
-    #     # suivi_stock = 1 if res.is_storable == True else 0
-    #     if res.categ_id:
-    #         url_categ = "https://demoapi.sellingathome.com/v1/Categories"
-    #         post_response_categ = requests.get(url_categ, headers=headers)
+    @api.model
+    def create(self, vals):
+        headers = self.env['authentication.sah'].establish_connection()
+        res = super(ProduitSelligHome, self).create(vals)
+        # des = res.description_ecommerce 
+        est_publie = bool(res.is_published)
+        virtual = res.type == 'service'
+        rupture_stock = bool(res.allow_out_of_stock_order)
+        is_sale = bool(res.sale_ok)
+        id_categ = ''
+        categ_parent =''
+        # suivi_stock = 1 if res.is_storable == True else 0
+        if res.categ_id:
+            url_categ = "https://demoapi.sellingathome.com/v1/Categories"
+            post_response_categ = requests.get(url_categ, headers=headers)
             
-    #         if post_response_categ.status_code == 200:
-    #             response_data_categ = post_response_categ.json()
-    #             categ_parent = response_data_categ[0]['Id']
-    #             j=0
-    #             for c in response_data_categ:
-    #                 CategoryLangs = c['CategoryLangs']
-    #                 for cc in CategoryLangs :
-    #                     nom_cat = cc['Name']
-    #                     if res.categ_id.name==nom_cat:
-    #                         id_categ = c['Id']
-    #                         j+=1
-    #             if j==0:
-    #                 create_category = {
-    #                     "Reference": res.categ_id.name,
-    #                     "ParentCategoryId": categ_parent,
-    #                     "IsPublished": True,
-    #                     "CategoryLangs": [
-    #                         {
-    #                             "Name": res.categ_id.name,
-    #                             "Description": 'None',
-    #                             "ISOValue": "fr",
-    #                         },
-    #                     ],
-    #                 }
-    #                 post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
-    #                 if post_response_categ_create.status_code == 200:
-    #                     categ = post_response_categ_create.json()
-    #                     id_categ = categ['Id']
-    #         else:
-    #             _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
+            if post_response_categ.status_code == 200:
+                response_data_categ = post_response_categ.json()
+                categ_parent = response_data_categ[0]['Id']
+                j=0
+                for c in response_data_categ:
+                    CategoryLangs = c['CategoryLangs']
+                    for cc in CategoryLangs :
+                        nom_cat = cc['Name']
+                        if res.categ_id.name==nom_cat:
+                            id_categ = c['Id']
+                            j+=1
+                if j==0:
+                    create_category = {
+                        "Reference": res.categ_id.name,
+                        "ParentCategoryId": categ_parent,
+                        "IsPublished": True,
+                        "CategoryLangs": [
+                            {
+                                "Name": res.categ_id.name,
+                                "Description": 'None',
+                                "ISOValue": "fr",
+                            },
+                        ],
+                    }
+                    post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+                    if post_response_categ_create.status_code == 200:
+                        categ = post_response_categ_create.json()
+                        id_categ = categ['Id']
+            else:
+                _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
 
-    #         url = "https://demoapi.sellingathome.com/v1/Products"   
+            url = "https://demoapi.sellingathome.com/v1/Products"   
 
-    #         discount_start_date = res.discountStartDate
-    #         discount_end_date = res.discountEndDate
-    #         user_timezone = self.env.user.tz or 'UTC'
+            discount_start_date = res.discountStartDate
+            discount_end_date = res.discountEndDate
+            user_timezone = self.env.user.tz or 'UTC'
 
-    #         if discount_start_date:
-    #             discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
-    #             discount_start_date_iso = discount_start_date_utc.isoformat()
-    #         else:
-    #             discount_start_date_iso = None
+            if discount_start_date:
+                discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
+                discount_start_date_iso = discount_start_date_utc.isoformat()
+            else:
+                discount_start_date_iso = None
 
-    #         if discount_end_date:
-    #             discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
-    #             discount_end_date_iso = discount_end_date_utc.isoformat()
-    #         else:
-    #             discount_end_date_iso = None
+            if discount_end_date:
+                discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
+                discount_end_date_iso = discount_end_date_utc.isoformat()
+            else:
+                discount_end_date_iso = None
 
-    #         product_data = {
-    #             "ProductType": 5,
-    #             "Reference": res.default_code,
-    #             "Prices": [
-    #                 {
-    #                     "ProductId": res.id,
-    #                     "BrandTaxRate": 2.1,
-    #                     "BrandTaxName": res.name,
-    #                     "TwoLetterISOCode": "FR",
-    #                     "PriceExclTax": res.list_price,
-    #                     "PriceInclTax": res.list_price * (res.taxes_id.amount/100),
-    #                     "ProductCost": res.standard_price,
-    #                     "EcoTax": 8.1
-    #                 }
-    #             ],
-    #             # "RemoteId": "sample string 2",
-    #             # "RemoteReference": "sample string 3",
-    #             "Barcode": res.barcode,
-    #             "Weight": res.weight,
-    #             "Length": res.long_sah,
-    #             # "Width": 1.1,
-    #             "Height": res.haut_sah,
-    #             "IsPublished": est_publie,
-    #             "IsVirtual": virtual,
-    #             "UncommissionedProduct": is_sale,
-    #             # "InventoryMethod": suivi_stock,
-    #             # "LowStockQuantity": 1,
-    #             "AllowOutOfStockOrders": rupture_stock,
-    #             "AvailableOnSellerMinisites": res.availableOnHostMinisites,
-    #             "DiscountEndDate": discount_end_date_iso,
-    #             "DiscountStartDate": discount_start_date_iso,
-    #             # "WarehouseLocation": res.warehouse_id.id or '',
-    #             'ProductLangs': [
-    #                 {'Name': res.name,
-    #                 'Description': res.description, 
-    #                 'ISOValue': 'fr',
-    #                 }
-    #             ],
-    #             "Categories": [
-    #                 {
-    #                 "Id": id_categ,
-    #                 },
-    #             ],
-    #             # "AdditionalInformations": {
-    #             #     "description": [des],
-    #             # },
-    #             "ProductRelatedProducts": [
-    #                 {
-    #                     "ProductId": res.id,
-    #                     "ProductRemoteId": str(related_product.id),
-    #                     "ProductReference": related_product.default_code,
-    #                     "IsDeleted": False
-    #                 } for related_product in res.accessory_product_ids
-    #             ],
-    #             "Combinations": [
-    #                 {
-    #                     "ProductAttributes": [
-    #                         {
-    #                             "AttributeId": value.attribute_id.id,
-    #                             "Attribute": value.attribute_id.name,
-    #                             "Value": value.name,
-    #                             "WeightAdjustement": res.weight,
-    #                             "ProductAttributeLangs": [
-    #                                 {
-    #                                     "Name": value.attribute_id.name,
-    #                                     "Value": value.name,
-    #                                     "ISOValue": 'fr'
-    #                                 }
-    #                             ]
-    #                         }
-    #                         for value in line.value_ids
-    #                     ]
-    #                 }
-    #                 for line in res.attribute_line_ids if line.value_ids
-    #             ]
-    #         }
+            product_data = {
+                "ProductType": 5,
+                "Reference": res.default_code,
+                "Prices": [
+                    {
+                        "ProductId": res.id,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": res.name,
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": res.list_price,
+                        "PriceInclTax": res.list_price * (res.taxes_id.amount/100),
+                        "ProductCost": res.standard_price,
+                        "EcoTax": 8.1
+                    }
+                ],
+                # "RemoteId": "sample string 2",
+                # "RemoteReference": "sample string 3",
+                "Barcode": res.barcode,
+                "Weight": res.weight,
+                "Length": res.long_sah,
+                # "Width": 1.1,
+                "Height": res.haut_sah,
+                "IsPublished": est_publie,
+                "IsVirtual": virtual,
+                "UncommissionedProduct": is_sale,
+                # "InventoryMethod": suivi_stock,
+                # "LowStockQuantity": 1,
+                "AllowOutOfStockOrders": rupture_stock,
+                "AvailableOnSellerMinisites": res.availableOnHostMinisites,
+                "DiscountEndDate": discount_end_date_iso,
+                "DiscountStartDate": discount_start_date_iso,
+                # "WarehouseLocation": res.warehouse_id.id or '',
+                'ProductLangs': [
+                    {'Name': res.name,
+                    'Description': res.description, 
+                    'ISOValue': 'fr',
+                    }
+                ],
+                "Categories": [
+                    {
+                    "Id": id_categ,
+                    },
+                ],
+                # "AdditionalInformations": {
+                #     "description": [des],
+                # },
+                "ProductRelatedProducts": [
+                    {
+                        "ProductId": res.id,
+                        "ProductRemoteId": str(related_product.id),
+                        "ProductReference": related_product.default_code,
+                        "IsDeleted": False
+                    } for related_product in res.accessory_product_ids
+                ],
+                "Combinations": [
+                    {
+                        "ProductAttributes": [
+                            {
+                                "AttributeId": value.attribute_id.id,
+                                "Attribute": value.attribute_id.name,
+                                "Value": value.name,
+                                "WeightAdjustement": res.weight,
+                                "ProductAttributeLangs": [
+                                    {
+                                        "Name": value.attribute_id.name,
+                                        "Value": value.name,
+                                        "ISOValue": 'fr'
+                                    }
+                                ]
+                            }
+                            for value in line.value_ids
+                        ]
+                    }
+                    for line in res.attribute_line_ids if line.value_ids
+                ]
+            }
 
-    #         # Send POST request
-    #         post_response = requests.post(url, json=product_data, headers=headers)
+            # Send POST request
+            post_response = requests.post(url, json=product_data, headers=headers)
             
-    #         if post_response.status_code == 200:
-    #             response_data = post_response.json()
-    #             product_id = response_data.get('Id')
-    #             res.produit_sah_id = product_id
-    #             default_list_price = self.env['product.pricelist'].create({
-    #                 'name':f'Tarif du produit {res.name}',
-    #                 'price_list_sah_id':response_data['Prices'][0]['Id']
-    #             })
-    #             res.default_list_price = default_list_price.id
-    #         else:
-    #             _logger.info(f"Error {post_response.status_code}: {post_response.text}")
-    #     return res
+            if post_response.status_code == 200:
+                response_data = post_response.json()
+                product_id = response_data.get('Id')
+                res.produit_sah_id = product_id
+                default_list_price = self.env['product.pricelist'].create({
+                    'name':f'Tarif du produit {res.name}',
+                    'price_list_sah_id':response_data['Prices'][0]['Id']
+                })
+                res.default_list_price = default_list_price.id
+            else:
+                _logger.info(f"Error {post_response.status_code}: {post_response.text}")
+        return res
 
 
     def write(self, vals):

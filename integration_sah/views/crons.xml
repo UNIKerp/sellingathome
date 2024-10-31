@@ -11,11 +11,13 @@
             <field name="interval_number">30</field>
             <field name="interval_type">minutes</field>
         </record>
+        
         <record forcecreate="True" id="synchro_produits_sah_odoo" model="ir.cron">
-            <field name="name">Synchronisation d'informations de SAH vers Odoo</field>
+            <field name="name">Synchronisation des Produits de SAH vers Odoo</field>
             <field name="model_id" ref="model_product_template"/>
             <field name="state">code</field>
             <field name="code">model.create_article_sah_odoo()</field>
+            <field eval="True" name="active" />
             <field name="user_id" ref="base.user_root" />
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
