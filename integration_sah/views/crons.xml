@@ -2,9 +2,10 @@
     <data noupdate="1">
         <record id="ir_cron_update_inofs_sah_odoo" model="ir.cron">
             <field name="name">Synchronisation d'informations de SAH vers Odoo</field>
-            <field name="model_id" ref="integration_sah.model_res_partner"/>
+            <field name="model_id" ref="model_res_partner"/>
             <field name="state">code</field>
             <field name="code">model.update_infos_customers_and_sellers_and_commandes()</field>
+            <field name="user_id" ref="base.user_root"/>
             <field name="interval_type">minutes</field>
             <field name="interval_number">20</field> 
             <field name="numbercall">-1</field>
