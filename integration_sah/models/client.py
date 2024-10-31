@@ -19,6 +19,16 @@ class ClientSAH(models.Model):
     _sql_constraints = [
         ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"), ]
 
+    def update_infors_customers_and_sellers(self):
+        job_kwargs_customers = {
+            "description": "Mise à jour et création de nouveau clients s'ils existent de SAH vers Odoo",
+        }
+        job_kwargs_sellers = {
+            "description": "Mise à jour et création de nouveau vendeurs s'ils existent de SAH vers Odoo",
+        }
+        
+        self.with_delay(**job_kwargs_sellers).recuperation_vendeurs_sah_vers_odoo()
+        self.with_delay(**job_kwargs_customers).get_update_client_sah()
 
     def get_update_client_sah(self):
         headers_client = self.env['authentication.sah'].establish_connection()
