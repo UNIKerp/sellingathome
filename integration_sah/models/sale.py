@@ -34,6 +34,7 @@ class SaleSAH(models.Model):
         return super(SaleSAH, self).copy(default)
 
     def get_commande(self):
+        _logger.info("======================= Debut de mise à jour des commandes")
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'            
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
@@ -87,7 +88,8 @@ class SaleSAH(models.Model):
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
         else:
-            print(f"Erreur {response.status_code}: {response.text}")
+            _logger.info(f"Erreur {response.status_code}: {response.text}")
+        _logger.info("======================= Fin de mise à jour des commandes")
        
             
     def _get_or_create_tax(self, tax_rate):

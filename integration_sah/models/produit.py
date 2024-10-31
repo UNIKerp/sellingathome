@@ -115,6 +115,7 @@ class ProduitSelligHome(models.Model):
 
     # Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo
     def update_produit_dans_sah(self, product, headers):
+        _logger.info("======================= Debut de mise à jour de l'Article")
         id_categ = ''
         # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
         if product.categ_id:
@@ -225,7 +226,7 @@ class ProduitSelligHome(models.Model):
             else:
                 _logger.error(f"Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code}")
 
-
+        _logger.info("======================= Fin de mise à jour de l'Article")
 
     @api.model
     def create(self, vals):
@@ -390,11 +391,11 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         if vals:
-            ### Modification stock
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
             self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            ### Modification stock
             if self.is_storable == True:
                 url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
                 values = {

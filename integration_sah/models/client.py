@@ -34,7 +34,7 @@ class ClientSAH(models.Model):
     consent = fields.Boolean(string='Consentement du client',help='Consentement du client')
     ConsentDt = fields.Boolean(string="date du Consentement du client",help="date du Consentement du client")
     CustomQuestionAnswers = fields.Char(string='Réponses en question',help="Réponses en question")
-
+    
     # Les champs du du vendeur
     status = fields.Char(string='Nom du statut',help='Nom du statut')
     Statut_pour_toujours = fields.Char(string="Statut permanent",help='Statut permanent')
@@ -91,7 +91,24 @@ class ClientSAH(models.Model):
         default['id_vendeur_sah'] = 0
         # Appeler la méthode copy du parent pour créer la copie avec les valeurs par défaut
         return super(ClientSAH, self).copy(default)
+    
+    # Fonction maj des donnéés de SAH 
+    def update_infos_customers_and_sellers_and_commandes(self):
+        job_kwargs_customers = {
+            "description": "Mise à jour et création de nouveaux clients s'ils existent de SAH vers Odoo",
+        }
+        job_kwargs_sellers = {
+            "description": "Mise à jour et création de nouveaux vendeurs s'ils existent de SAH vers Odoo",
+        }
+        job_kwargs_sellers = {
+            "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
+        }
+        self.with_delay(**job_kwargs_sellers).recuperation_vendeurs_sah_vers_odoo()
+        self.with_delay(**job_kwargs_customers).get_update_client_sah()
+        self.env['sale.order'].with_delay(**job_kwargs_customers).get_commande()
+        
     def get_update_client_sah(self):
+        _logger.info("======================= Debut de mise à jour des clients")
         headers_client = self.env['authentication.sah'].establish_connection()
         url_client = "https://demoapi.sellingathome.com/v1/Customers"
         response2 = requests.get(url_client, headers=headers_client)
@@ -180,16 +197,16 @@ class ClientSAH(models.Model):
             _logger.info("==================================Résultat: %s ==========================", json.dumps(clients_data, indent=4))
         else:
             _logger.info("==================================Erreur: %s ==========================",  response2.text)
+        _logger.info("======================= Fin de mise à jour des Clients")
 
     def recuperation_vendeurs_sah_vers_odoo(self):
+        _logger.info("======================= Debut de mise à jour des vendeurs")
         headers = self.env['authentication.sah'].establish_connection()
         url = 'https://demoapi.sellingathome.com/v1/Sellers'
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
-                print('PPPPPPPPP',data)
-                print('PPPPPPPPP',data)
                 ref_sah= 'V'+str(data['Id'])
                 pays=self.env['res.country'].search([('code','=',data['CountryIso'])])
                 contact = self.env['res.partner'].search([('ref_sah','=',ref_sah)])
@@ -340,3 +357,5 @@ class ClientSAH(models.Model):
 
         else:
             _logger.info("==================================Erreur: %s ==========================",  response.text)
+            
+        _logger.info("======================= Fin de mise à jour des vendeurs")
