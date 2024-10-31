@@ -17,4 +17,4 @@
         'views/crons.xml',
     ],
     'images':['static/description/icon.png',],
-} # type: ignore
+}
