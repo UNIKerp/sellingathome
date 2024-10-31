@@ -93,7 +93,7 @@ class ClientSAH(models.Model):
         return super(ClientSAH, self).copy(default)
     
     # Fonction maj des donnéés de SAH 
-    def update_infos_customers_and_sellers_and_commandes(self):
+    def _update_infos_customers_and_sellers_and_commandes(self):
         job_kwargs_customers = {
             "description": "Mise à jour et création de nouveaux clients s'ils existent de SAH vers Odoo",
         }
