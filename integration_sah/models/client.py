@@ -37,7 +37,7 @@ class ClientSAH(models.Model):
     
     # Les champs du du vendeur
     status = fields.Char(string='Nom du statut',help='Nom du statut')
-    Statut_pour_toujours = fields.Char(string="Statut permanent",help='Statut permanent')
+    statut_pour_toujours = fields.Char(string="Statut permanent",help='Statut permanent')
     isActive = fields.Boolean(string='Vendeur Actif',help='Vendeur Actif')
     candidacyId =fields.Integer(string="ID de candidature",help='ID de candidature')
     emailIsFlagged = fields.Boolean(string="État de l'e-mail du vendeur",help="État de l'e-mail du vendeur")
@@ -250,7 +250,7 @@ class ClientSAH(models.Model):
                         'isActive':data['IsActive'],
                         'title':gender,
                         'status':data['Status'],
-                        'Statut_pour_toujours':data['StatusForever'],
+                        'statut_pour_toujours':data['StatusForever'],
                         'candidacyId':data['CandidacyId'],
                         'emailIsFlagged':data['EmailIsFlagged'],
                         'birthdate':data['Birthdate'],
