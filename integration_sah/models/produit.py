@@ -164,45 +164,25 @@ class ProduitSelligHome(models.Model):
         if product.produit_sah_id:
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
-            rupture_stock = bool(product.allow_out_of_stock_order)
-            est_publie = bool(product.is_published)
-            is_sale = bool(product.sale_ok)
-            virtual = product.type == 'service'
-            # des = product.description_ecommerce
-            suivi_stock = 1 if product.is_storable == True else 0
-
-            # discount_start_date = product.discountStartDate
-            # discount_end_date = product.discountEndDate
-            # user_timezone = self.env.user.tz or 'UTC'
-
-            # if discount_start_date:
-            #     discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
-            #     discount_start_date_iso = discount_start_date_utc.isoformat()
-            # else:
-            #     discount_start_date_iso = None
-
-            # if discount_end_date:
-            #     discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
-            #     discount_end_date_iso = discount_end_date_utc.isoformat()
-            # else:
-            #     discount_end_date_iso = None
-
+            # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
             update_data = {
                 "ProductType": 5,
                 "Reference": product.default_code,
-                "AllowOutOfStockOrders": rupture_stock,
-                "IsVirtual": virtual,
-                "InventoryMethod": suivi_stock,
-                "UncommissionedProduct": is_sale,
+                "Prices": [
+                    {
+                        "Id": product.produit_sah_id,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": product.name,
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": product.list_price,
+                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
+                        "ProductCost": product.standard_price,
+                        "EcoTax": 8.1
+                    }
+                ],
                 "Barcode": product.barcode,
                 "Weight": product.weight,
-                "IsPublished": est_publie,
-                # "AvailableOnSellerMinisites": product.availableOnHostMinisites,
-                # "DiscountEndDate": discount_end_date_iso,
-                # "DiscountStartDate": discount_start_date_iso,
-                # "Length": product.long_sah,
-                # "Width": 1.1,
-                # "Height": product.haut_sah,
+                "IsPublished": True,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -214,17 +194,6 @@ class ProduitSelligHome(models.Model):
                     {
                         "Id": id_categ,
                     }
-                ],
-                # "AdditionalInformations": {
-                #     "description": [des],
-                # },
-                "ProductRelatedProducts": [
-                    {
-                        "ProductId": product.id,
-                        "ProductRemoteId": str(related_product.id),
-                        "ProductReference": related_product.default_code,
-                        "IsDeleted": False
-                    } for related_product in product.accessory_product_ids
                 ],
                 "Combinations": [
                     {
@@ -245,10 +214,10 @@ class ProduitSelligHome(models.Model):
                             for value in line.value_ids
                         ]
                     }
-                    for line in product.attribute_line_ids
+                    for line in product.attribute_line_ids if line.value_ids
                 ]
             }
-            _logger.warning("SUCCCCCCCESSSSS 555555555555")
+            
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             
             if put_response_produit.status_code == 200:
