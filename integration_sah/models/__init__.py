@@ -2,10 +2,10 @@
 from . import authentication
 from . import config
 from . import tarifs
-from . import produit
+# from . import produit
 from . import stock
 from .import sale
 from . import client
 # from . import vendeur
-# from . import gestion_vdi
+from . import gestion_vdi
 

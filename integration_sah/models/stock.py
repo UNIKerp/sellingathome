@@ -27,6 +27,17 @@ _logger = logging.getLogger(__name__)
 class StockPickingSAH(models.Model):
     _inherit = "stock.picking" 
 
+    @api.model
+    def create(self, vals):
+        res = super(StockPickingSAH, self).create(vals)
+        if res.origin:
+            sale_order = self.env['sale.order'].search([('name', '=', res.origin)], limit=1)
+            if sale_order and sale_order.vdi:
+                    group_vdi = self.env['gestion.vdi'].search([('contact_vdi_ids', 'in', [sale_order.vdi.id])], limit=1)
+                    if group_vdi:
+                        res.partner_id = group_vdi.adresse_livraison
+        return res
+
 
     def button_validate(self):
         res = super(StockPickingSAH,self).button_validate()

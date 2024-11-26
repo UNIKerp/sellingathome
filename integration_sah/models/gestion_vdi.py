@@ -10,9 +10,8 @@ _logger = logging.getLogger(__name__)
 
 
 class GestionVdi(models.Model):
-    _inherit = "gestion.vdi"
+    _name = "gestion.vdi"
     _description = "gestion vdi"
-
 
 
     contact_vdi_ids = fields.Many2many('res.partner', string='Contacts vdi',required=True, help="Contacts vdi")
