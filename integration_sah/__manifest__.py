@@ -15,6 +15,7 @@
         'views/sale.xml',
         'views/client.xml',
         'views/crons.xml',
+        'views/gestion_vdi.xml',
     ],
     'images':['static/description/icon.png',],
 }

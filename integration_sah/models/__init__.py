@@ -5,5 +5,5 @@ from . import produit
 from . import stock
 from .import sale
 from . import client
-
+from . import gestion_vdi
 

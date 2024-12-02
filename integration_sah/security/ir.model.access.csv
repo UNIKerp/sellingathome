@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
 access_authentication_sah_user,access authentication sah,model_authentication_sah,integration_sah.group_user,1,0,0,0
 access_authentication_sah_manager,access authentication sah,model_authentication_sah,integration_sah.group_manager,1,1,1,1
+access_gestion_vdi_manager,access gestion vdi,model_gestion_vdi,integration_sah.group_manager,1,1,1,1
