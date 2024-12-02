@@ -18,4 +18,4 @@
         'views/gestion_vdi.xml',
     ],
     'images':['static/description/icon.png',],
-} # type: ignore
+}

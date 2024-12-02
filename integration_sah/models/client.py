@@ -37,7 +37,7 @@ class ClientSAH(models.Model):
     
     # Les champs du du vendeur
     status = fields.Char(string='Nom du statut',help='Nom du statut')
-    Statut_pour_toujours = fields.Char(string="Statut permanent",help='Statut permanent')
+    statut_pour_toujours = fields.Char(string="Statut permanent",help='Statut permanent')
     isActive = fields.Boolean(string='Vendeur Actif',help='Vendeur Actif')
     candidacyId =fields.Integer(string="ID de candidature",help='ID de candidature')
     emailIsFlagged = fields.Boolean(string="État de l'e-mail du vendeur",help="État de l'e-mail du vendeur")
@@ -93,19 +93,19 @@ class ClientSAH(models.Model):
         return super(ClientSAH, self).copy(default)
     
     # Fonction maj des donnéés de SAH 
-    def update_infos_customers_and_sellers_and_commandes(self):
+    def _update_infos_customers_and_sellers_and_commandes(self):
         job_kwargs_customers = {
             "description": "Mise à jour et création de nouveaux clients s'ils existent de SAH vers Odoo",
         }
         job_kwargs_sellers = {
             "description": "Mise à jour et création de nouveaux vendeurs s'ils existent de SAH vers Odoo",
         }
-        job_kwargs_sellers = {
+        job_kwargs_commandes = {
             "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
         }
         self.with_delay(**job_kwargs_sellers).recuperation_vendeurs_sah_vers_odoo()
         self.with_delay(**job_kwargs_customers).get_update_client_sah()
-        self.env['sale.order'].with_delay(**job_kwargs_customers).get_commande()
+        self.env['sale.order'].with_delay(**job_kwargs_commandes).get_commande()
         
     def get_update_client_sah(self):
         _logger.info("======================= Debut de mise à jour des clients")
@@ -250,7 +250,7 @@ class ClientSAH(models.Model):
                         'isActive':data['IsActive'],
                         'title':gender,
                         'status':data['Status'],
-                        'Statut_pour_toujours':data['StatusForever'],
+                        'statut_pour_toujours':data['StatusForever'],
                         'candidacyId':data['CandidacyId'],
                         'emailIsFlagged':data['EmailIsFlagged'],
                         'birthdate':data['Birthdate'],
@@ -311,7 +311,8 @@ class ClientSAH(models.Model):
                     'country_id':pays.id if pays else None,
                     'lang':active_lang.code,
                     'email': data['Email'],
-                    'Status':data['Status'],
+                    'status':data['Status'],
+                    'statut_pour_toujours':data['StatusForever'],
                     'candidacyId':data['CandidacyId'],
                     'emailIsFlagged':data['EmailIsFlagged'],
                     'birthdate':data['Birthdate'],

@@ -45,7 +45,7 @@
               </group>
               <group>
                 <field name="status"/> 
-                <field name="Statut_pour_toujours"/> 
+                <field name="statut_pour_toujours"/> 
                 <field name="nationalIdentificationNumber"/> 
                 <field name="identityCardNumber"/> 
                 <field name="nationalite"/> 
