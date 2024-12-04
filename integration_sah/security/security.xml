@@ -17,5 +17,6 @@
         <field name="name">Administrateur</field>
         <field name="implied_ids" eval="[(4, ref('integration_sah.group_user'))]"/>
         <field name="category_id" ref="integration_sah.sah_security"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record> 
 </odoo>
