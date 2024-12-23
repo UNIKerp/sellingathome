@@ -1,2 +1,1 @@
-# sellingathome
-Projet sellingathome
+# jeriko

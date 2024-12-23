@@ -9,7 +9,7 @@ from datetime import datetime
 class ProduitPriceList(models.Model):
     _inherit = "product.pricelist"
 
-    price_list_sah_id = fields.Char(string='Id Prix SAH')
+    price_list_sah_id = fields.Char(string='Id Prix SAH',copy=False,)
 
 
 class Tarifs(models.Model):

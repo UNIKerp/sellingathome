@@ -41,8 +41,16 @@ class StockPickingSAH(models.Model):
 
     def button_validate(self):
         res = super(StockPickingSAH,self).button_validate()
-        if self.move_ids_without_package:
-            for line in self.move_ids_without_package:
+        if res:
+            job_kwargs2 = {
+                'description': 'Mise à jour du stock produit',
+            }
+            self.with_delay(**job_kwargs2).maj_des_stocks(self.move_ids_without_package)
+        return res
+    
+    def maj_des_stocks(self,move_ids_without_package):
+        if  move_ids_without_package:
+            for line in move_ids_without_package:
                 if line.product_id.product_tmpl_id.is_storable == True:
                     qty_available = line.product_id.product_tmpl_id.qty_available
                     virtual_available = line.product_id.product_tmpl_id.virtual_available
@@ -56,12 +64,8 @@ class StockPickingSAH(models.Model):
                         "AllowOutOfStockOrders": True
                         
                     }
-                    response = requests.put(url, headers=headers, json=values)
-                    if response.status_code == 200:
-                        _logger.info(response.json())  
-                    else:
-                        _logger.info(response.text)
-        return res
+                    requests.put(url, headers=headers, json=values)
+                   
 
 class StockSAH(models.TransientModel):
     _inherit = "stock.change.product.qty"
@@ -69,28 +73,30 @@ class StockSAH(models.TransientModel):
     @api.model
     def create(self,vals):
         res = super(StockSAH,self).create(vals)
-        object_id = self.env.context.get('active_id')
+        if res:
+            job_kwargs2 = {
+                'description': 'Mise à jour du stock produit',
+            }
+            object_id = self.env.context.get('active_id')
+            self.with_delay(**job_kwargs2).maj_des_stocks(object_id,res.new_quantity) 
+        return res
+
+    def maj_des_stocks(self,object_id,new_quantity):
         if object_id:
             produit = self.env['product.template'].search([('id','=',object_id),('is_storable','=',True)])
-            if res.new_quantity and produit:
+            if new_quantity and produit:
                 url = 'https://demoapi.sellingathome.com/v1/Stocks'
                 headers = self.env['authentication.sah'].establish_connection()
                 if headers:
                     values = {
                         "ProductId":  produit.produit_sah_id,
                         "ProductReference": produit.default_code,
-                        "StockQuantity": int(res.new_quantity),
+                        "StockQuantity": int(new_quantity),
                         "StockQuantityComing":int(produit.virtual_available),
                         "AllowOutOfStockOrders": True
                     }
-                    response = requests.put(url, headers=headers, json=values)
-                    if response.status_code == 200:
-                        _logger.info(response.json())   
-                    else:
-                        _logger.info(f"Erreur {response.status_code}: {response.text}")  
-        return res
-
-
+                    requests.put(url, headers=headers, json=values)
+                    
 
 
 class StockQuant(models.Model):
@@ -100,42 +106,34 @@ class StockQuant(models.Model):
     @api.model
     def create(self,vals):
         res = super(StockQuant,self).create(vals)
-        if res.product_tmpl_id.is_storable:
-            url = 'https://demoapi.sellingathome.com/v1/Stocks'
-            headers = self.env['authentication.sah'].establish_connection()
-            if headers:
-                values = {
-                    "ProductId": res.product_tmpl_id.produit_sah_id,
-                    "ProductReference": res.product_tmpl_id.default_code,
-                    "StockQuantity": int(res.inventory_quantity_auto_apply),
-                    "StockQuantityComing":int(res.product_tmpl_id.virtual_available),  
-                    "AllowOutOfStockOrders": True
-                }
-                response = requests.put(url, headers=headers, json=values)
-                if response.status_code == 200:
-                    _logger.info(response.json())  
-                else:
-                    _logger.info(f"Erreur {response.status_code}: {response.text}") 
+        if res:
+            job_kwargs2 = {
+                'description': f'Mise à jour du stock produit',
+            }
+            self.with_delay(**job_kwargs2).maj_des_stocks(res.product_tmpl_id,res.inventory_quantity_auto_apply)
         return res
 
 
     def write(self,vals):
         res = super(StockQuant,self).write(vals)
         if vals:
-            if self.product_tmpl_id.is_storable:
-                url = 'https://demoapi.sellingathome.com/v1/Stocks'
-                headers = self.env['authentication.sah'].establish_connection()
-                if headers:
-                    values = {
-                        "ProductId": self.product_tmpl_id.produit_sah_id,
-                        "ProductReference": self.product_tmpl_id.default_code,
-                        "StockQuantity": int(self.inventory_quantity_auto_apply),
-                        "StockQuantityComing":int(self.product_tmpl_id.virtual_available),  
-                        "AllowOutOfStockOrders": True
-                    }
-                    response = requests.put(url, headers=headers, json=values)
-                    if response.status_code == 200:
-                        _logger.info(response.json())  
-                    else:
-                        _logger.info(f"Erreur {response.status_code}: {response.text}")  
+            job_kwargs2 = {
+                'description': 'Mise à jour du stock produit',
+            }
+            self.with_delay(**job_kwargs2).maj_des_stocks(self.product_tmpl_id,self.inventory_quantity_auto_apply)
         return res
+
+    def maj_des_stocks(self,product_tmpl_id,inventory_quantity_auto_apply):
+        if  product_tmpl_id.is_storable:
+            url = 'https://demoapi.sellingathome.com/v1/Stocks'
+            headers = self.env['authentication.sah'].establish_connection()
+            if headers:
+                values = {
+                    "ProductId": product_tmpl_id.produit_sah_id,
+                    "ProductReference": product_tmpl_id.default_code,
+                    "StockQuantity": int(inventory_quantity_auto_apply),
+                    "StockQuantityComing":int(product_tmpl_id.virtual_available),  
+                    "AllowOutOfStockOrders": True
+                }
+                requests.put(url, headers=headers, json=values)
+                

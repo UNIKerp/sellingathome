@@ -2,7 +2,7 @@
 {
     'name': "Integration Selling at home",
     'version': '18.0.2.0.0',
-    'depends': ["stock","contacts",'sale_management','point_of_sale','website_sale'],
+    'depends': ["stock","contacts",'sale_management','point_of_sale','website_sale','queue_job'],
     "author":"Unikerp",
     "website" : "www.unikerp.com",
     'description': """ Integration sellingathome et odoo """,

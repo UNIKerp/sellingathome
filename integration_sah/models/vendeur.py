@@ -8,7 +8,7 @@ from datetime import datetime
 class vendeur(models.Model):
     _inherit = "res.users"
 
-    id_vendeur_sah = fields.Char(string='Id vendeur SAH')
+    id_vendeur_sah = fields.Char(string='Id vendeur SAH',copy=False)
    
     type_revendeur = fields.Selection([
         ('vendeur_domicile', 'VENDEUR À DOMICILE INDÉPENDANT'),
