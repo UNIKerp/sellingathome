@@ -20,6 +20,7 @@ class ProduitSelligHome(models.Model):
     discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
     discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
     discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
+    product_image = fields.Binary("Product Image")
 
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
@@ -228,7 +229,7 @@ class ProduitSelligHome(models.Model):
     def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
-                                    description,accessory_product_ids,attribute_line_ids,product_image):
+                                    description,accessory_product_ids,attribute_line_ids,image_1920):
         _logger.info("11111111111111111111111111111")
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
@@ -293,8 +294,8 @@ class ProduitSelligHome(models.Model):
 
             # Convertissez l'image binaire en base64
             product_image = False
-            if self.image_1920:
-                product_image = base64.b64encode(self.image_1920).decode('utf-8')
+            if image_1920:
+                product_image = base64.b64encode(image_1920).decode('utf-8')
                 _logger.info("222222222222222222222222222",product_image)
 
             product_data = {
@@ -398,7 +399,7 @@ class ProduitSelligHome(models.Model):
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-                                    res.description,res.accessory_product_ids,res.attribute_line_ids,res.product_image)
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids,res.image_1920)
         return res
 
 
