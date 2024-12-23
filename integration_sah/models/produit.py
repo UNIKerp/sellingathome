@@ -3,7 +3,8 @@ import requests
 import json
 from datetime import date
 from datetime import datetime
-import os, base64, inspect, PyPDF2
+import os
+from odoo.tools import config
 import pytz
 import logging
 _logger = logging.getLogger(__name__)
@@ -292,11 +293,26 @@ class ProduitSelligHome(models.Model):
             else:
                 discount_end_date_iso = None
 
-            # Convertissez l'image binaire en base64
-            product_image = False
-            if self.image_1920:
-                product_image = base64.b64encode(self.image_1920).decode('utf-8')
-                _logger.info("222222222222222222222222222",product_image)
+            # Chemin du répertoire public pour les images
+            base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+            image_folder = os.path.join(config["data_dir"], "images")
+
+            # Assurez-vous que le dossier existe
+            os.makedirs(image_folder, exist_ok=True)
+
+            if image_1920:
+                # Générer un nom de fichier unique
+                image_name = f"product_{self.id}.png"
+                image_path = os.path.join(image_folder, image_name)
+
+                # Sauvegarder l'image
+                with open(image_path, "wb") as f:
+                    f.write(image_1920)
+
+                # Construire l'URL publique
+                product_image_url = f"{base_url}/images/{image_name}"
+            else:
+                product_image_url = None
 
             product_data = {
                 "ProductType": 5,
@@ -343,12 +359,12 @@ class ProduitSelligHome(models.Model):
 
                 "ProductPhotos": [
                 {
-                    "Link": f"data:image/png;base64,{product_image}",
+                    "Link": product_image_url,
                     "ProductId": res.id,
                     "IsDefault": True,
                     "DisplayOrder": 1
                 }
-                ] if product_image else [],
+                ] if product_image_url else [],
 
                 "ProductRelatedProducts": [
                     {
