@@ -341,7 +341,7 @@ class ProduitSelligHome(models.Model):
                 "ProductPhotos": [
                 {
                     "Link": product_image_url,
-                    "ProductId": res.id,
+                    "ProductId": objet.id,
                     "IsDefault": True,
                     "DisplayOrder": 1
                 }
