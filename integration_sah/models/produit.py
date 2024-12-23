@@ -401,7 +401,7 @@ class ProduitSelligHome(models.Model):
                 'public': True,
             })
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-            product_image_url = f'{base_url}/web/content/{res.id}/{res.name}'
+            product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
             _logger.info("================================================product_image_url product_image_url")
             _logger.info(product_image_url)
 
