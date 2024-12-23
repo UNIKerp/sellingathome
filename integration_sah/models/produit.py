@@ -3,6 +3,7 @@ import requests
 import json
 from datetime import date
 from datetime import datetime
+import os, base64, inspect, PyPDF2
 import pytz
 import logging
 _logger = logging.getLogger(__name__)
@@ -227,7 +228,8 @@ class ProduitSelligHome(models.Model):
     def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
-                                    description,accessory_product_ids,attribute_line_ids):
+                                    description,accessory_product_ids,attribute_line_ids,product_image):
+        _logger.info("11111111111111111111111111111")
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -289,6 +291,12 @@ class ProduitSelligHome(models.Model):
             else:
                 discount_end_date_iso = None
 
+            # Convertissez l'image binaire en base64
+            product_image = False
+            if self.image_1920:
+                product_image = base64.b64encode(self.image_1920).decode('utf-8')
+                _logger.info("222222222222222222222222222",product_image)
+
             product_data = {
                 "ProductType": 5,
                 "Reference": default_code,
@@ -331,6 +339,16 @@ class ProduitSelligHome(models.Model):
                     "Id": id_categ,
                     },
                 ],
+
+                "ProductPhotos": [
+                {
+                    "Link": f"data:image/png;base64,{product_image}",
+                    "ProductId": res.id,
+                    "IsDefault": True,
+                    "DisplayOrder": 1
+                }
+                ] if product_image else [],
+
                 "ProductRelatedProducts": [
                     {
                         "ProductId": id,
@@ -380,7 +398,7 @@ class ProduitSelligHome(models.Model):
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-                                    res.description,res.accessory_product_ids,res.attribute_line_ids)
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids,res.product_image)
         return res
 
 
