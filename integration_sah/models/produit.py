@@ -389,10 +389,23 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
+
+        # attachment = self.env['ir.attachment'].create({
+        #     'name': f'{image.name_image}{mailing.id}{image.id}.png',
+        #     'type': 'binary',
+        #     'datas': image_data,
+        #     'res_model': 'mailing.mailing',
+        #     'res_id': mailing.id,
+        #     'mimetype': 'image/png',
+        #     'public': True,
+        #     'tmp_file': True,
+        # })
+        # base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        # image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+
         # Chemin du répertoire public pour les images
         base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
         image_folder = "/home/odoo/tmp_files"  # Temp folder for image storage
-
 
         # Ensure folder exists
         os.makedirs(image_folder, exist_ok=True)
@@ -407,7 +420,7 @@ class ProduitSelligHome(models.Model):
                 f.write(base64.b64decode(res.image_1920))
 
             # Construct public URL for the image
-            product_image_url = f"{base_url}/web/static/images/{image_name}"
+            product_image_url = f"{base_url}/integration_sah/static/images/{image_name}"
             # product_image_url = f"{base_url}/images/{image_name}"
             _logger.info("product_image_url product_image_url")
             _logger.info(product_image_url)
