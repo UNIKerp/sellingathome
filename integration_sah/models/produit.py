@@ -232,6 +232,8 @@ class ProduitSelligHome(models.Model):
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
                                     description,accessory_product_ids,attribute_line_ids,product_image_url):
         _logger.info("Creating Product in SellingAtHome...")
+        _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        _logger.info(product_image_url)
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -427,7 +429,7 @@ class ProduitSelligHome(models.Model):
         #     _logger.info("product_image_url product_image_url")
         #     _logger.info(product_image_url)
         # else:
-            product_image_url = None
+        #    product_image_url = None
         if res:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
