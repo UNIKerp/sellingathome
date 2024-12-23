@@ -399,7 +399,6 @@ class ProduitSelligHome(models.Model):
                 'res_id': res.id,
                 'mimetype': 'image/png',
                 'public': True,
-                'tmp_file': True,
             })
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             product_image_url = f'{base_url}/web/content/{res.id}/{res.name}'
