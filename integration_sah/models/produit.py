@@ -294,13 +294,15 @@ class ProduitSelligHome(models.Model):
                 discount_end_date_iso = None
 
             # Chemin du répertoire public pour les images
-            base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
-            image_folder = os.path.join(config["data_dir"], "images")
+            # base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+            # image_folder = os.path.join(config["data_dir"], "images")
 
-            # Assurez-vous que le dossier existe
-            os.makedirs(image_folder, exist_ok=True)
+            # # Assurez-vous que le dossier existe
+            # os.makedirs(image_folder, exist_ok=True)
 
             if image_1920:
+                _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                _logger.info(image_1920)
                 # Générer un nom de fichier unique
                 image_name = f"product_{self.id}.png"
                 image_path = os.path.join(image_folder, image_name)
