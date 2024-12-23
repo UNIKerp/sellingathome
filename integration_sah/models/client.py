@@ -14,8 +14,8 @@ class ClientSAH(models.Model):
     _description = "client de SAH"
 
 
-    id_client_sah = fields.Integer("ID client SAH", help="l'ID du client dans SAH")
-    id_vendeur_sah = fields.Integer(string='ID vendeur SAH', help="l'ID du vendeur dans SAH")
+    id_client_sah = fields.Integer("ID client SAH",copy=False, help="l'ID du client dans SAH")
+    id_vendeur_sah = fields.Integer(string='ID vendeur SAH',copy=False, help="l'ID du vendeur dans SAH")
     type_revendeur = fields.Selection([
         ('vendeur_domicile', 'VENDEUR À DOMICILE INDÉPENDANT'),
         ('vdi', 'VDI INSCRIT AU RCS'),

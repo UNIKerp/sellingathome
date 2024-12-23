@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
-    produit_sah_id = fields.Integer("ID produit SAH", help="l'ID du produit dans SAH")
+    produit_sah_id = fields.Integer("ID produit SAH",copy=False, help="l'ID du produit dans SAH")
     default_list_price = fields.Many2one('product.pricelist', string='Liste de prix par défaut')
     long_sah = fields.Float("Longueur Produit SAH", help="Longueur du produit dans SAH")
     haut_sah = fields.Float("Hauteur Produit SAH", help="Hauteur du produit dans SAH")
@@ -22,11 +22,6 @@ class ProduitSelligHome(models.Model):
 
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
-        
-    def copy(self, default=None):
-        default = dict(default or {})
-        default['produit_sah_id'] = 0
-        return super(ProduitSelligHome, self).copy(default)
 
     # création des articles venant de l'api dans odoo
     def create_article_sah_odoo(self):
@@ -184,6 +179,7 @@ class ProduitSelligHome(models.Model):
                 "Barcode": product.barcode,
                 "Weight": product.weight,
                 "IsPublished": True,
+                "InventoryMethod": 1 if product.is_storable == True else 0,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -228,19 +224,19 @@ class ProduitSelligHome(models.Model):
 
         _logger.info("======================= Fin de mise à jour de l'Article")
 
-    @api.model
-    def create(self, vals):
+    def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
+                                    discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
+                                    standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
+                                    description,accessory_product_ids,attribute_line_ids):
         headers = self.env['authentication.sah'].establish_connection()
-        res = super(ProduitSelligHome, self).create(vals)
-        # des = res.description_ecommerce 
-        est_publie = bool(res.is_published)
-        virtual = res.type == 'service'
-        rupture_stock = bool(res.allow_out_of_stock_order)
-        is_sale = bool(res.sale_ok)
+        est_publie = bool(is_published)
+        virtual = type == 'service'
+        rupture_stock = bool(allow_out_of_stock_order)
+        is_sale = bool(sale_ok)
         id_categ = ''
         categ_parent =''
-        # suivi_stock = 1 if res.is_storable == True else 0
-        if res.categ_id:
+        suivi_stock = 1 if is_storable == True else 0
+        if categ_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
             
@@ -252,17 +248,17 @@ class ProduitSelligHome(models.Model):
                     CategoryLangs = c['CategoryLangs']
                     for cc in CategoryLangs :
                         nom_cat = cc['Name']
-                        if res.categ_id.name==nom_cat:
+                        if categ_id.name==nom_cat:
                             id_categ = c['Id']
                             j+=1
                 if j==0:
                     create_category = {
-                        "Reference": res.categ_id.name,
+                        "Reference": categ_id.name,
                         "ParentCategoryId": categ_parent,
                         "IsPublished": True,
                         "CategoryLangs": [
                             {
-                                "Name": res.categ_id.name,
+                                "Name": categ_id.name,
                                 "Description": 'None',
                                 "ISOValue": "fr",
                             },
@@ -277,8 +273,8 @@ class ProduitSelligHome(models.Model):
 
             url = "https://demoapi.sellingathome.com/v1/Products"   
 
-            discount_start_date = res.discountStartDate
-            discount_end_date = res.discountEndDate
+            discount_start_date = discountStartDate
+            discount_end_date = discountEndDate
             user_timezone = self.env.user.tz or 'UTC'
 
             if discount_start_date:
@@ -295,39 +291,38 @@ class ProduitSelligHome(models.Model):
 
             product_data = {
                 "ProductType": 5,
-                "Reference": res.default_code,
+                "Reference": default_code,
                 "Prices": [
                     {
-                        "ProductId": res.id,
+                        "ProductId": id,
                         "BrandTaxRate": 2.1,
-                        "BrandTaxName": res.name,
+                        "BrandTaxName": name,
                         "TwoLetterISOCode": "FR",
-                        "PriceExclTax": res.list_price,
-                        "PriceInclTax": res.list_price * (res.taxes_id.amount/100),
-                        "ProductCost": res.standard_price,
+                        "PriceExclTax": list_price,
+                        "PriceInclTax": list_price * (taxes_id.amount/100),
+                        "ProductCost": standard_price,
                         "EcoTax": 8.1
                     }
                 ],
                 # "RemoteId": "sample string 2",
                 # "RemoteReference": "sample string 3",
-                "Barcode": res.barcode,
-                "Weight": res.weight,
-                "Length": res.long_sah,
+                "Barcode": barcode,
+                "Weight": weight,
+                "Length": long_sah,
                 # "Width": 1.1,
-                "Height": res.haut_sah,
+                "Height": haut_sah,
                 "IsPublished": est_publie,
                 "IsVirtual": virtual,
                 "UncommissionedProduct": is_sale,
-                # "InventoryMethod": suivi_stock,
+                "InventoryMethod": suivi_stock,
                 # "LowStockQuantity": 1,
                 "AllowOutOfStockOrders": rupture_stock,
-                "AvailableOnSellerMinisites": res.availableOnHostMinisites,
+                "AvailableOnSellerMinisites": availableOnHostMinisites,
                 "DiscountEndDate": discount_end_date_iso,
                 "DiscountStartDate": discount_start_date_iso,
-                # "WarehouseLocation": res.warehouse_id.id or '',
                 'ProductLangs': [
-                    {'Name': res.name,
-                    'Description': res.description, 
+                    {'Name': name,
+                    'Description': description, 
                     'ISOValue': 'fr',
                     }
                 ],
@@ -336,16 +331,13 @@ class ProduitSelligHome(models.Model):
                     "Id": id_categ,
                     },
                 ],
-                # "AdditionalInformations": {
-                #     "description": [des],
-                # },
                 "ProductRelatedProducts": [
                     {
-                        "ProductId": res.id,
+                        "ProductId": id,
                         "ProductRemoteId": str(related_product.id),
                         "ProductReference": related_product.default_code,
                         "IsDeleted": False
-                    } for related_product in res.accessory_product_ids
+                    } for related_product in accessory_product_ids
                 ],
                 "Combinations": [
                     {
@@ -354,7 +346,7 @@ class ProduitSelligHome(models.Model):
                                 "AttributeId": value.attribute_id.id,
                                 "Attribute": value.attribute_id.name,
                                 "Value": value.name,
-                                "WeightAdjustement": res.weight,
+                                "WeightAdjustement": weight,
                                 "ProductAttributeLangs": [
                                     {
                                         "Name": value.attribute_id.name,
@@ -366,24 +358,29 @@ class ProduitSelligHome(models.Model):
                             for value in line.value_ids
                         ]
                     }
-                    for line in res.attribute_line_ids if line.value_ids
+                    for line in attribute_line_ids if line.value_ids
                 ]
             }
-
-            # Send POST request
             post_response = requests.post(url, json=product_data, headers=headers)
             
             if post_response.status_code == 200:
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
-                res.produit_sah_id = product_id
-                # default_list_price = self.env['product.pricelist'].create({
-                #     'name':f'Tarif du produit {res.name}',
-                #     'price_list_sah_id':response_data['Prices'][0]['Id']
-                # })
-                # res.default_list_price = default_list_price.id
-            else:
-                _logger.info(f"Error {post_response.status_code}: {post_response.text}")
+                objet.produit_sah_id = product_id
+                
+
+
+    @api.model
+    def create(self, vals):
+        res = super(ProduitSelligHome, self).create(vals)
+        if res:
+            job_kwargs = {
+                'description': 'Création produit Odoo vers SAH',
+            }
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+                                    res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
+                                    res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids)
         return res
 
 
@@ -395,20 +392,48 @@ class ProduitSelligHome(models.Model):
                 'description': 'Mise à jour du produit dans SAH',
             }
             self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+
             ### Modification stock
-            if self.is_storable == True:
-                url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
-                values = {
-                    "ProductId": self.produit_sah_id,
-                    "ProductReference": self.default_code,
-                    "StockQuantity": int(self.qty_available),
-                    "StockQuantityComing":int(self.virtual_available),
-                    "AllowOutOfStockOrders": True
-                    
-                }
-                response2 = requests.put(url2, headers=headers, json=values)
-                if response2.status_code == 200:
-                    _logger.info(self.virtual_available)  
-                else:
-                    _logger.info(f"Erreur {response2.status_code}: {response2.text}")
+            job_kwargs2 = {
+                'description': 'Mise à jour du stock produit',
+            }
+            self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
         return rec
+
+    def maj_des_stocks(self,is_storable,produit_sah_id,default_code,qty_available,virtual_available):
+        headers = self.env['authentication.sah'].establish_connection()
+        if is_storable == True:
+            url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
+            values = {
+                "ProductId": produit_sah_id,
+                "ProductReference": default_code,
+                "StockQuantity": int(qty_available),
+                "StockQuantityComing":int(virtual_available),
+                "AllowOutOfStockOrders": True
+                
+            }
+            requests.put(url2, headers=headers, json=values)
+          
+
+
+    def _export_stock_produit(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        active_ids = self.env.context.get('active_ids')
+        for active_id in active_ids:
+            product_id = self.env['product.template'].search([('id','=',active_id)])
+            job_kwargs2 = {
+                'description': 'Export stock',
+            }
+            self.with_delay(**job_kwargs2).maj_des_stocks(product_id.is_storable,product_id.produit_sah_id,product_id.default_code,product_id.qty_available,product_id.virtual_available)
+        
+        
+
+    def _export_datas_produit(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        active_ids = self.env.context.get('active_ids')
+        for active_id in active_ids:
+            product_id = self.env['product.template'].search([('id','=',active_id)])
+            job_kwargs = {
+                    'description': 'Export  produit',
+            }
+            self.with_delay(**job_kwargs).update_produit_dans_sah(product_id, headers)

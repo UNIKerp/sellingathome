@@ -9,32 +9,23 @@ _logger = logging.getLogger(__name__)
 class SaleLineSAH(models.Model):
     _inherit = "sale.order.line"
 
-    id_order_line_sh = fields.Integer(string="ID Line de Commande SAH", help="ID Line de Commande dans SAH")
+    id_order_line_sh = fields.Integer(string="ID Line de Commande SAH", copy=False, help="ID Line de Commande dans SAH")
 
     _sql_constraints = [
         ('id_order_line_sh_uniq', 'unique (id_order_line_sh)', "ID linr de commande SAH exists deja!"), ]
     
-    def copy(self, default=None):
-        default = dict(default or {})
-        default['id_order_line_sh'] = 0
-        return super(SaleLineSAH, self).copy(default)
 
 class SaleSAH(models.Model):
     _inherit = "sale.order"
 
-    id_order_sh = fields.Integer(string="ID commande SAH", help="ID de la Commande dans SAH")
+    id_order_sh = fields.Integer(string="ID commande SAH", copy=False, help="ID de la Commande dans SAH")
     vdi = fields.Many2one('res.partner',string="vdi",help='le veudeur dans SAH')
     
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
     
-    def copy(self, default=None):
-        default = dict(default or {})
-        default['id_order_sh'] = 0
-        return super(SaleSAH, self).copy(default)
 
     def get_commande(self):
-        _logger.info("======================= Debut de mise à jour des commandes")
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'            
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
