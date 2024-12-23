@@ -230,7 +230,7 @@ class ProduitSelligHome(models.Model):
     def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
-                                    description,accessory_product_ids,attribute_line_ids,image_1920):
+                                    description,accessory_product_ids,attribute_line_ids,product_image_url):
         _logger.info("Creating Product in SellingAtHome...")
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
@@ -293,29 +293,7 @@ class ProduitSelligHome(models.Model):
             else:
                 discount_end_date_iso = None
 
-            # Chemin du répertoire public pour les images
-            base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
-            image_folder = "/home/odoo/tmp_files"  # Temp folder for image storage
-
-
-            # Ensure folder exists
-            os.makedirs(image_folder, exist_ok=True)
-
-            # Handle image_1920 and save to the local folder
-            if image_1920:
-                image_name = f"product_{self.id}.png"
-                image_path = os.path.join(image_folder, image_name)
-
-                # Save the image locally
-                with open(image_path, "wb") as f:
-                    f.write(base64.b64decode(image_1920))
-
-                # Construct public URL for the image
-                product_image_url = f"{base_url}/images/{image_name}"
-                _logger.info("product_image_url product_image_url")
-                _logger.info(product_image_url)
-            else:
-                product_image_url = None
+          
 
             product_data = {
                 "ProductType": 5,
@@ -411,6 +389,29 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
+        # Chemin du répertoire public pour les images
+        base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+        image_folder = "/home/odoo/tmp_files"  # Temp folder for image storage
+
+
+        # Ensure folder exists
+        os.makedirs(image_folder, exist_ok=True)
+        product_image_url = ''
+        # Handle image_1920 and save to the local folder
+        if res.image_1920:
+            image_name = f"product_{res.id}.png"
+            image_path = os.path.join(image_folder, image_name)
+
+            # Save the image locally
+            with open(image_path, "wb") as f:
+                f.write(base64.b64decode(res.image_1920))
+
+            # Construct public URL for the image
+            product_image_url = f"{base_url}/images/{image_name}"
+            _logger.info("product_image_url product_image_url")
+            _logger.info(product_image_url)
+        else:
+            product_image_url = None
         if res:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
@@ -418,7 +419,7 @@ class ProduitSelligHome(models.Model):
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-                                    res.description,res.accessory_product_ids,res.attribute_line_ids,res.image_1920)
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids,product_image_url)
         return res
 
 
