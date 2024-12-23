@@ -389,43 +389,46 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
-
-        # attachment = self.env['ir.attachment'].create({
-        #     'name': f'{image.name_image}{mailing.id}{image.id}.png',
-        #     'type': 'binary',
-        #     'datas': image_data,
-        #     'res_model': 'mailing.mailing',
-        #     'res_id': mailing.id,
-        #     'mimetype': 'image/png',
-        #     'public': True,
-        #     'tmp_file': True,
-        # })
-        # base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        # image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-
-        # Chemin du répertoire public pour les images
-        base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
-        image_folder = "/home/odoo/tmp_files"  # Temp folder for image storage
-
-        # Ensure folder exists
-        os.makedirs(image_folder, exist_ok=True)
-        product_image_url = ''
-        # Handle image_1920 and save to the local folder
-        if res.image_1920:
-            image_name = f"product_{res.id}.png"
-            image_path = os.path.join(image_folder, image_name)
-
-            # Save the image locally
-            with open(image_path, "wb") as f:
-                f.write(base64.b64decode(res.image_1920))
-
-            # Construct public URL for the image
-            product_image_url = f"{base_url}/integration_sah/static/images/{image_name}"
-            # product_image_url = f"{base_url}/images/{image_name}"
+        if if res.image_1920 :
+            image_data = res.image_1920
+            attachment = self.env['ir.attachment'].create({
+                'name': f'product_image_{res.id}.png',
+                'type': 'binary',
+                'datas': image_data,
+                'res_model': 'product.template',
+                'res_id': res.id,
+                'mimetype': 'image/png',
+                'public': True,
+                'tmp_file': True,
+            })
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            product_image_url = f'{base_url}/web/content/{res.id}/{res.name}'
             _logger.info("product_image_url product_image_url")
             _logger.info(product_image_url)
-        else:
-            product_image_url = None
+
+        # Chemin du répertoire public pour les images
+        # base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+        # image_folder = "/home/odoo/tmp_files"  # Temp folder for image storage
+
+        # Ensure folder exists
+        # os.makedirs(image_folder, exist_ok=True)
+        # product_image_url = ''
+        # # Handle image_1920 and save to the local folder
+        # if res.image_1920:
+        #     image_name = f"product_{res.id}.png"
+        #     image_path = os.path.join(image_folder, image_name)
+
+        #     # Save the image locally
+        #     with open(image_path, "wb") as f:
+        #         f.write(base64.b64decode(res.image_1920))
+
+        #     # Construct public URL for the image
+        #     product_image_url = f"{base_url}/integration_sah/static/images/{image_name}"
+        #     # product_image_url = f"{base_url}/images/{image_name}"
+        #     _logger.info("product_image_url product_image_url")
+        #     _logger.info(product_image_url)
+        # else:
+        #     product_image_url = None
         if res:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
