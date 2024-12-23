@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_sah_integration_view_order_form" model="ir.ui.view">
+            <field name="name">sah.integration.commande.template.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/div[@class='oe_title']" position="after">
+                <group>
+                    <field name="id_order_sh" string="ID commande SAH" readonly="1"  invisible="id_order_sh == 0"/>
+                </group>
+                            </xpath>
+                <xpath expr="//form/sheet/group[@name='sale_header']/group[@name='order_details']/field[@name='payment_term_id']" position="after">
+                    <field name="vdi" string="VDI"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

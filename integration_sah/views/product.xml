@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="settings_sah_integration_view_product_template_form" model="ir.ui.view">
+            <field name="name">sah.integration.product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <field name="categ_id" position="after">
+                    <field name="produit_sah_id" readonly='1'/>
+                    <field name="default_list_price"/>
+                </field>
+                <xpath expr="//notebook//page[@name='inventory']//group//group[@name='group_lots_and_weight']" position="inside">
+                   
+                    <field name='long_sah'/>       
+                    <field name='haut_sah'/>       
+                    <field name='unitcapacity'/>       
+                    <field name='availableOnHostMinisites'/>     
+                    <field name='discountEndDate'/>     
+                    <field name='discountStartDate'/>     
+                    <field name='discountBadgeIsActive'/>
+                  
+                </xpath>
+            </field>
+        </record>
+
+        <record id="export_stock" model="ir.actions.server">
+            <field name="name">Export stock</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="binding_model_id" ref="product.model_product_template"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">action = model._export_stock_produit()</field>
+           
+        </record>
+
+        <record id="export_produit" model="ir.actions.server">
+            <field name="name">Export produit</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="binding_model_id" ref="product.model_product_template"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">action = model._export_datas_produit()</field>
+        </record>
+
+    </data>
+</odoo>
