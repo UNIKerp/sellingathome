@@ -294,8 +294,8 @@ class ProduitSelligHome(models.Model):
 
             # Convertissez l'image binaire en base64
             product_image = False
-            if image_1920:
-                product_image = base64.b64encode(image_1920).decode('utf-8')
+            if self.image_1920:
+                product_image = base64.b64encode(self.image_1920).decode('utf-8')
                 _logger.info("222222222222222222222222222",product_image)
 
             product_data = {
