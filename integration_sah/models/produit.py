@@ -303,18 +303,18 @@ class ProduitSelligHome(models.Model):
             if image_1920:
                 _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 _logger.info(image_1920)
-                # Générer un nom de fichier unique
-                image_name = f"product_{self.id}.png"
-                image_path = os.path.join(image_folder, image_name)
+            #     # Générer un nom de fichier unique
+            #     image_name = f"product_{self.id}.png"
+            #     image_path = os.path.join(image_folder, image_name)
 
-                # Sauvegarder l'image
-                with open(image_path, "wb") as f:
-                    f.write(image_1920)
+            #     # Sauvegarder l'image
+            #     with open(image_path, "wb") as f:
+            #         f.write(image_1920)
 
-                # Construire l'URL publique
-                product_image_url = f"{base_url}/images/{image_name}"
-            else:
-                product_image_url = None
+            #     # Construire l'URL publique
+            #     product_image_url = f"{base_url}/images/{image_name}"
+            # else:
+            #     product_image_url = None
 
             product_data = {
                 "ProductType": 5,
