@@ -407,7 +407,8 @@ class ProduitSelligHome(models.Model):
                 f.write(base64.b64decode(res.image_1920))
 
             # Construct public URL for the image
-            product_image_url = f"{base_url}/images/{image_name}"
+            product_image_url = f"{base_url}/web/static/images/{image_name}"
+            # product_image_url = f"{base_url}/images/{image_name}"
             _logger.info("product_image_url product_image_url")
             _logger.info(product_image_url)
         else:
