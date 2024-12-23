@@ -402,7 +402,7 @@ class ProduitSelligHome(models.Model):
             })
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             product_image_url = f'{base_url}/web/content/{res.id}/{res.name}'
-            _logger.info("product_image_url product_image_url")
+            _logger.info("================================================product_image_url product_image_url")
             _logger.info(product_image_url)
 
         # Chemin du répertoire public pour les images
@@ -427,7 +427,7 @@ class ProduitSelligHome(models.Model):
         #     _logger.info("product_image_url product_image_url")
         #     _logger.info(product_image_url)
         # else:
-        #     product_image_url = None
+            product_image_url = None
         if res:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
