@@ -4,6 +4,7 @@ import json
 from datetime import date
 from datetime import datetime
 import os
+import base64
 from odoo.tools import config
 import pytz
 import logging
@@ -231,7 +232,7 @@ class ProduitSelligHome(models.Model):
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
                                     description,accessory_product_ids,attribute_line_ids,image_1920):
-        _logger.info("11111111111111111111111111111")
+        _logger.info("Creating Product in SellingAtHome...")
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -294,27 +295,28 @@ class ProduitSelligHome(models.Model):
                 discount_end_date_iso = None
 
             # Chemin du répertoire public pour les images
-            # base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
-            # image_folder = os.path.join(config["data_dir"], "images")
+            base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+            image_folder = "/home/odoo/tmp_files"  # Temp folder for image storage
 
-            # # Assurez-vous que le dossier existe
-            # os.makedirs(image_folder, exist_ok=True)
 
+            # Ensure folder exists
+            os.makedirs(image_folder, exist_ok=True)
+
+            # Handle image_1920 and save to the local folder
             if image_1920:
-                _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                _logger.info(image_1920)
-            #     # Générer un nom de fichier unique
-            #     image_name = f"product_{self.id}.png"
-            #     image_path = os.path.join(image_folder, image_name)
+                image_name = f"product_{self.id}.png"
+                image_path = os.path.join(image_folder, image_name)
 
-            #     # Sauvegarder l'image
-            #     with open(image_path, "wb") as f:
-            #         f.write(image_1920)
+                # Save the image locally
+                with open(image_path, "wb") as f:
+                    f.write(base64.b64decode(image_1920))
 
-            #     # Construire l'URL publique
-            #     product_image_url = f"{base_url}/images/{image_name}"
-            # else:
-            #     product_image_url = None
+                # Construct public URL for the image
+                product_image_url = f"{base_url}/images/{image_name}"
+                _logger.info("product_image_url product_image_url")
+                _logger.info(product_image_url)
+            else:
+                product_image_url = None
 
             product_data = {
                 "ProductType": 5,
