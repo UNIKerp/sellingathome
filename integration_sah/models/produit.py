@@ -389,7 +389,7 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
-        if if res.image_1920 :
+        if res.image_1920 :
             image_data = res.image_1920
             attachment = self.env['ir.attachment'].create({
                 'name': f'product_image_{res.id}.png',
