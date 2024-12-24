@@ -230,10 +230,9 @@ class ProduitSelligHome(models.Model):
     def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
-                                    description,accessory_product_ids,attribute_line_ids,product_image_url):
+                                    description,accessory_product_ids,attribute_line_ids):
         _logger.info("Creating Product in SellingAtHome...")
         _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        _logger.info(product_image_url)
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -295,7 +294,19 @@ class ProduitSelligHome(models.Model):
             else:
                 discount_end_date_iso = None
 
-          
+             # Récupérer les images depuis product_template_image_ids
+            product_photos = []
+            if objet.product_template_image_ids:
+                for index, image in enumerate(objet.product_template_image_ids):
+                    # Générer l'URL de l'image
+                    base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+                    product_image_url = f'{base_url}/web/content/{image.id}/{image.name}'
+                    product_photos.append({
+                        "Link": product_image_url,
+                        "ProductId": id,
+                        "IsDefault": index == 0,  # La première image est par défaut
+                        "DisplayOrder": index + 1
+                    })
 
             product_data = {
                 "ProductType": 5,
@@ -340,14 +351,7 @@ class ProduitSelligHome(models.Model):
                     },
                 ],
 
-                "ProductPhotos": [
-                {
-                    "Link": product_image_url,
-                    "ProductId": id,
-                    "IsDefault": True,
-                    "DisplayOrder": 1
-                }
-                ] if product_image_url else [],
+                "ProductPhotos": product_photos,
 
                 "ProductRelatedProducts": [
                     {
@@ -391,53 +395,29 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
-        if res.image_1920 :
-            image_data = res.image_1920
-            attachment = self.env['ir.attachment'].create({
-                'name': f'product_image_{res.id}.png',
-                'type': 'binary',
-                'datas': image_data,
-                'res_model': 'product.template',
-                'res_id': res.id,
-                'mimetype': 'image/png',
-                'public': True,
-            })
-            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-            product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-            _logger.info("================================================product_image_url product_image_url")
-            _logger.info(product_image_url)
-
-        # Chemin du répertoire public pour les images
-        # base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
-        # image_folder = "/home/odoo/tmp_files"  # Temp folder for image storage
-
-        # Ensure folder exists
-        # os.makedirs(image_folder, exist_ok=True)
-        # product_image_url = ''
-        # # Handle image_1920 and save to the local folder
-        # if res.image_1920:
-        #     image_name = f"product_{res.id}.png"
-        #     image_path = os.path.join(image_folder, image_name)
-
-        #     # Save the image locally
-        #     with open(image_path, "wb") as f:
-        #         f.write(base64.b64decode(res.image_1920))
-
-        #     # Construct public URL for the image
-        #     product_image_url = f"{base_url}/integration_sah/static/images/{image_name}"
-        #     # product_image_url = f"{base_url}/images/{image_name}"
-        #     _logger.info("product_image_url product_image_url")
+        # if res.image_1920 :
+        #     image_data = res.image_1920
+        #     attachment = self.env['ir.attachment'].create({
+        #         'name': f'product_image_{res.id}.png',
+        #         'type': 'binary',
+        #         'datas': image_data,
+        #         'res_model': 'product.template',
+        #         'res_id': res.id,
+        #         'mimetype': 'image/png',
+        #         'public': True,
+        #     })
+        #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        #     product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+        #     _logger.info("================================================product_image_url product_image_url")
         #     _logger.info(product_image_url)
-        # else:
-        #    product_image_url = None
-        if res:
+        if res.product_template_image_ids:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-                                    res.description,res.accessory_product_ids,res.attribute_line_ids,product_image_url)
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids)
         return res
 
 
