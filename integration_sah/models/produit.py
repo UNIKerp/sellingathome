@@ -174,7 +174,7 @@ class ProduitSelligHome(models.Model):
                 try:
                     # Créer une pièce jointe publique pour chaque image
                     attachment = self.env['ir.attachment'].create({
-                        'name': f'product_image_{product.id}_{index + 1}.png',
+                        'name': f'product_image_{product.id}.png',
                         'type': 'binary',
                         'datas': image.image_1920, 
                         'res_model': 'product.template',
