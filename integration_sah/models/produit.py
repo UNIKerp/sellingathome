@@ -469,13 +469,35 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         if vals:
+            product_photos = []
+            if self.product_template_image_ids:
+                for index, image in enumerate(self.product_template_image_ids):
+                    # Créer une pièce jointe publique pour chaque image
+                    attachment = self.env['ir.attachment'].create({
+                        'name': f'product_image_{self.id}.png',
+                        'type': 'binary',
+                        'datas': image.image_1920, 
+                        'res_model': 'product.template',
+                        'res_id': self.id,
+                        'mimetype': 'image/png', 
+                        'public': True,
+                    })
+                    # Générer l'URL de l'image
+                    base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+                    product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                    product_photos.append({
+                        "Link": product_image_url,
+                        "ProductId": self.id,
+                        "IsDefault": index == 0,
+                        "DisplayOrder": index + 1
+                    })
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(self,self.is_published,self.type,self.allow_out_of_stock_order,self.sale_ok,self.is_storable,self.categ_id,
                                     self.discountStartDate,self.discountEndDate,self.default_code,self.id,self.name,self.list_price,self.taxes_id,
                                     self.standard_price,self.barcode,self.weight,self.long_sah,self.haut_sah,self.availableOnHostMinisites,
-                                    self.description,self.accessory_product_ids,self.attribute_line_ids)
+                                    self.description,self.accessory_product_ids,self.attribute_line_ids,product_photos)
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
