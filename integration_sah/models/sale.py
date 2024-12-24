@@ -37,6 +37,18 @@ class SaleSAH(models.Model):
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
                 Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
+
+                # Mapping des états SAH aux états Odoo
+                state_mapping = {
+                    'pending': 'draft',
+                    'confirmed': 'sale',
+                    'shipped': 'sent',
+                    'delivered': 'done'
+                }
+                order_state_sah = commande.get('Status', 'pending')  # Par défaut 'pending' si l'état n'est pas défini
+                _logger.info("+++++++++++++++++++++ order_state_sah ============================================")
+                _logger.info(order_state_sah)
+
                 if not commandes_odoo and client_id:
                     # p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id
                     order = commandes_odoo.create({
@@ -44,7 +56,8 @@ class SaleSAH(models.Model):
                         "name":commande['OrderRefCode'],
                         "partner_id":client_id.id,
                         "currency_id":Currency.id, 
-                        "vdi":client_id.vdi_id.id or False
+                        "vdi":client_id.vdi_id.id or False,
+                        "state": state_mapping.get(order_state_sah, 'draft'),
                     })
                     if order:
                         for elt in commande['Products']:
@@ -60,7 +73,13 @@ class SaleSAH(models.Model):
                                 })
 
                 elif commandes_odoo:
-                    commandes_odoo.write({ "name":commande['OrderRefCode'], "partner_id":client_id.id, "currency_id":Currency.id, "vdi":client_id.vdi_id.id or False})
+                    commandes_odoo.write({ 
+                        "name":commande['OrderRefCode'], 
+                        "partner_id":client_id.id, 
+                        "currency_id":Currency.id, 
+                        "vdi":client_id.vdi_id.id or False,
+                        "state": state_mapping.get(order_state_sah, 'draft'),
+                    })
                     for elt in commande['Products']:
                         if self.get_produit(elt['ProductId'])!=0:
                             j=0
