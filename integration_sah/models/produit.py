@@ -415,7 +415,7 @@ class ProduitSelligHome(models.Model):
         if res.product_template_image_ids:
             for index, image in enumerate(res.product_template_image_ids):
                 # Créer une pièce jointe publique pour chaque image
-                png_image_data = convert_webp_to_png(image.image_1920)
+                png_image_data = self.convert_webp_to_png(image.image_1920)
                 attachment = self.env['ir.attachment'].create({
                     'name': image.name,
                     'type': 'binary',
