@@ -6,14 +6,14 @@
 		<field	name="model">gestion.vdi</field>
 		<field	name="arch"	type="xml">
 			<form >
-			<sheet>
-				<group>
-					<field	name="name"/>
-					<field	name="contact_vdi_ids" widget="many2many_tags"/>
-					<field	name="contact_vdi_master"/>
-					<field  name="domain_adresse_livraison" invisible="1" />
-					<field	name="adresse_livraison" domain="[('id','in',domain_adresse_livraison)]" />
-				</group>
+				<sheet>
+					<group>
+						<field	name="name"/>
+						<field	name="contact_vdi_ids" widget="many2many_tags"/>
+						<field	name="contact_vdi_master"/>
+						<field  name="domain_adresse_livraison" invisible="1" />
+						<field	name="adresse_livraison" domain="[('id','in',domain_adresse_livraison)]" />
+					</group>
 				</sheet>
 				<!-- chatter dans la vue formulaire -->
                 <chatter reload_on_post="True"/>

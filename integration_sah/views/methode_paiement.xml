@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+  <record id="view_form_methode_paiement"	model="ir.ui.view">
+		<field	name="name">methode.paiement.form</field>
+		<field	name="model">methode.paiement</field>
+		<field	name="arch"	type="xml">
+			<form >
+			<sheet>
+					<group>
+						<group>
+							<field name="especes"/>
+							<field name="cheque" />
+							<field name="cheque_multi"/>
+							<field name="carte_credit" />
+
+                            <field name="carte_credit_multi"/>
+							<field name="declaratif_carte_credit" />
+							<field name="financement"/>
+							
+						</group>
+						<group>
+							<field name="virement_bancaire"/>
+							<field name="separe"/>
+							<field name="depot_dematerialise"/>
+
+                            <field name="non_remunere"/>
+                            <field name="avantage_gratuit"/>
+							<field name="bon_administratif"/>
+							<field name="declaratif_livraison"/>
+                            <field name="is_confirme"/>
+						</group>
+					</group>
+				</sheet>
+				<!-- chatter dans la vue formulaire -->
+                <chatter reload_on_post="True"/>
+			</form>
+		</field>
+	</record>
+
+    <record id="view_list_methode_paiement"	model="ir.ui.view">
+		<field	name="name">methode.paiement.form</field>
+		<field	name="model">methode.paiement</field>
+		<field	name="arch"	type="xml">
+			<list >
+                <field name="especes"/>
+                <field name="cheque" />
+                <field name="cheque_multi"/>
+                <field name="carte_credit" />
+
+                <field name="carte_credit_multi"/>
+                <field name="declaratif_carte_credit" />
+                <field name="financement"/>
+
+                <field name="virement_bancaire"/>
+                <field name="separe"/>
+                <field name="depot_dematerialise"/>
+
+                <field name="non_remunere"/>
+                <field name="avantage_gratuit"/>
+                <field name="bon_administratif"/>
+                <field name="declaratif_livraison"/>
+                <field name="is_confirme"/>
+			</list>
+		</field>
+	</record>
+    <record id="action_unikerp_ib_vogt_methode_paiement" model="ir.actions.act_window">
+        <field name="name">Méthode de paiement </field>
+        <field name="res_model">methode.paiement</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem name="Méthode de paiement" id="unikerp_ib_vogt_methode_paiement" parent="sale.sale_menu_root"  action="action_unikerp_ib_vogt_methode_paiement" sequence="1000"/> 
+    
+    </data>
+</odoo>
