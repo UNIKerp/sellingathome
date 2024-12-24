@@ -60,16 +60,18 @@ class SaleSAH(models.Model):
                     })
                     if order:
                         for elt in commande['Products']:
-                            if self.get_produit(elt['ProductId'])!=0:
-                                self.env['sale.order.line'].create({
+                            p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
+                            if p:
+                                l=self.env['sale.order.line'].create({
                                 "id_order_line_sh":elt["Id"],
-                                "name":self.get_produit(elt['ProductId']).name,
+                                "name":p.name,
                                 "order_id":order.id,
-                                'product_template_id':self.get_produit(elt['ProductId']).id,
+                                'product_template_id':p.id,
                                 'product_uom_qty': elt['Quantity'],
                                 'price_unit': elt['UnitPriceExcltax'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
+                                _logger.info("qqqqqqqqqq%s",l.product_template_id)
 
                 elif commandes_odoo:
                     commandes_odoo.write({ 
