@@ -10,6 +10,9 @@ import pytz
 import logging
 _logger = logging.getLogger(__name__)
 
+from PIL import Image
+from io import BytesIO
+
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
@@ -379,7 +382,14 @@ class ProduitSelligHome(models.Model):
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
                 
-
+    def convert_webp_to_png(image_data):
+    # Ouvrir l'image WebP avec Pillow
+    with Image.open(BytesIO(image_data)) as img:
+        # Créer un buffer pour l'image convertie
+        img_io = BytesIO()
+        img.save(img_io, 'PNG')  # Convertir en PNG
+        img_io.seek(0)  # Revenir au début du buffer
+        return img_io.read()
 
     @api.model
     def create(self, vals):
@@ -405,10 +415,11 @@ class ProduitSelligHome(models.Model):
         if res.product_template_image_ids:
             for index, image in enumerate(res.product_template_image_ids):
                 # Créer une pièce jointe publique pour chaque image
+                png_image_data = convert_webp_to_png(image.image_1920)
                 attachment = self.env['ir.attachment'].create({
                     'name': image.name,
                     'type': 'binary',
-                    'datas': image.image_1920, 
+                    'datas': png_image_data, 
                     'res_model': 'product.template',
                     'res_id': res.id,
                     'mimetype': 'image/png',  # Assurez-vous d'utiliser le type MIME approprié
