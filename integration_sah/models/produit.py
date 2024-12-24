@@ -163,47 +163,47 @@ class ProduitSelligHome(models.Model):
                 _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
         # Gestion des images du produit
-        # product_photos = []
-        # if product.product_template_image_ids:
-        #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        #     if not base_url:
-        #         _logger.error("Base URL is not configured in Odoo. Check 'web.base.url' parameter.")
-        #         return
+        product_photos = []
+        if product.product_template_image_ids:
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            if not base_url:
+                _logger.error("Base URL is not configured in Odoo. Check 'web.base.url' parameter.")
+                return
             
-        #     for index, image in enumerate(product.product_template_image_ids):
-        #         try:
-        #             # Créer une pièce jointe publique pour chaque image
-        #             attachment = self.env['ir.attachment'].create({
-        #                 'name': f'product_image_{product.id}.png',
-        #                 'type': 'binary',
-        #                 'datas': image.image_1920, 
-        #                 'res_model': 'product.template',
-        #                 'res_id': product.id,
-        #                 'mimetype': 'image/png', 
-        #                 'public': True,
-        #             })
+            for index, image in enumerate(product.product_template_image_ids):
+                try:
+                    # Créer une pièce jointe publique pour chaque image
+                    attachment = self.env['ir.attachment'].create({
+                        'name': f'product_image_{product.id}.png',
+                        'type': 'binary',
+                        'datas': image.image_1920, 
+                        'res_model': 'product.template',
+                        'res_id': product.id,
+                        'mimetype': 'image/png', 
+                        'public': True,
+                    })
 
-        #             # Vérifier que l'attachement est créé
-        #             if attachment:
-        #                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-        #                 product_photos.append({
-        #                     "Link": product_image_url,
-        #                     "ProductId": product.id,
-        #                     "IsDefault": index == 0,
-        #                     "DisplayOrder": index + 1
-        #                 })
-        #                 _logger.info(f"Image URL generated: {product_image_url}")
-        #             else:
-        #                 _logger.error("Failed to create attachment for product image.")
-        #         except Exception as e:
-        #             _logger.error(f"Error while processing product image: {e}")
+                    # Vérifier que l'attachement est créé
+                    if attachment:
+                        product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                        product_photos.append({
+                            "Link": product_image_url,
+                            "ProductId": product.id,
+                            "IsDefault": index == 0,
+                            "DisplayOrder": index + 1
+                        })
+                        _logger.info(f"Image URL generated: {product_image_url}")
+                    else:
+                        _logger.error("Failed to create attachment for product image.")
+                except Exception as e:
+                    _logger.error(f"Error while processing product image: {e}")
 
-        # _logger.info("######################## Product Photos ###########################")
-        # _logger.info(product_photos)
+        _logger.info("######################## Product Photos ###########################")
+        _logger.info(product_photos)
 
-        # # Si aucune image n'a été ajoutée
-        # if not product_photos:
-        #     _logger.warning("No product photos were generated for the product.")
+        # Si aucune image n'a été ajoutée
+        if not product_photos:
+            _logger.warning("No product photos were generated for the product.")
         
         # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
@@ -241,7 +241,7 @@ class ProduitSelligHome(models.Model):
                         "Id": id_categ,
                     }
                 ],
-                # "ProductPhotos": product_photos,
+                "ProductPhotos": product_photos,
                 "Combinations": [
                     {
                         "ProductAttributes": [
