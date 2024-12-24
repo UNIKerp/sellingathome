@@ -384,13 +384,22 @@ class ProduitSelligHome(models.Model):
 
     @api.model          
     def convert_webp_to_png(self, image_data):
-        # Ouvrir l'image WebP avec Pillow
-        with Image.open(BytesIO(image_data)) as img:
-            # Créer un buffer pour l'image convertie
-            img_io = BytesIO()
-            img.save(img_io, 'PNG')  # Convertir en PNG
-            img_io.seek(0)  # Revenir au début du buffer
-            return img_io.read()
+        try:
+            # Ouvrir l'image avec Pillow
+            with Image.open(BytesIO(image_data)) as img:
+                # Vérifier le format de l'image
+                if img.format != 'WEBP':
+                    _logger.error("L'image n'est pas au format WebP.")
+                    raise ValueError("L'image n'est pas au format WebP.")
+                
+                # Convertir en PNG
+                img_io = BytesIO()
+                img.save(img_io, 'PNG')
+                img_io.seek(0)
+                return img_io.read()
+        except Exception as e:
+            _logger.error(f"Erreur lors de la conversion de l'image: {str(e)}")
+            raise e
 
     @api.model
     def create(self, vals):
