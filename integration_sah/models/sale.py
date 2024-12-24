@@ -19,7 +19,7 @@ class SaleSAH(models.Model):
     _inherit = "sale.order"
 
     id_order_sh = fields.Integer(string="ID commande SAH", copy=False, help="ID de la Commande dans SAH")
-    vdi = fields.Many2one('res.partner',string="vdi",help='le veudeur dans SAH')
+    vdi = fields.Many2one('res.partner',string="Ambassadeur",help='le reveudeur vdi dans SAH')
     
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
@@ -46,7 +46,6 @@ class SaleSAH(models.Model):
                     'delivered': 'done'
                 }
                 order_state_sah = commande.get('Status', 'pending')  # Par défaut 'pending' si l'état n'est pas défini
-                _logger.info("+++++++++++++++++++++ order_state_sah ============================================")
                 _logger.info(order_state_sah)
 
                 if not commandes_odoo and client_id:
