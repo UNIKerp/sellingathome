@@ -238,14 +238,14 @@ class ProduitSelligHome(models.Model):
                 ],
                 "ProductPhotos": [
                         {
-                        "Link": elt,
+                        "Link": product_photos[0],
                         "ProductId": 120608,
                         "IsDefault": True,
                         "IsDeleted": True,
                         "DeletedDate": "2024-12-24T17:09:59.5386624+01:00",
                         "RemoteId": 1,
                         "DisplayOrder": 1
-                        } for elt in product_photos
+                        }, 
                         
                 ],
                 "Combinations": [
