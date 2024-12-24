@@ -378,42 +378,42 @@ class ProduitSelligHome(models.Model):
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
 
-    # @api.model
-    # def create(self, vals):
-    #     res = super(ProduitSelligHome, self).create(vals)
-    #     # Récupérer les images depuis product_template_image_ids
-    #     product_photos = []
-    #     if res.product_template_image_ids:
-    #         for index, image in enumerate(res.product_template_image_ids):
-    #             # Créer une pièce jointe publique pour chaque image
-    #             attachment = self.env['ir.attachment'].create({
-    #                 'name': f'product_image_{res.id}.png',
-    #                 'type': 'binary',
-    #                 'datas': image.image_1920, 
-    #                 'res_model': 'product.template',
-    #                 'res_id': res.id,
-    #                 'mimetype': 'image/png', 
-    #                 'public': True,
-    #             })
-    #             # Générer l'URL de l'image
-    #             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-    #             product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-    #             product_photos.append({
-    #                 "Link": product_image_url,
-    #                 "ProductId": res.id,
-    #                 "IsDefault": index == 0,
-    #                 "DisplayOrder": index + 1
-    #             })
+    @api.model
+    def create(self, vals):
+        res = super(ProduitSelligHome, self).create(vals)
+        # Récupérer les images depuis product_template_image_ids
+        product_photos = []
+        if res.product_template_image_ids:
+            for index, image in enumerate(res.product_template_image_ids):
+                # Créer une pièce jointe publique pour chaque image
+                attachment = self.env['ir.attachment'].create({
+                    'name': f'product_image_{res.id}.png',
+                    'type': 'binary',
+                    'datas': image.image_1920, 
+                    'res_model': 'product.template',
+                    'res_id': res.id,
+                    'mimetype': 'image/png', 
+                    'public': True,
+                })
+                # Générer l'URL de l'image
+                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+                product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                product_photos.append({
+                    "Link": product_image_url,
+                    "ProductId": res.id,
+                    "IsDefault": index == 0,
+                    "DisplayOrder": index + 1
+                })
 
-    #     if res:
-    #         job_kwargs = {
-    #             'description': 'Création produit Odoo vers SAH',
-    #         }
-    #         self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
-    #                                 res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
-    #                                 res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-    #                                 res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
-    #     return res
+        if res:
+            job_kwargs = {
+                'description': 'Création produit Odoo vers SAH',
+            }
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+                                    res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
+                                    res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
+        return res
 
 
     def write(self, vals):
