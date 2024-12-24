@@ -419,7 +419,7 @@ class ProduitSelligHome(models.Model):
                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
                 product_photos.append({
                     "Link": product_image_url,
-                    "ProductId": id,
+                    "ProductId": res.id,
                     "IsDefault": index == 0,  # La première image est par défaut
                     "DisplayOrder": index + 1
                 })
