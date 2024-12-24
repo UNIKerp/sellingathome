@@ -64,7 +64,7 @@ class SaleSAH(models.Model):
                             if p:
                                 l=self.env['sale.order.line'].create({
                                 "id_order_line_sh":elt["Id"],
-                                "name":p.name,
+                                # "name":p.name,
                                 "order_id":order.id,
                                 'product_template_id':p.id,
                                 'product_uom_qty': elt['Quantity'],
