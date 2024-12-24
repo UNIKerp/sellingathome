@@ -383,13 +383,13 @@ class ProduitSelligHome(models.Model):
                 objet.produit_sah_id = product_id
                 
     def convert_webp_to_png(image_data):
-    # Ouvrir l'image WebP avec Pillow
-    with Image.open(BytesIO(image_data)) as img:
-        # Créer un buffer pour l'image convertie
-        img_io = BytesIO()
-        img.save(img_io, 'PNG')  # Convertir en PNG
-        img_io.seek(0)  # Revenir au début du buffer
-        return img_io.read()
+        # Ouvrir l'image WebP avec Pillow
+        with Image.open(BytesIO(image_data)) as img:
+            # Créer un buffer pour l'image convertie
+            img_io = BytesIO()
+            img.save(img_io, 'PNG')  # Convertir en PNG
+            img_io.seek(0)  # Revenir au début du buffer
+            return img_io.read()
 
     @api.model
     def create(self, vals):
