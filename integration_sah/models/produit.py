@@ -235,8 +235,6 @@ class ProduitSelligHome(models.Model):
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
                                     description,accessory_product_ids,attribute_line_ids,product_photos):
         _logger.info("Creating Product in SellingAtHome...")
-        _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        _logger.info(product_photos)
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -297,8 +295,6 @@ class ProduitSelligHome(models.Model):
                 discount_end_date_iso = discount_end_date_utc.isoformat()
             else:
                 discount_end_date_iso = None
-
-            
 
             product_data = {
                 "ProductType": 5,
@@ -385,22 +381,6 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
-        # if res.image_1920 :
-        #     image_data = res.image_1920
-        #     attachment = self.env['ir.attachment'].create({
-        #         'name': f'product_image_{res.id}.png',
-        #         'type': 'binary',
-        #         'datas': image_data,
-        #         'res_model': 'product.template',
-        #         'res_id': res.id,
-        #         'mimetype': 'image/png',
-        #         'public': True,
-        #     })
-        #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        #     product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-        #     _logger.info("================================================product_image_url product_image_url")
-        #     _logger.info(product_image_url)
-        
         # Récupérer les images depuis product_template_image_ids
         product_photos = []
         if res.product_template_image_ids:
@@ -412,8 +392,8 @@ class ProduitSelligHome(models.Model):
                     'datas': image.image_1920, 
                     'res_model': 'product.template',
                     'res_id': res.id,
-                    'mimetype': 'image/png',  # Assurez-vous d'utiliser le type MIME approprié
-                    'public': True,  # Rendre l'image publique
+                    'mimetype': 'image/png', 
+                    'public': True,
                 })
                 # Générer l'URL de l'image
                 base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
@@ -421,12 +401,9 @@ class ProduitSelligHome(models.Model):
                 product_photos.append({
                     "Link": product_image_url,
                     "ProductId": res.id,
-                    "IsDefault": index == 0,  # La première image est par défaut
+                    "IsDefault": index == 0,
                     "DisplayOrder": index + 1
                 })
-                _logger.info(f"Product Image URL {index + 1}: {product_image_url}")
-                _logger.info("######################### product_photos ###############################")
-                _logger.info(product_photos)
 
         if res:
             job_kwargs = {
