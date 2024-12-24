@@ -278,7 +278,7 @@ class ProduitSelligHome(models.Model):
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
                                     description,accessory_product_ids,attribute_line_ids,product_photos):
-        _logger.info("Creating Product in SellingAtHome...")
+        _logger.info("$$$$$$$$$$$ Creating Product in SellingAtHome...%s",objet)
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -416,7 +416,7 @@ class ProduitSelligHome(models.Model):
                 ]
             }
             post_response = requests.post(url, json=product_data, headers=headers)
-            
+            _logger.info("$$$$$$$$$$$%s",post_response.status_code )
             if post_response.status_code == 200:
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
@@ -449,7 +449,7 @@ class ProduitSelligHome(models.Model):
                     "DisplayOrder": index + 1
                 })
 
-        if res and not res.produit_sah_id:
+        if res :
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
