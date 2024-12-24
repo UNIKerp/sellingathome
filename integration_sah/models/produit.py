@@ -381,8 +381,9 @@ class ProduitSelligHome(models.Model):
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
-                
-    def convert_webp_to_png(image_data):
+
+    @api.model          
+    def convert_webp_to_png(self, image_data):
         # Ouvrir l'image WebP avec Pillow
         with Image.open(BytesIO(image_data)) as img:
             # Créer un buffer pour l'image convertie
