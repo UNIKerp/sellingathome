@@ -163,7 +163,7 @@ class ProduitSelligHome(models.Model):
                 _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
         # Gestion des images du produit
-        product_photos = []
+        product_photos = {}
         if product.product_template_image_ids:
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             if not base_url:
@@ -186,7 +186,7 @@ class ProduitSelligHome(models.Model):
                     # Vérifier que l'attachement est créé
                     if attachment:
                         product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                        product_photos.append(product_image_url)
+                        product_photos['Link'] = product_image_url
                         _logger.info(f"Image URL generated: {product_image_url}")
                     else:
                         _logger.error("Failed to create attachment for product image.")
@@ -196,7 +196,7 @@ class ProduitSelligHome(models.Model):
         _logger.info("######################## Product Photos ###########################")
         _logger.info(product_photos)
         _logger.info(product_photos[0])
-        test = product_photos[0]
+        test = product_photos['Link'][0]
         # Si aucune image n'a été ajoutée
         if not product_photos:
             _logger.warning("No product photos were generated for the product.")
