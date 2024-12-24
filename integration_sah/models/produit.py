@@ -303,7 +303,7 @@ class ProduitSelligHome(models.Model):
                     attachment = self.env['ir.attachment'].create({
                         'name': image.name,
                         'type': 'binary',
-                        'datas': image.image_1920,  # Remplacez par le bon champ pour l'image si différent
+                        'datas': image.image,  # Remplacez par le bon champ pour l'image si différent
                         'res_model': 'product.template',
                         'res_id': objet.id,
                         'mimetype': 'image/webp',  # Assurez-vous d'utiliser le type MIME approprié
