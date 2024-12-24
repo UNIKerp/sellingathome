@@ -195,7 +195,6 @@ class ProduitSelligHome(models.Model):
 
         _logger.info("######################## Product Photos ###########################")
         _logger.info(product_photos)
-        _logger.info(product_photos[0])
         test = product_photos['Link'][0]
         # Si aucune image n'a été ajoutée
         if not product_photos:
