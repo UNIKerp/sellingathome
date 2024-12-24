@@ -93,6 +93,7 @@ class SaleSAH(models.Model):
                                 "id_order_line_sh":elt["Id"],
                                 "name":p.name,
                                 "order_id":commandes_odoo.id,
+                                'product_id':p.product_variant_id.id,
                                 'product_template_id':p.id,
                                 'product_uom_qty': elt['Quantity'],
                                 'price_unit': elt['UnitPriceExcltax'], 
