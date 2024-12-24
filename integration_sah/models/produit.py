@@ -163,47 +163,47 @@ class ProduitSelligHome(models.Model):
                 _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
         # Gestion des images du produit
-        product_photos = []
-        if product.product_template_image_ids:
-            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-            if not base_url:
-                _logger.error("Base URL is not configured in Odoo. Check 'web.base.url' parameter.")
-                return
+        # product_photos = []
+        # if product.product_template_image_ids:
+        #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        #     if not base_url:
+        #         _logger.error("Base URL is not configured in Odoo. Check 'web.base.url' parameter.")
+        #         return
             
-            for index, image in enumerate(product.product_template_image_ids):
-                try:
-                    # Créer une pièce jointe publique pour chaque image
-                    attachment = self.env['ir.attachment'].create({
-                        'name': f'product_image_{product.id}.png',
-                        'type': 'binary',
-                        'datas': image.image_1920, 
-                        'res_model': 'product.template',
-                        'res_id': product.id,
-                        'mimetype': 'image/png', 
-                        'public': True,
-                    })
+        #     for index, image in enumerate(product.product_template_image_ids):
+        #         try:
+        #             # Créer une pièce jointe publique pour chaque image
+        #             attachment = self.env['ir.attachment'].create({
+        #                 'name': f'product_image_{product.id}.png',
+        #                 'type': 'binary',
+        #                 'datas': image.image_1920, 
+        #                 'res_model': 'product.template',
+        #                 'res_id': product.id,
+        #                 'mimetype': 'image/png', 
+        #                 'public': True,
+        #             })
 
-                    # Vérifier que l'attachement est créé
-                    if attachment:
-                        product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                        product_photos.append({
-                            "Link": product_image_url,
-                            "ProductId": product.id,
-                            "IsDefault": index == 0,
-                            "DisplayOrder": index + 1
-                        })
-                        _logger.info(f"Image URL generated: {product_image_url}")
-                    else:
-                        _logger.error("Failed to create attachment for product image.")
-                except Exception as e:
-                    _logger.error(f"Error while processing product image: {e}")
+        #             # Vérifier que l'attachement est créé
+        #             if attachment:
+        #                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+        #                 product_photos.append({
+        #                     "Link": product_image_url,
+        #                     "ProductId": product.id,
+        #                     "IsDefault": index == 0,
+        #                     "DisplayOrder": index + 1
+        #                 })
+        #                 _logger.info(f"Image URL generated: {product_image_url}")
+        #             else:
+        #                 _logger.error("Failed to create attachment for product image.")
+        #         except Exception as e:
+        #             _logger.error(f"Error while processing product image: {e}")
 
-        _logger.info("######################## Product Photos ###########################")
-        _logger.info(product_photos)
+        # _logger.info("######################## Product Photos ###########################")
+        # _logger.info(product_photos)
 
-        # Si aucune image n'a été ajoutée
-        if not product_photos:
-            _logger.warning("No product photos were generated for the product.")
+        # # Si aucune image n'a été ajoutée
+        # if not product_photos:
+        #     _logger.warning("No product photos were generated for the product.")
         
         # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
@@ -278,7 +278,8 @@ class ProduitSelligHome(models.Model):
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
                                     description,accessory_product_ids,attribute_line_ids,product_photos):
-        _logger.info("$$$$$$$$$$$ Creating Product in SellingAtHome...%s")
+        _logger.info("$$$$$$$$$$$ Creating Product in SellingAtHome...")
+        _logger.info(product_photos)
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -416,8 +417,6 @@ class ProduitSelligHome(models.Model):
                 ]
             }
             post_response = requests.post(url, json=product_data, headers=headers)
-            _logger.info("22222$$$$$$$%s",post_response.status_code )
-            _logger.info("3333$$$$$$$$$$%s",post_response )
             if post_response.status_code == 200:
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
@@ -443,12 +442,16 @@ class ProduitSelligHome(models.Model):
                 # Générer l'URL de l'image
                 base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                _logger.info("##################### product_image_url ############################")
+                _logger.info(product_image_url)
                 product_photos.append({
                     "Link": product_image_url,
                     "ProductId": res.id,
                     "IsDefault": index == 0,
                     "DisplayOrder": index + 1
                 })
+        _logger.info("*************************** product_photos *************************")
+        _logger.info(product_photos)
 
         if res :
             job_kwargs = {
