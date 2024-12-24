@@ -239,7 +239,7 @@ class ProduitSelligHome(models.Model):
                 ],
                 "ProductPhotos": [
                         {
-                        "Link": test,
+                        "Link": 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2118/product_image_166.png',
                         "ProductId": 120608,
                         "IsDefault": True,
                         "IsDeleted": True,
