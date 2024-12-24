@@ -382,25 +382,6 @@ class ProduitSelligHome(models.Model):
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
 
-    @api.model          
-    def convert_webp_to_png(self, image_data):
-        try:
-            # Ouvrir l'image avec Pillow
-            with Image.open(BytesIO(image_data)) as img:
-                # Vérifier le format de l'image
-                if img.format != 'WEBP':
-                    _logger.error("L'image n'est pas au format WebP.")
-                    raise ValueError("L'image n'est pas au format WebP.")
-                
-                # Convertir en PNG
-                img_io = BytesIO()
-                img.save(img_io, 'PNG')
-                img_io.seek(0)
-                return img_io.read()
-        except Exception as e:
-            _logger.error(f"Erreur lors de la conversion de l'image: {str(e)}")
-            raise e
-
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
@@ -425,11 +406,10 @@ class ProduitSelligHome(models.Model):
         if res.product_template_image_ids:
             for index, image in enumerate(res.product_template_image_ids):
                 # Créer une pièce jointe publique pour chaque image
-                png_image_data = self.convert_webp_to_png(image.image_1920)
                 attachment = self.env['ir.attachment'].create({
-                    'name': image.name,
+                    'name': f'product_image_{res.id}.png',
                     'type': 'binary',
-                    'datas': png_image_data, 
+                    'datas': image.image_1920, 
                     'res_model': 'product.template',
                     'res_id': res.id,
                     'mimetype': 'image/png',  # Assurez-vous d'utiliser le type MIME approprié
