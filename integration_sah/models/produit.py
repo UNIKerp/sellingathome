@@ -417,10 +417,16 @@ class ProduitSelligHome(models.Model):
             }
             post_response = requests.post(url, json=product_data, headers=headers)
             _logger.info("$$$$$$$$$$$%s",post_response.status_code )
-            if post_response.status_code == 200:
-                response_data = post_response.json()
+            
+            response_data = post_response.json()
+            if response_data.get('Id'):
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
+            # _logger.info("$$$$$$$$$$$%s",post_response.status_code )
+            # if post_response.status_code == 200:
+            #     response_data = post_response.json()
+            #     product_id = response_data.get('Id')
+            #     objet.produit_sah_id = product_id
 
     @api.model
     def create(self, vals):
