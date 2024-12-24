@@ -189,8 +189,8 @@ class ProduitSelligHome(models.Model):
                         product_photos.append({
                             "Link": product_image_url,
                             "ProductId": product.produit_sah_id,
-                            "IsDefault": index == 0,
-                            "DisplayOrder": index + 1
+                            "IsDefault": True,
+                            "DisplayOrder": 1
                         })
                         _logger.info(f"Image URL generated: {product_image_url}")
                     else:
