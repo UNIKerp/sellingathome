@@ -186,12 +186,7 @@ class ProduitSelligHome(models.Model):
                     # Vérifier que l'attachement est créé
                     if attachment:
                         product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                        product_photos.append({
-                            "Link": product_image_url,
-                            "ProductId": product.produit_sah_id,
-                            "IsDefault": True,
-                            "DisplayOrder": 1
-                        })
+                        product_photos.append(product_image_url)
                         _logger.info(f"Image URL generated: {product_image_url}")
                     else:
                         _logger.error("Failed to create attachment for product image.")
@@ -243,14 +238,14 @@ class ProduitSelligHome(models.Model):
                 ],
                 "ProductPhotos": [
                         {
-                        "Link": "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/1990/product_image_166.png",
+                        "Link": elt,
                         "ProductId": 120608,
                         "IsDefault": True,
                         "IsDeleted": True,
                         "DeletedDate": "2024-12-24T17:09:59.5386624+01:00",
                         "RemoteId": 1,
                         "DisplayOrder": 1
-                        },
+                        } for elt in product_photos
                         
                 ],
                 "Combinations": [
