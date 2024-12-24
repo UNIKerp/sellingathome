@@ -238,7 +238,7 @@ class ProduitSelligHome(models.Model):
                 ],
                 "ProductPhotos": [
                         {
-                        "Link": elt.id,
+                        "Link": str(elt.id),
                         "ProductId": 120608,
                         "IsDefault": True,
                         "IsDeleted": True,
