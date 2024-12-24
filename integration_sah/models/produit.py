@@ -195,6 +195,7 @@ class ProduitSelligHome(models.Model):
 
         _logger.info("######################## Product Photos ###########################")
         _logger.info(product_photos)
+        _logger.info(product_photos[0])
 
         # Si aucune image n'a été ajoutée
         if not product_photos:
@@ -238,7 +239,7 @@ class ProduitSelligHome(models.Model):
                 ],
                 "ProductPhotos": [
                         {
-                        "Link": product_photos[0],
+                        "Link": "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2065/product_image_166.png",
                         "ProductId": 120608,
                         "IsDefault": True,
                         "IsDeleted": True,
