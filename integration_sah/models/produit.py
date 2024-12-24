@@ -239,7 +239,7 @@ class ProduitSelligHome(models.Model):
                 ],
                 "ProductPhotos": [
                         {
-                        "Link": "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2065/product_image_166.png",
+                        "Link": product_photos[0],
                         "ProductId": 120608,
                         "IsDefault": True,
                         "IsDeleted": True,
@@ -271,7 +271,9 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
-            
+            _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            _logger.info(update_data)
+            _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             
             if put_response_produit.status_code == 200:
