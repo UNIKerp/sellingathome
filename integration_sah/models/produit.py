@@ -241,7 +241,7 @@ class ProduitSelligHome(models.Model):
                         "Id": id_categ,
                     }
                 ],
-                "ProductPhotos": product_photos,
+                # "ProductPhotos": product_photos,
                 "Combinations": [
                     {
                         "ProductAttributes": [
