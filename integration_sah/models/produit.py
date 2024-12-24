@@ -196,7 +196,7 @@ class ProduitSelligHome(models.Model):
         _logger.info("######################## Product Photos ###########################")
         _logger.info(product_photos)
         _logger.info(product_photos[0])
-        test = 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2088/product_image_166.png'
+        test = product_photos[0]
         # Si aucune image n'a été ajoutée
         if not product_photos:
             _logger.warning("No product photos were generated for the product.")
