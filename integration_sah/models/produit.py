@@ -295,20 +295,30 @@ class ProduitSelligHome(models.Model):
             else:
                 discount_end_date_iso = None
 
-             # Récupérer les images depuis product_template_image_ids
+            # Récupérer les images depuis product_template_image_ids
             product_photos = []
             if objet.product_template_image_ids:
-                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
                 for index, image in enumerate(objet.product_template_image_ids):
+                    # Créer une pièce jointe publique pour chaque image
+                    attachment = self.env['ir.attachment'].create({
+                        'name': image.name,
+                        'type': 'binary',
+                        'datas': image.image_1920,  # Remplacez par le bon champ pour l'image si différent
+                        'res_model': 'product.template',
+                        'res_id': objet.id,
+                        'mimetype': 'image/webp',  # Assurez-vous d'utiliser le type MIME approprié
+                        'public': True,  # Rendre l'image publique
+                    })
                     # Générer l'URL de l'image
-                    product_image_url = f'{base_url}/web/content/{image.id}/{image.name}'
-                    _logger.info(f"Product Image URL {index + 1}: {product_image_url}")  # Log each URL
+                    base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+                    product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
                     product_photos.append({
                         "Link": product_image_url,
                         "ProductId": id,
                         "IsDefault": index == 0,  # La première image est par défaut
                         "DisplayOrder": index + 1
                     })
+                    _logger.info(f"Product Image URL {index + 1}: {product_image_url}")
 
             product_data = {
                 "ProductType": 5,
