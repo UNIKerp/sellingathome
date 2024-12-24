@@ -49,7 +49,6 @@ class SaleSAH(models.Model):
                 _logger.info(order_state_sah)
 
                 if not commandes_odoo and client_id:
-                    # p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])]).id
                     order = commandes_odoo.create({
                         "id_order_sh":commande['Id'],
                         "name":commande['OrderRefCode'],
@@ -62,7 +61,7 @@ class SaleSAH(models.Model):
                         for elt in commande['Products']:
                             p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
                             if p:
-                                l=self.env['sale.order.line'].create({
+                                self.env['sale.order.line'].create({
                                 "id_order_line_sh":elt["Id"],
                                 "name":p.name,
                                 "order_id":order.id,
@@ -72,7 +71,6 @@ class SaleSAH(models.Model):
                                 'price_unit': elt['UnitPriceExcltax'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
-                                _logger.info("qqqqqqqqqq%s",l.product_template_id)
 
                 elif commandes_odoo:
                     commandes_odoo.write({ 
@@ -83,7 +81,8 @@ class SaleSAH(models.Model):
                         "state": state_mapping.get(order_state_sah, 'draft'),
                     })
                     for elt in commande['Products']:
-                        if self.get_produit(elt['ProductId'])!=0:
+                        p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
+                        if p:
                             j=0
                             for l in commandes_odoo.order_line:
                                 if l.id_order_line_sh==elt["Id"]:
@@ -92,16 +91,15 @@ class SaleSAH(models.Model):
                             if j==0:
                                 self.env['sale.order.line'].create({
                                 "id_order_line_sh":elt["Id"],
-                                "name":self.get_produit(elt['ProductId']).name,
+                                "name":p.name,
                                 "order_id":commandes_odoo.id,
-                                'product_template_id':self.get_produit(elt['ProductId']).id,
+                                'product_template_id':p.id,
                                 'product_uom_qty': elt['Quantity'],
                                 'price_unit': elt['UnitPriceExcltax'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
         else:
             _logger.info(f"Erreur {response.status_code}: {response.text}")
-        _logger.info("======================= Fin de mise à jour des commandes")
        
             
     def _get_or_create_tax(self, tax_rate):
@@ -115,11 +113,4 @@ class SaleSAH(models.Model):
         
         return tax.id
 
-
-    def get_produit(self,ProductId):
-        produit = self.env['product.template'].search([('produit_sah_id','=',ProductId)])
-        if produit: 
-            return produit
-        else:
-            return 0
 
