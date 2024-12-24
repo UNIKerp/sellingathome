@@ -303,7 +303,7 @@ class ProduitSelligHome(models.Model):
                     attachment = self.env['ir.attachment'].create({
                         'name': image.name,
                         'type': 'binary',
-                        'datas': image.image,  # Remplacez par le bon champ pour l'image si différent
+                        'datas': image.image_1920, 
                         'res_model': 'product.template',
                         'res_id': objet.id,
                         'mimetype': 'image/webp',  # Assurez-vous d'utiliser le type MIME approprié
@@ -319,6 +319,8 @@ class ProduitSelligHome(models.Model):
                         "DisplayOrder": index + 1
                     })
                     _logger.info(f"Product Image URL {index + 1}: {product_image_url}")
+                    _logger.info("######################### product_photos ###############################")
+                    _logger.info(product_photos)
 
             product_data = {
                 "ProductType": 5,
