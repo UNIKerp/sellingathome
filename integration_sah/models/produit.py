@@ -418,7 +418,7 @@ class ProduitSelligHome(models.Model):
             post_response = requests.post(url, json=product_data, headers=headers)
             _logger.info("$$$$$$$$$$$%s",post_response.status_code )
             response_data = post_response.json()
-            _logger.info("@@@@@@@@@@%s",response_data.get('Id'))
+            _logger.info("@@@@@@@@@@%s",response_data)
             if response_data.get('Id'):
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
@@ -472,13 +472,13 @@ class ProduitSelligHome(models.Model):
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
-            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            # self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
             ### Modification stock
             job_kwargs2 = {
                 'description': 'Mise à jour du stock produit',
             }
-            self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
+            # self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
         return rec
 
     def maj_des_stocks(self,is_storable,produit_sah_id,default_code,qty_available,virtual_available):
