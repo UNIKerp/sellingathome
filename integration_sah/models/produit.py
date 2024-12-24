@@ -161,6 +161,28 @@ class ProduitSelligHome(models.Model):
                         id_categ = categ['Id']
             else:
                 _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
+
+        # Gestion des images du produit
+        product_photos = []
+        if product.product_template_image_ids:
+            for index, image in enumerate(product.product_template_image_ids):
+                attachment = self.env['ir.attachment'].create({
+                    'name': f'product_image_{product.id}_{index + 1}.png',
+                    'type': 'binary',
+                    'datas': image.image_1920, 
+                    'res_model': 'product.template',
+                    'res_id': product.id,
+                    'mimetype': 'image/png', 
+                    'public': True,
+                })
+                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+                product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                product_photos.append({
+                    "Link": product_image_url,
+                    "ProductId": product.id,
+                    "IsDefault": index == 0,
+                    "DisplayOrder": index + 1
+                })
         
         # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
@@ -198,6 +220,7 @@ class ProduitSelligHome(models.Model):
                         "Id": id_categ,
                     }
                 ],
+                "ProductPhotos": product_photos,
                 "Combinations": [
                     {
                         "ProductAttributes": [
