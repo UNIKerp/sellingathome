@@ -278,7 +278,7 @@ class ProduitSelligHome(models.Model):
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
                                     description,accessory_product_ids,attribute_line_ids,product_photos):
-        _logger.info("$$$$$$$$$$$ Creating Product in SellingAtHome...%s",objet)
+        _logger.info("$$$$$$$$$$$ Creating Product in SellingAtHome...%s")
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -416,16 +416,12 @@ class ProduitSelligHome(models.Model):
                 ]
             }
             post_response = requests.post(url, json=product_data, headers=headers)
-            _logger.info("11111111111111111111$$$%s",post_response.status_code ,post_response)
-            response_data = post_response.json()
-            _logger.info("@@@@@@@@@@%s",response_data)
-            if response_data.get('Id'):
+            _logger.info("22222$$$$$$$%s",post_response.status_code )
+            _logger.info("3333$$$$$$$$$$%s",post_response )
+            if post_response.status_code == 200:
+                response_data = post_response.json()
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
-            # if post_response.status_code == 200:
-            #     response_data = post_response.json()
-            #     product_id = response_data.get('Id')
-            #     objet.produit_sah_id = product_id
 
     @api.model
     def create(self, vals):
@@ -454,14 +450,14 @@ class ProduitSelligHome(models.Model):
                     "DisplayOrder": index + 1
                 })
 
-        # if res :
-        #     job_kwargs = {
-        #         'description': 'Création produit Odoo vers SAH',
-        #     }
-        #     self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
-        #                             res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
-        #                             res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-        #                             res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
+        if res :
+            job_kwargs = {
+                'description': 'Création produit Odoo vers SAH',
+            }
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+                                    res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
+                                    res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
         return res
 
 
@@ -469,45 +465,16 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         if vals:
-            product_photos = []
-            if self.product_template_image_ids:
-                for index, image in enumerate(self.product_template_image_ids):
-                    # Créer une pièce jointe publique pour chaque image
-                    attachment = self.env['ir.attachment'].create({
-                        'name': f'product_image_{self.id}.png',
-                        'type': 'binary',
-                        'datas': image.image_1920, 
-                        'res_model': 'product.template',
-                        'res_id': self.id,
-                        'mimetype': 'image/png', 
-                        'public': True,
-                    })
-                    # Générer l'URL de l'image
-                    base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-                    product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                    product_photos.append({
-                        "Link": product_image_url,
-                        "ProductId": self.id,
-                        "IsDefault": index == 0,
-                        "DisplayOrder": index + 1
-                    })
-            job_kwargs = {
-                'description': 'Création produit Odoo vers SAH',
-            }
-            self.with_delay(**job_kwargs).creation_produit_odoo_sah(self,self.is_published,self.type,self.allow_out_of_stock_order,self.sale_ok,self.is_storable,self.categ_id,
-                                    self.discountStartDate,self.discountEndDate,self.default_code,self.id,self.name,self.list_price,self.taxes_id,
-                                    self.standard_price,self.barcode,self.weight,self.long_sah,self.haut_sah,self.availableOnHostMinisites,
-                                    self.description,self.accessory_product_ids,self.attribute_line_ids,product_photos)
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
-            # self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
             ### Modification stock
             job_kwargs2 = {
                 'description': 'Mise à jour du stock produit',
             }
-            # self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
+            self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
         return rec
 
     def maj_des_stocks(self,is_storable,produit_sah_id,default_code,qty_available,virtual_available):
