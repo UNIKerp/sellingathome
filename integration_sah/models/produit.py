@@ -416,7 +416,7 @@ class ProduitSelligHome(models.Model):
                 ]
             }
             post_response = requests.post(url, json=product_data, headers=headers)
-            _logger.info("$$$$$$$$$$$%s",post_response.status_code ,post_response)
+            _logger.info("11111111111111111111$$$%s",post_response.status_code ,post_response)
             response_data = post_response.json()
             _logger.info("@@@@@@@@@@%s",response_data)
             if response_data.get('Id'):
