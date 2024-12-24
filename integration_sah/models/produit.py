@@ -411,7 +411,7 @@ class ProduitSelligHome(models.Model):
                     'datas': image.image_1920, 
                     'res_model': 'product.template',
                     'res_id': res.id,
-                    'mimetype': 'image/webp',  # Assurez-vous d'utiliser le type MIME approprié
+                    'mimetype': 'image/png',  # Assurez-vous d'utiliser le type MIME approprié
                     'public': True,  # Rendre l'image publique
                 })
                 # Générer l'URL de l'image
