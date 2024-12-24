@@ -177,12 +177,16 @@ class ProduitSelligHome(models.Model):
                 })
                 base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                _logger.info("########################### product_image_url ######################")
+                _logger.info(product_image_url)
                 product_photos.append({
                     "Link": product_image_url,
                     "ProductId": product.id,
                     "IsDefault": index == 0,
                     "DisplayOrder": index + 1
                 })
+        _logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$ product_photos $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        _logger.info(product_photos)
         
         # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
