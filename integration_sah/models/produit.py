@@ -278,7 +278,7 @@ class ProduitSelligHome(models.Model):
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
                                     description,accessory_product_ids,attribute_line_ids,product_photos):
-        _logger.info("Creating Product in SellingAtHome...%s",objet)
+        _logger.info("$$$$$$$$$$$ Creating Product in SellingAtHome...%s",objet)
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
