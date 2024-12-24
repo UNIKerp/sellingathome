@@ -194,7 +194,7 @@ class ProduitSelligHome(models.Model):
                             "DeletedDate": "2024-12-24T17:09:59.5386624+01:00",
                             "RemoteId": 1,
                             "DisplayOrder": 1
-                        }, 
+                        }
                         product_photos.append(photo)
                     else:
                         _logger.error("Failed to create attachment for product image.")
