@@ -104,7 +104,7 @@ class ProduitSelligHome(models.Model):
             response_data_produit = get_response_produit.json()
             for identifiant in response_data_produit:
                 identite_api = identifiant['Id']
-
+                
                 product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
                 if product_odoo:
                     self.update_produit_dans_sah(product_odoo, headers)
@@ -525,7 +525,7 @@ class ProduitSelligHome(models.Model):
         }
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
-        response_produit = requests.put(url_produit, json=product_photos, headers=headers)
+        response_produit = requests.put(url_produit, headers=headers)
         _logger.info('============================== %s',response_produit)
 
 
