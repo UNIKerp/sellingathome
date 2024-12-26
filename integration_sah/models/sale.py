@@ -120,7 +120,8 @@ class SaleSAH(models.Model):
                                         'date_validation':p['ValidatedAt'],
                                         })
                                 else:
-                                    self.env['paiement.sah'].sudo().create({
+                                    _logger.info('@@@@@@@@dddd%s',p)
+                                    commandes_odoo.paiement_ids = self.env['paiement.sah'].sudo().create({
                                         'name':p['Name'],  
                                         'methode': mtp.id if mtp else None,  
                                         'montant': p['Amount'],   
