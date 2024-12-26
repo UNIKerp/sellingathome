@@ -479,6 +479,11 @@ class ProduitSelligHome(models.Model):
                 product_photos.append({
                     "Link": product_image_url,
                     "ProductId": product_id.produit_sah_id,
+                    "IsDefault": True,
+                    "IsDeleted": True,
+                    "DeletedDate": "2024-12-26T16:14:05.4557869+01:00",
+                    "RemoteId": 1,
+                    "DisplayOrder": 1
                 })
         if product_id.image_1920:
             attachment_img = self.env['ir.attachment'].create({
@@ -494,6 +499,11 @@ class ProduitSelligHome(models.Model):
             product_photos.append({
                 "Link": product_image_1920,
                 "ProductId": product_id.produit_sah_id,
+                "IsDefault": True,
+                "IsDeleted": True,
+                "DeletedDate": "2024-12-26T16:14:05.4557869+01:00",
+                "RemoteId": 1,
+                "DisplayOrder": 1
             })
         _logger.info('=================================== %s',product_photos)
         product_photos = {
