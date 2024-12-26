@@ -204,6 +204,7 @@ class ProduitSelligHome(models.Model):
            
             #Mise à jour du produit si produit est synchronié
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
+            _logger.info('==============================i dshah  %s',product.produit_sah_id)
             update_data = {
                 "ProductType": 5,
                 "Reference": product.default_code,
@@ -233,7 +234,7 @@ class ProduitSelligHome(models.Model):
                 "ProductComponents":[
                     {
                     "Name": "Componet 2222",
-                    "ProductId": product.produit_sah_id,
+                    # "ProductId": product.produit_sah_id,
                     "MaxQuantity": 10
                     }
                 ],
