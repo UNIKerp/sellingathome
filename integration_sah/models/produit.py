@@ -163,11 +163,7 @@ class ProduitSelligHome(models.Model):
                             id_categ = categ['Id']
                 else:
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
-
-    
-            
-            #Mise à jour du produit si produit est synchronié
-            _logger.info('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s',product_photos)
+                    
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
                 "ProductType": 5,
