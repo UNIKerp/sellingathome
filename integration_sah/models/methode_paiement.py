@@ -6,7 +6,7 @@ _logger = logging.getLogger(__name__)
 
 
 class MethodePaiement(models.Model):
-    _name = "methode.paiement"
+    _name = "methode.paiement.sah"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = "gestion des methodes de paiement"
 

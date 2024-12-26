@@ -2,8 +2,8 @@
 <odoo>
   <data>
   <record id="view_form_methode_paiement"	model="ir.ui.view">
-		<field	name="name">methode.paiement.form</field>
-		<field	name="model">methode.paiement</field>
+		<field	name="name">methode.paiement.sah.form</field>
+		<field	name="model">methode.paiement.sah</field>
 		<field	name="arch"	type="xml">
 			<form >
 			<sheet>
@@ -39,8 +39,8 @@
 	</record>
 
     <record id="view_list_methode_paiement"	model="ir.ui.view">
-		<field	name="name">methode.paiement.form</field>
-		<field	name="model">methode.paiement</field>
+		<field	name="name">methode.paiement.sah.form</field>
+		<field	name="model">methode.paiement.sah</field>
 		<field	name="arch"	type="xml">
 			<list >
                 <field name="especes"/>
@@ -66,7 +66,7 @@
 	</record>
     <record id="action_unikerp_ib_vogt_methode_paiement" model="ir.actions.act_window">
         <field name="name">Méthode de paiement </field>
-        <field name="res_model">methode.paiement</field>
+        <field name="res_model">methode.paiement.sah</field>
         <field name="view_mode">list,form</field>
     </record>
     <menuitem name="Méthode de paiement" id="unikerp_ib_vogt_methode_paiement" parent="sale.sale_menu_root"  action="action_unikerp_ib_vogt_methode_paiement" sequence="1000"/> 
