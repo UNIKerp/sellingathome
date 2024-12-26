@@ -524,6 +524,7 @@ class ProduitSelligHome(models.Model):
                 photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2527/product_image_317.png"
             _logger.info('================================= aprss%s',values)
             url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
+            _logger.info('result======================================%s',url_put)
             result = requests.put(url_put,json=values, headers=headers)
             _logger.info('================================= result%s',result)
 
