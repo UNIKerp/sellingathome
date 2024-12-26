@@ -71,7 +71,7 @@ class SaleSAH(models.Model):
                             paiement_vals=[]
                             for p in paiement_sah:
                                 mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
-                                paiement_vals.append({
+                                self.env['paiement.sah'].sudo().create({
                                     'name':p['Name'],  
                                     'methode': mtp.id if mtp else None,  
                                     'montant': p['Amount'],   
@@ -82,7 +82,6 @@ class SaleSAH(models.Model):
                                     'order_id': order.id,
                                 })
                                 order.methode_paiement_id = mtp.id if mtp else order.methode_paiement_id
-                            self.env['paiement.sah'].sudo().create(paiement_vals)
                         for elt in commande['Products']:
                             p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
                             if p:
@@ -121,7 +120,7 @@ class SaleSAH(models.Model):
                                         'date_validation':p['ValidatedAt'],
                                         })
                                 else:
-                                    paiement_vals.append({
+                                    self.env['paiement.sah'].sudo().create({
                                         'name':p['Name'],  
                                         'methode': mtp.id if mtp else None,  
                                         'montant': p['Amount'],   
@@ -129,10 +128,9 @@ class SaleSAH(models.Model):
                                         'date_paiement': p['PaymentAt'],
                                         'date_echeance':p['DueAt'],
                                         'date_validation':p['ValidatedAt'],
-                                        'order_id': order.id,
+                                        'order_id': commandes_odoo.id,
                                     })
                                 commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
-                        self.env['paiement.sah'].sudo().create(paiement_vals)
                     for elt in commande['Products']:
                         p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
                         if p:
