@@ -457,11 +457,14 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
        
         if self.produit_sah_id:
-            # job_kwargs = {
-            #     'description': 'Mise à jour du produit dans SAH',
-            # }
-            # _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! l'id sah existe %s", self.produit_sah_id)
-            # self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            if self.env.context.get('from_create'):
+                _logger.info('===========================================%s',self.env.context)
+                return super(ProduitSelligHome, self).write(vals)
+            job_kwargs = {
+                'description': 'Mise à jour du produit dans SAH',
+            }
+            _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! l'id sah existe %s", self.produit_sah_id)
+            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
             ### Modification stock
             job_kwargs2 = {
