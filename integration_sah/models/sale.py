@@ -20,7 +20,7 @@ class SaleSAH(models.Model):
 
     id_order_sh = fields.Integer(string="ID commande SAH", copy=False, help="ID de la Commande dans SAH")
     vdi = fields.Many2one('res.partner',string="Ambassadeur",help='le reveudeur vdi dans SAH')
-    methode_paiement_id = fields.Many2one('methode.paiement',string="Methode de paiement",help='la Methode de paiement')
+    methode_paiement_id = fields.Many2one('methode.paiement',string="Moyen de paiement",help='la Methode de paiement')
     paiement_id = fields.Many2one('paiement.sah',string="Paiement SAH",help='le paiement dans SAH')
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
