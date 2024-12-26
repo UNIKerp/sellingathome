@@ -528,7 +528,7 @@ class ProduitSelligHome(models.Model):
             # result = requests.put(url_put,json=values, headers=headers)
             # _logger.info('================================= result%s',result)
             else:
-            _logger.error("Produit avec l'ID %s introuvable.", product_id.produit_sah_id)
+                _logger.error("Produit avec l'ID %s introuvable.", product_id.produit_sah_id)
             return
         
             _logger.info('Valeur du produit récupérée: %s', json.dumps(values, indent=4))
