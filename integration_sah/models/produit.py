@@ -428,7 +428,7 @@ class ProduitSelligHome(models.Model):
                 attachment = self.env['ir.attachment'].create({
                     'name': f'product_image_{res.id}.png',
                     'type': 'binary',
-                    'datas': image.datas, 
+                    'datas': image.image_1920, 
                     'res_model': 'product.template',
                     'res_id': res.id,
                     'mimetype': 'image/png', 
