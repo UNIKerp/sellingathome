@@ -231,13 +231,13 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                "ProductComponents":[
-                    {
-                    "Name": "Componet 2222",
-                    # "ProductId": product.produit_sah_id,
-                    "MaxQuantity": 10
-                    }
-                ],
+                # "ProductComponents":[
+                #     {
+                #     "Name": "Componet 2222",
+                #     "ProductId": product.produit_sah_id,
+                #     "MaxQuantity": 10
+                #     }
+                # ],
                 "Categories": [
                     {
                         "Id": id_categ,
