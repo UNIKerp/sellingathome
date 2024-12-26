@@ -411,6 +411,7 @@ class ProduitSelligHome(models.Model):
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
+                _logger.info("======================================== %s",objet.produit_sah_id)
 
     @api.model
     def create(self, vals):
