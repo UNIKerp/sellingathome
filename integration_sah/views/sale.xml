@@ -16,7 +16,7 @@
                     <field name="methode_paiement_id" />
                 </xpath> 
                 <page name="other_information" position="after">
-                    <page string="Info Paiement SAH" name="info_paiement_sah">
+                    <page string="Infos Paiement SAH" name="info_paiement_sah">
                         <group>
                             <field name="paiement_ids"  readonly="1" force_save="1">
                                 <list>

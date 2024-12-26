@@ -47,7 +47,7 @@
         <field name="res_model">paiement.sah</field>
         <field name="view_mode">list,form</field>
     </record>
-    <menuitem name="Modèles de paiement" id="sah_model_paiement" parent="info_sah_paiement"  action="action_unikerp_ib_vogt_model_paiement" sequence="2"/> 
+    <menuitem name="Paiements" id="sah_model_paiement" parent="info_sah_paiement"  action="action_unikerp_ib_vogt_model_paiement" sequence="2"/> 
     
   </data>
 </odoo>

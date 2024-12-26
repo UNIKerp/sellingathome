@@ -37,6 +37,9 @@ class SaleSAH(models.Model):
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
                 Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
+                methode_paiement = commande['PaymentMethod']
+                if methode_paiement:
+                    methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
 
                 # Mapping des états SAH aux états Odoo
@@ -57,6 +60,7 @@ class SaleSAH(models.Model):
                         "currency_id":Currency.id, 
                         "vdi":client_id.vdi_id.id or False,
                         "state": state_mapping.get(order_state_sah, 'draft'),
+                        "methode_paiement_id":methode_paiement.id if methode_paiement else None,
                     })
                     if order:
                         for elt in commande['Products']:
@@ -80,6 +84,7 @@ class SaleSAH(models.Model):
                         "currency_id":Currency.id, 
                         "vdi":client_id.vdi_id.id or False,
                         "state": state_mapping.get(order_state_sah, 'draft'),
+                        "methode_paiement_id":methode_paiement.id if methode_paiement else None,
                     })
                     for elt in commande['Products']:
                         p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
