@@ -409,6 +409,7 @@ class ProduitSelligHome(models.Model):
             post_response = requests.post(url, json=product_data, headers=headers)
             if post_response.status_code == 200:
                 response_data = post_response.json()
+                _logger.info("========================================response %s",response_data)
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
                 _logger.info("======================================== %s",objet.produit_sah_id)
