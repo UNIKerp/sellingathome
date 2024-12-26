@@ -12,7 +12,7 @@ class ModelPaiement(models.Model):
 
 
     name = fields.Char(string='Nom',help="Nom du client")
-    methode = fields.Mamy2one('methode.paiement.sah',string='Méthode de paiement',help="Méthode de paiement")
+    methode = fields.Many2one('methode.paiement.sah',string='Méthode de paiement',help="Méthode de paiement")
     montant = fields.Float(string='Montant',help="Montant du paiement")
     numero_transaction = fields.Char(string='Numéro de transaction',help="Numéro de transaction") 
     date_paiement = fields.Date(string='Date de paiement',help="Date de paiement") 
