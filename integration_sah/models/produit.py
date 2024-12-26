@@ -201,19 +201,11 @@ class ProduitSelligHome(models.Model):
                 except Exception as e:
                     _logger.error(f"Error while processing product image: {e}")
 
-        _logger.info("######################## Product Photos ###########################")
-        _logger.info(product_photos)
-        _logger.info(product_photos[0])
-        test = str(product_photos[0])
-        # Si aucune image n'a été ajoutée
-        if not product_photos:
-            _logger.warning("No product photos were generated for the product.")
         
         # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-            
-            # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
+            _logger.info('====================================== %s',product.produit_sah_id)
             update_data = {
                 "ProductType": 5,
                 "Reference": product.default_code,
@@ -245,7 +237,7 @@ class ProduitSelligHome(models.Model):
                         "Id": id_categ,
                     }
                 ],
-                "ProductPhotos": product_photos,
+                # "ProductPhotos": product_photos,
                 "Combinations": [
                     {
                         "ProductAttributes": [
@@ -268,11 +260,7 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
-            _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            _logger.info(update_data)
-            _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
-            
             if put_response_produit.status_code == 200:
                 _logger.info(f"Article {product.name} mis à jour avec succès sur l'API SAH")
             else:
@@ -284,8 +272,6 @@ class ProduitSelligHome(models.Model):
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
                                     description,accessory_product_ids,attribute_line_ids,product_photos):
-        _logger.info("$$$$$$$$$$$ Creating Product in SellingAtHome...")
-        _logger.info(product_photos)
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -448,17 +434,12 @@ class ProduitSelligHome(models.Model):
                 # Générer l'URL de l'image
                 base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                _logger.info("##################### product_image_url ############################")
-                _logger.info(product_image_url)
                 product_photos.append({
                     "Link": product_image_url,
                     "ProductId": res.id,
                     "IsDefault": True,
                     "DisplayOrder": 1
                 })
-        _logger.info("*************************** product_photos *************************")
-        _logger.info(product_photos)
-
         if res :
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
@@ -474,10 +455,12 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         if vals:
-            # job_kwargs = {
-            #     'description': 'Mise à jour du produit dans SAH',
-            # }
-            # self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            if self.produit_sah_id:
+                job_kwargs = {
+                    'description': 'Mise à jour du produit dans SAH',
+                }
+                _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! l'id sah existe %s", self.produit_sah_id)
+                self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
             ### Modification stock
             job_kwargs2 = {
