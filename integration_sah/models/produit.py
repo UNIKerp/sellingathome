@@ -233,29 +233,26 @@ class ProduitSelligHome(models.Model):
                 ],
                 "ProductComponents": [
                     {
-                        "Id": 1,
                         "Name": "sample string 1",
-                        "ProductId": 2,
-                        "MaxQuantity": 1,
-                        "Deleted": True,
-                        "RemoteReference": "sample string 3",
-                        "ProductComponentLangs": [
-                            {
-                            "Label": "sample string 1",
-                            "ISOValue": "fr"
-                            }
-                        ],
-                        "ProductComponentProducts": [
-                            {
-                            "ProductId": 1,
-                            "ProductRemoteId": "sample string 1",
-                            "ProductCombinationId": 1,
-                            "ProductCombinationBarCode": "sample string 2",
-                            "Quantity": 1,
-                            "DisplayOrder": 1,
-                            "Deleted": True
-                            }
-                        ]
+                        "ProductId": 120778,
+                        "MaxQuantity": 10,
+                        # "ProductComponentLangs": [
+                        #     {
+                        #     "Label": "sample string 1",
+                        #     "ISOValue": "fr"
+                        #     }
+                        # ],
+                        # "ProductComponentProducts": [
+                        #     {
+                        #     "ProductId": 1,
+                        #     "ProductRemoteId": "sample string 1",
+                        #     "ProductCombinationId": 1,
+                        #     "ProductCombinationBarCode": "sample string 2",
+                        #     "Quantity": 1,
+                        #     "DisplayOrder": 1,
+                        #     "Deleted": True
+                        #     }
+                        # ]
                     }
                 ],
                 "Categories": [
