@@ -16,6 +16,8 @@
         'views/client.xml',
         'views/crons.xml',
         'views/gestion_vdi.xml',
+        'views/model_paiement.xml',
+        'views/methode_paiement.xml',
     ],
     'images':['static/description/icon.png',],
 }

@@ -6,4 +6,6 @@ from . import stock
 from .import sale
 from . import client
 from . import gestion_vdi
+from . import model_paiement
+from . import methode_paiement
 
