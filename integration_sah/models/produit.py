@@ -441,7 +441,7 @@ class ProduitSelligHome(models.Model):
                     "IsDefault": True,
                     "DisplayOrder": 1
                 })
-        if res :
+        if res and not res.produit_sah_id:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
