@@ -5,8 +5,8 @@
 		<field	name="name">paiement.sah.form</field>
 		<field	name="model">paiement.sah</field>
 		<field	name="arch"	type="xml">
-			<form >
-			<sheet>
+			<form create="false" edite="false">
+				<sheet>
 					<group>
 						<group>
 							<field name="name"/>
@@ -31,7 +31,7 @@
 		<field	name="name">paiement.sah.form</field>
 		<field	name="model">paiement.sah</field>
 		<field	name="arch"	type="xml">
-			<list >
+			<list create="false" edite="false">
                 <field	name="name"/>
                 <field	name="methode" />
                 <field	name="montant"/>
