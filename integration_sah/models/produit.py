@@ -376,7 +376,7 @@ class ProduitSelligHome(models.Model):
                     },
                 ],
 
-                # "ProductPhotos": product_photos,
+                "ProductPhotos": product_photos,
 
                 "ProductRelatedProducts": [
                     {
