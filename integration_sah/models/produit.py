@@ -448,10 +448,6 @@ class ProduitSelligHome(models.Model):
                                     res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
         return res
 
-
-    def test(self):
-        _logger.info('==================================== hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
-
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
