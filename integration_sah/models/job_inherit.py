@@ -1,15 +1,17 @@
 from odoo import models, api, fields,_
 import requests
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class JobEXT(models.Model):
     _inherit = "queue.job"
 
-    product_job = fields.Char()
 
-    # @api.model
-    # def create(self,vals):
-    #     res = super(JobEXT, self).create(vals)
-    #     if res:
-    #         res.retry = 1
-    #     return res
+  
+    def write(self,vals):
+        res = super(JobEXT, self).write(vals)
+        if self.method_name == "creation_produit_odoo_sah":
+           
+            self.retry = 1
+            _logger.info('========================================= %s',self.retry)
+        return res
