@@ -519,14 +519,36 @@ class ProduitSelligHome(models.Model):
                 if elt['Id'] == product_id.produit_sah_id:
                     values = elt
                     break
-            _logger.info('=================================%s',values)
-            for photo in values['ProductPhotos']:
-                photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2551/product_image_317.png"
-            _logger.info('================================= aprss%s',values)
+            # _logger.info('=================================%s',values)
+            # for photo in values['ProductPhotos']:
+            #     photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2551/product_image_317.png"
+            # _logger.info('================================= aprss%s',values)
+            # url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
+            # _logger.info('result======================================%s',url_put)
+            # result = requests.put(url_put,json=values, headers=headers)
+            # _logger.info('================================= result%s',result)
+            else:
+            _logger.error("Produit avec l'ID %s introuvable.", product_id.produit_sah_id)
+            return
+        
+            _logger.info('Valeur du produit récupérée: %s', json.dumps(values, indent=4))
+            
+            # Mise à jour des liens des photos
+            for photo, new_photo in zip(values.get('ProductPhotos', []), product_photos):
+                photo["Link"] = new_photo["Link"]
+            
+            _logger.info('Valeur après mise à jour: %s', json.dumps(values, indent=4))
+            
+            # Envoi de la mise à jour
             url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
-            _logger.info('result======================================%s',url_put)
-            result = requests.put(url_put,json=values, headers=headers)
-            _logger.info('================================= result%s',result)
+            result = requests.put(url_put, json=values, headers=headers)
+            
+            if result.status_code == 200:
+                _logger.info('Mise à jour réussie: %s', result.json())
+            else:
+                _logger.error('Erreur lors de la mise à jour: %s - %s', result.status_code, result.text)
+        else:
+            _logger.error("Erreur lors de la récupération des produits: %s - %s", response_produit.status_code, response_produit.text)
 
 
 
