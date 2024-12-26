@@ -18,3 +18,4 @@ class ModelPaiement(models.Model):
     date_paiement = fields.Date(string='Date de paiement',help="Date de paiement") 
     date_echeance = fields.Date(string='Date d\'échéance du paiement',help="date d'échéance du paiement") 
     date_validation = fields.Date(string='Date de validation du paiement',help="Date de validation du paiement") 
+    order_id = fields.Many2one('sale.order',string="Commande",help='le bon de commande')
