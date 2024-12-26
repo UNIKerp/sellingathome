@@ -25,6 +25,7 @@ class ProduitSelligHome(models.Model):
     discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
     discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
     discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
+    is_id_sah_exist = fields.Boolean()
 
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
@@ -278,7 +279,7 @@ class ProduitSelligHome(models.Model):
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if is_storable == True else 0
-        if categ_id and not objet.produit_sah_id:
+        if categ_id and objet.is_id_sah_exist == False:
             _logger.info("############################################### DEBUT CREATION #################################")
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
@@ -413,7 +414,7 @@ class ProduitSelligHome(models.Model):
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
                 _logger.info('=======================================%s',product_id)
-                objet.produit_sah_id = int(product_id)
+                objet.is_id_sah_exist = True
                 _logger.info('======================================= SHA%s',   objet.produit_sah_id)
 
     @api.model
