@@ -20,10 +20,10 @@
                         <group>
                             <field name="paiement_ids"  readonly="1" force_save="1">
                                 <list>
+                                    <field  name="numero_transaction" />
                                     <field	name="name"/>
                                     <field	name="methode" />
                                     <field	name="montant"/>
-                                    <field  name="numero_transaction" />
                                     <field	name="date_paiement"/>
                                     <field	name="date_echeance"/>
                                     <field	name="date_validation"/>

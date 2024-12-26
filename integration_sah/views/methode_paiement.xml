@@ -69,7 +69,8 @@
         <field name="res_model">methode.paiement.sah</field>
         <field name="view_mode">list,form</field>
     </record>
-    <menuitem name="Méthode de paiement" id="unikerp_ib_vogt_methode_paiement" parent="sale.sale_menu_root"  action="action_unikerp_ib_vogt_methode_paiement" sequence="1000"/> 
+    <menuitem name="Informations Paiement SAH" id="info_sah_paiement" parent="sale.sale_menu_root"/> 
+    <menuitem name="Méthode de paiement" id="sah_methode_paiement" parent="info_sah_paiement"  action="action_unikerp_ib_vogt_methode_paiement" sequence="1"/> 
     
     </data>
 </odoo>
