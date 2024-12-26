@@ -446,28 +446,34 @@ class ProduitSelligHome(models.Model):
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
-            result = self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
-                                    res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
-                                    res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-                                    res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
-            _logger.info('================================resultresultresult %s',result)
+            # self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+            #                         res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
+            #                         res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
+            #                         res.description,res.accessory_product_ids,res.attribute_line_ids)
+            
         return res
 
-    # def write(self, vals):
-    #     headers = self.env['authentication.sah'].establish_connection()
-    #     rec = super(ProduitSelligHome, self).write(vals)
-    #     if vals:
-    #         job_kwargs = {
-    #             'description': 'Mise à jour du produit dans SAH',
-    #         }
-    #         self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+    def write(self, vals):
+        headers = self.env['authentication.sah'].establish_connection()
+        rec = super(ProduitSelligHome, self).write(vals)
+        _logger.info("======================================== write s'excute")
+        if not self.produit_sah_id:
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(self,self.is_published,self.type,self.allow_out_of_stock_order,self.sale_ok,self.is_storable,self.categ_id,
+                                        self.discountStartDate,self.discountEndDate,self.default_code,self.id,res.name,self.list_price,self.taxes_id,
+                                        self.standard_price,self.barcode,self.weight,self.long_sah,self.haut_sah,self.availableOnHostMinisites,
+                                        self.description,self.accessory_product_ids,self.attribute_line_ids,product_photos)
+        else:
+            job_kwargs = {
+                'description': 'Mise à jour du produit dans SAH',
+            }
+            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
-    #         ### Modification stock
-    #         job_kwargs2 = {
-    #             'description': 'Mise à jour du stock produit',
-    #         }
-    #         self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
-    #     return rec
+            ### Modification stock
+            job_kwargs2 = {
+                'description': 'Mise à jour du stock produit',
+            }
+            self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
+        return rec
 
     def maj_des_stocks(self,is_storable,produit_sah_id,default_code,qty_available,virtual_available):
         headers = self.env['authentication.sah'].establish_connection()
