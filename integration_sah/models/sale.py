@@ -106,6 +106,8 @@ class SaleSAH(models.Model):
                         "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
                     })
                     paiement_sah = commande['Payments']
+                    
+                    _logger.info('@@@@@@@@ commande dddd%s',commande['Payments'])
                     if paiement_sah:
                         paiement_vals=[]
                         for p in paiement_sah:
