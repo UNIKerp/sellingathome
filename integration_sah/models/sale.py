@@ -40,6 +40,7 @@ class SaleSAH(models.Model):
                 methode_paiement = commande['PaymentMethod']
                 if methode_paiement:
                     methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
+                paiement_sah = commande['Payments']
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
 
                 # Mapping des états SAH aux états Odoo
