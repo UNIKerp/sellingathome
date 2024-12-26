@@ -163,38 +163,7 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
     
-            product_photos = []
-            if product.product_template_image_ids:
-                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-                for image in product.product_template_image_ids:
-                    attachment = self.env['ir.attachment'].create({
-                        'name': f'product_image_{product.id}.png',
-                        'type': 'binary',
-                        'datas': image.image_1920, 
-                        'res_model': 'product.template',
-                        'res_id': product.id,
-                        'mimetype': 'image/png', 
-                        'public': True,
-                    })
-                    product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                    product_photos.append({
-                        "Link": product_image_url,
-                        "ProductId":product.produit_sah_id
-                    })
-            if  product.image_1920:
-                attachment_img = self.env['ir.attachment'].create({
-                    'name': f'product_image_{product.id}.png',
-                    'type': 'binary',
-                    'datas': product.image_1920, 
-                    'res_model': 'product.template',
-                    'res_id': product.id,
-                    'mimetype': 'image/png', 
-                    'public': True,
-                })
-                product_image = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
-                product_photos.append({"Link": product_image,"ProductId":product.produit_sah_id})
-
-           
+            
             #Mise à jour du produit si produit est synchronié
             _logger.info('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s',product_photos)
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
@@ -230,7 +199,6 @@ class ProduitSelligHome(models.Model):
                         "Id": id_categ,
                     }
                 ],
-                "ProductPhotos": product_photos,
                 "Combinations": [
                     {
                         "ProductAttributes": [
