@@ -237,7 +237,7 @@ class ProduitSelligHome(models.Model):
                         "Name": "sample string 1",
                         "ProductId": 2,
                         "MaxQuantity": 1,
-                        "Deleted": true,
+                        "Deleted": True,
                         "RemoteReference": "sample string 3",
                         "ProductComponentLangs": [
                             {
@@ -253,7 +253,7 @@ class ProduitSelligHome(models.Model):
                             "ProductCombinationBarCode": "sample string 2",
                             "Quantity": 1,
                             "DisplayOrder": 1,
-                            "Deleted": true
+                            "Deleted": True
                             }
                         ]
                     }
