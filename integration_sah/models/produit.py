@@ -406,19 +406,15 @@ class ProduitSelligHome(models.Model):
                     for line in attribute_line_ids if line.value_ids
                 ]
             }
-            url_get = f"https://demoapi.sellingathome.com/v1/Products/{objet.produit_sah_id}"
-            _logger.info("========================================url_get %s",url_get)
-            response_get =  requests.post(url_get, headers=headers)
-            _logger.info("========================================response_get %s",response_get)
-            if response_get.status_code != 200:
-                post_response = requests.post(url, json=product_data, headers=headers)
-                _logger.info("========================================response %s",post_response)
-                if post_response.status_code == 200:
-                    response_data = post_response.json()
-                    _logger.info("========================================response %s",response_data)
-                    product_id = response_data.get('Id')
-                    objet.produit_sah_id = product_id
-                    _logger.info("======================================== %s",objet.produit_sah_id)
+            
+            post_response = requests.post(url, json=product_data, headers=headers)
+            if post_response.status_code == 200:
+                response_data = post_response.json()
+                _logger.info("========================================response %s",response_data)
+                product_id = response_data.get('Id')
+                objet.produit_sah_id = product_id
+                _logger.info("======================================== %s",objet.produit_sah_id)
+                return product_id
 
     @api.model
     def create(self, vals):
@@ -450,10 +446,11 @@ class ProduitSelligHome(models.Model):
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
-            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+            result = self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
                                     res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
+            _logger.info('================================ %s',result)
         return res
 
     def write(self, vals):
