@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 import re
 from PIL import Image
 from io import BytesIO
-is_product_sah = ""
+is_product_sah = 0
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
@@ -279,7 +279,8 @@ class ProduitSelligHome(models.Model):
         categ_parent =''
         suivi_stock = 1 if is_storable == True else 0
         global is_product_sah
-        if categ_id and not objet.produit_sah_id and not is_product_sah:
+        is_product_sah = is_product_sah+1
+        if categ_id and not objet.produit_sah_id and is_product_sah == 0:
             _logger.info("############################################### DEBUT CREATION %s #################################")
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
@@ -415,8 +416,10 @@ class ProduitSelligHome(models.Model):
                 product_id = response_data.get('Id')
                 _logger.info('=======================================%s',product_id)
                 objet.produit_sah_id = int(product_id)
-                is_product_sah = product_id
+                
                 _logger.info('======================================= SHA%s',   objet.produit_sah_id)
+        if is_product_sah >= 1:
+            is_product_sah = 0
 
     @api.model
     def create(self, vals):
