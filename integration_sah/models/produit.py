@@ -406,7 +406,8 @@ class ProduitSelligHome(models.Model):
                     for line in attribute_line_ids if line.value_ids
                 ]
             }
-            url_get = f"https://demoapi.sellingathome.com/v1//Products/{objet.produit_sah_id}"
+            url_get = f"https://demoapi.sellingathome.com/v1/Products/{objet.produit_sah_id}"
+            _logger.info("========================================url_get %s",url_get)
             response_get =  requests.post(url_get, headers=headers)
             _logger.info("========================================response_get %s",response_get)
             if response_get.status_code != 200:
