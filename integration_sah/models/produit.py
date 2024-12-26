@@ -443,14 +443,14 @@ class ProduitSelligHome(models.Model):
                     "DisplayOrder": 1
                 })
         _logger.info("=========================================== la fonction create execute")
-        # if res and not res.produit_sah_id:
-        #     job_kwargs = {
-        #         'description': 'Création produit Odoo vers SAH',
-        #     }
-        #     self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
-        #                             res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
-        #                             res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-        #                             res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
+        if res and not res.produit_sah_id:
+            job_kwargs = {
+                'description': 'Création produit Odoo vers SAH',
+            }
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+                                    res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
+                                    res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
             
         return res
 
