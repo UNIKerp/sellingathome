@@ -231,13 +231,33 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                # "ProductComponents":[
-                #     {
-                #     "Name": "Componet 2222",
-                #     "ProductId": product.produit_sah_id,
-                #     "MaxQuantity": 10
-                #     }
-                # ],
+                "ProductComponents": [
+                    {
+                        "Id": 1,
+                        "Name": "sample string 1",
+                        "ProductId": 2,
+                        "MaxQuantity": 1,
+                        "Deleted": true,
+                        "RemoteReference": "sample string 3",
+                        "ProductComponentLangs": [
+                            {
+                            "Label": "sample string 1",
+                            "ISOValue": "fr"
+                            }
+                        ],
+                        "ProductComponentProducts": [
+                            {
+                            "ProductId": 1,
+                            "ProductRemoteId": "sample string 1",
+                            "ProductCombinationId": 1,
+                            "ProductCombinationBarCode": "sample string 2",
+                            "Quantity": 1,
+                            "DisplayOrder": 1,
+                            "Deleted": true
+                            }
+                        ]
+                    }
+                ],
                 "Categories": [
                     {
                         "Id": id_categ,
