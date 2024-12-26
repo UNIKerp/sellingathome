@@ -75,10 +75,10 @@ class SaleSAH(models.Model):
                                     'name':p['Name'],  
                                     'methode': mtp.id if mtp else None,  
                                     'montant': p['Amount'],   
-                                    'numero_transaction': p['TransactionNumber'],  
-                                    'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f"),
-                                    'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f"),
-                                    'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f"),
+                                    'numero_transaction': p['TransactionNumber'], 
+                                    'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
+                                    'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
+                                    'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
                                     'order_id': order.id,
                                 })
                                 order.methode_paiement_id = mtp.id if mtp else order.methode_paiement_id
@@ -117,9 +117,9 @@ class SaleSAH(models.Model):
                                         pc.sudo().write({
                                             'montant': p['Amount'],   
                                             'numero_transaction': p['TransactionNumber'],  
-                                            'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f"),
-                                            'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f"),
-                                            'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f"),
+                                            'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
+                                            'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
+                                            'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
                                             })
                                     else:
                                         self.env['paiement.sah'].sudo().create({
@@ -127,9 +127,9 @@ class SaleSAH(models.Model):
                                             'methode': mtp.id if mtp else None,  
                                             'montant': p['Amount'],   
                                             'numero_transaction': p['TransactionNumber'],  
-                                            'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f"),
-                                            'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f"),
-                                            'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f"),
+                                            'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
+                                            'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
+                                            'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
                                             'order_id': commandes_odoo.id,
                                         })
                                     commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
@@ -141,9 +141,9 @@ class SaleSAH(models.Model):
                                     'methode': mtp.id if mtp else None,  
                                     'montant': p['Amount'],   
                                     'numero_transaction': p['TransactionNumber'],  
-                                    'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f"),
-                                    'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f"),
-                                    'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f"),
+                                    'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
+                                    'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
+                                    'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
                                     'order_id': commandes_odoo.id,
                                 })
                                 commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
