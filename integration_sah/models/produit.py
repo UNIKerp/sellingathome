@@ -533,10 +533,13 @@ class ProduitSelligHome(models.Model):
                 if elt['Id'] == product_id.produit_sah_id:
                     values = elt
                     break
-
+            _logger.info('=================================%s',values)
             values['ProductPhotos'] = product_photos
+            _logger.info('================================= aprss%s',values)
             url_put = f"https://demoapi.sellingathome.com/v1/Products{product_id.produit_sah_id}"
-            requests.put(url_produit,json=values, headers=headers)
+            result = requests.put(url_produit,json=values, headers=headers)
+            _logger.info('================================= result%s',result)
+
 
 
         
