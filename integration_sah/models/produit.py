@@ -524,8 +524,8 @@ class ProduitSelligHome(models.Model):
             "ProductPhotos": product_photos
         }
         headers = self.env['authentication.sah'].establish_connection()
-        url_produit = f"https://demoapi.sellingathome.com/v1/Products"
-        response_produit = requests.put(url_produit, headers=headers)
+        url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
+        response_produit = requests.get(url_produit, headers=headers)
         _logger.info('============================== %s',response_produit)
 
 
