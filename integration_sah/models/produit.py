@@ -201,7 +201,13 @@ class ProduitSelligHome(models.Model):
                     except Exception as e:
                         _logger.error(f"Error while processing product image: {e}")
 
-            
+            #Product component
+            {
+            "Name": "Componet 2222",
+            "ProductId": product.produit_sah_id,
+            "MaxQuantity": 10
+            }
+            #
             #Mise à jour du produit si produit est synchronié
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
@@ -230,6 +236,7 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
+                "ProductComponents":ProductComponents,
                 "Categories": [
                     {
                         "Id": id_categ,
@@ -421,6 +428,7 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
+        ###################################
         product_photos = []
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         if res.product_template_image_ids:
@@ -452,7 +460,8 @@ class ProduitSelligHome(models.Model):
                 product_photos.append({
                     "Link": product_image_1920,
                 })
-        _logger.info('====================================product_photos %s', product_photos)
+        ########################################
+    
         if res and not res.produit_sah_id:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
