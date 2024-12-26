@@ -278,6 +278,7 @@ class ProduitSelligHome(models.Model):
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if is_storable == True else 0
+        _logger.info("22222222222222222222222222222222222")
         if categ_id and not objet.produit_sah_id:
             _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
