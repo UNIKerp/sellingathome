@@ -278,7 +278,7 @@ class ProduitSelligHome(models.Model):
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if is_storable == True else 0
-        if categ_id:
+        if categ_id and not objet:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
             
@@ -450,7 +450,7 @@ class ProduitSelligHome(models.Model):
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
                                     res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
-            _logger.info('================================ %s',result)
+            _logger.info('================================resultresultresult %s',result)
         return res
 
     def write(self, vals):
