@@ -376,7 +376,7 @@ class ProduitSelligHome(models.Model):
                     },
                 ],
 
-                # "ProductPhotos": product_photos,
+                "ProductPhotos": product_photos,
 
                 "ProductRelatedProducts": [
                     {
@@ -421,29 +421,44 @@ class ProduitSelligHome(models.Model):
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
-        # Récupérer les images depuis product_template_image_ids
         product_photos = []
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         if res.product_template_image_ids:
-            for index, image in enumerate(res.product_template_image_ids):
-                # Créer une pièce jointe publique pour chaque image
+            for image in res.product_template_image_ids:
                 attachment = self.env['ir.attachment'].create({
                     'name': f'product_image_{res.id}.png',
                     'type': 'binary',
-                    'datas': image.image_1920, 
+                    'datas': image.datas, 
                     'res_model': 'product.template',
                     'res_id': res.id,
                     'mimetype': 'image/png', 
                     'public': True,
                 })
-                # Générer l'URL de l'image
-                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
                 product_photos.append({
                     "Link": product_image_url,
-                    "ProductId": res.id,
-                    "IsDefault": True,
-                    "DisplayOrder": 1
+                    # "ProductId": res.id,
+                    # "IsDefault": True,
+                    # "DisplayOrder": 1
                 })
+            if res.image_1920:
+                attachment_img = self.env['ir.attachment'].create({
+                    'name': f'product_image_{res.id}.png',
+                    'type': 'binary',
+                    'datas': res.image_1920, 
+                    'res_model': 'product.template',
+                    'res_id': res.id,
+                    'mimetype': 'image/png', 
+                    'public': True,
+                })
+                product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
+                product_photos.append({
+                    "Link": product_image_1920,
+                    # "ProductId": res.id,
+                    # "IsDefault": True,
+                    # "DisplayOrder": 1
+                })
+        _logger.info('====================================product_photos %s', product_photos)
         if res and not res.produit_sah_id:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
