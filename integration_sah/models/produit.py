@@ -457,12 +457,13 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         _logger.info("======================================== write s'excute")
+        product_photos = []
         if not self.produit_sah_id:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(self,self.is_published,self.type,self.allow_out_of_stock_order,self.sale_ok,self.is_storable,self.categ_id,
-                                        self.discountStartDate,self.discountEndDate,self.default_code,self.id,res.name,self.list_price,self.taxes_id,
+                                        self.discountStartDate,self.discountEndDate,self.default_code,self.id,self.name,self.list_price,self.taxes_id,
                                         self.standard_price,self.barcode,self.weight,self.long_sah,self.haut_sah,self.availableOnHostMinisites,
                                         self.description,self.accessory_product_ids,self.attribute_line_ids,product_photos)
         else:
