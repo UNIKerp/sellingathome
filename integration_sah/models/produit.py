@@ -163,43 +163,43 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
             # Gestion des images du produit
-            product_photos = []
-            if product.product_template_image_ids:
-                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-                if not base_url:
-                    _logger.error("Base URL is not configured in Odoo. Check 'web.base.url' parameter.")
-                    return
+            # product_photos = []
+            # if product.product_template_image_ids:
+            #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            #     if not base_url:
+            #         _logger.error("Base URL is not configured in Odoo. Check 'web.base.url' parameter.")
+            #         return
                 
-                for index, image in enumerate(product.product_template_image_ids):
-                    try:
-                        # Créer une pièce jointe publique pour chaque image
-                        attachment = self.env['ir.attachment'].create({
-                            'name': f'product_image_{product.id}.png',
-                            'type': 'binary',
-                            'datas': image.image_1920, 
-                            'res_model': 'product.template',
-                            'res_id': product.id,
-                            'mimetype': 'image/png', 
-                            'public': True,
-                        })
+            #     for index, image in enumerate(product.product_template_image_ids):
+            #         try:
+            #             # Créer une pièce jointe publique pour chaque image
+            #             attachment = self.env['ir.attachment'].create({
+            #                 'name': f'product_image_{product.id}.png',
+            #                 'type': 'binary',
+            #                 'datas': image.image_1920, 
+            #                 'res_model': 'product.template',
+            #                 'res_id': product.id,
+            #                 'mimetype': 'image/png', 
+            #                 'public': True,
+            #             })
 
-                        # Vérifier que l'attachement est créé
-                        if attachment:
-                            product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                            photo  = {
-                                "Link": product_image_url,
-                                "ProductId": 120608,
-                                "IsDefault": True,
-                                "IsDeleted": True,
-                                "DeletedDate": "2024-12-24T17:09:59.5386624+01:00",
-                                "RemoteId": 1,
-                                "DisplayOrder": 1
-                            }
-                            product_photos.append(photo)
-                        else:
-                            _logger.error("Failed to create attachment for product image.")
-                    except Exception as e:
-                        _logger.error(f"Error while processing product image: {e}")
+            #             # Vérifier que l'attachement est créé
+            #             if attachment:
+            #                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+            #                 photo  = {
+            #                     "Link": product_image_url,
+            #                     "ProductId": 120608,
+            #                     "IsDefault": True,
+            #                     "IsDeleted": True,
+            #                     "DeletedDate": "2024-12-24T17:09:59.5386624+01:00",
+            #                     "RemoteId": 1,
+            #                     "DisplayOrder": 1
+            #                 }
+            #                 product_photos.append(photo)
+            #             else:
+            #                 _logger.error("Failed to create attachment for product image.")
+            #         except Exception as e:
+            #             _logger.error(f"Error while processing product image: {e}")
 
            
             #Mise à jour du produit si produit est synchronié
