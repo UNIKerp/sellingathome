@@ -76,9 +76,9 @@ class SaleSAH(models.Model):
                                     'methode': mtp.id if mtp else None,  
                                     'montant': p['Amount'],   
                                     'numero_transaction': p['TransactionNumber'],  
-                                    'date_paiement': p['PaymentAt'],
-                                    'date_echeance':p['DueAt'],
-                                    'date_validation':p['ValidatedAt'],
+                                    'date_paiement': datetime.strptime(p['PaymentAt'], "%Y-%m-%dT%H:%M:%S.%f"),
+                                    'date_echeance':datetime.strptime(p['DueAt'], "%Y-%m-%dT%H:%M:%S.%f"),
+                                    'date_validation': datetime.strptime(p['ValidatedAt'], "%Y-%m-%dT%H:%M:%S.%f"),
                                     'order_id': order.id,
                                 })
                                 order.methode_paiement_id = mtp.id if mtp else order.methode_paiement_id
@@ -107,7 +107,6 @@ class SaleSAH(models.Model):
                     })
                     paiement_sah = commande['Payments']
                     
-                    _logger.info('@@@@@@@@ commande dddd%s',commande['Payments'])
                     if paiement_sah:
                         paiement_vals=[]
                         if commandes_odoo.paiement_ids:
@@ -118,20 +117,19 @@ class SaleSAH(models.Model):
                                         pc.sudo().write({
                                             'montant': p['Amount'],   
                                             'numero_transaction': p['TransactionNumber'],  
-                                            'date_paiement': p['PaymentAt'],
-                                            'date_echeance':p['DueAt'],
-                                            'date_validation':p['ValidatedAt'],
+                                            'date_paiement': datetime.strptime(p['PaymentAt'], "%Y-%m-%dT%H:%M:%S.%f"),
+                                            'date_echeance':datetime.strptime(p['DueAt'], "%Y-%m-%dT%H:%M:%S.%f"),
+                                            'date_validation': datetime.strptime(p['ValidatedAt'], "%Y-%m-%dT%H:%M:%S.%f"),
                                             })
                                     else:
-                                        _logger.info('@@@@@@@@dddd%s',p)
                                         self.env['paiement.sah'].sudo().create({
                                             'name':p['Name'],  
                                             'methode': mtp.id if mtp else None,  
                                             'montant': p['Amount'],   
                                             'numero_transaction': p['TransactionNumber'],  
-                                            'date_paiement': p['PaymentAt'],
-                                            'date_echeance':p['DueAt'],
-                                            'date_validation':p['ValidatedAt'],
+                                            'date_paiement': datetime.strptime(p['PaymentAt'], "%Y-%m-%dT%H:%M:%S.%f"),
+                                            'date_echeance':datetime.strptime(p['DueAt'], "%Y-%m-%dT%H:%M:%S.%f"),
+                                            'date_validation': datetime.strptime(p['ValidatedAt'], "%Y-%m-%dT%H:%M:%S.%f"),
                                             'order_id': commandes_odoo.id,
                                         })
                                     commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
@@ -143,9 +141,9 @@ class SaleSAH(models.Model):
                                     'methode': mtp.id if mtp else None,  
                                     'montant': p['Amount'],   
                                     'numero_transaction': p['TransactionNumber'],  
-                                    'date_paiement': p['PaymentAt'],
-                                    'date_echeance':p['DueAt'],
-                                    'date_validation':p['ValidatedAt'],
+                                    'date_paiement': datetime.strptime(p['PaymentAt'], "%Y-%m-%dT%H:%M:%S.%f"),
+                                    'date_echeance':datetime.strptime(p['DueAt'], "%Y-%m-%dT%H:%M:%S.%f"),
+                                    'date_validation': datetime.strptime(p['ValidatedAt'], "%Y-%m-%dT%H:%M:%S.%f"),
                                     'order_id': commandes_odoo.id,
                                 })
                                 commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
