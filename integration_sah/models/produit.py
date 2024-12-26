@@ -520,6 +520,7 @@ class ProduitSelligHome(models.Model):
                     values = elt
                     break
             _logger.info('=================================%s',values)
+            values['Reference']='01118'
             # for photo in values['ProductPhotos']:
             #     photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2551/product_image_317.png"
             _logger.info('================================= aprss%s',values)
