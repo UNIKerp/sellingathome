@@ -12,7 +12,8 @@
                 </group>
                             </xpath>
                 <xpath expr="//form/sheet/group[@name='sale_header']/group[@name='order_details']/field[@name='payment_term_id']" position="after">
-                    <field name="vdi" string="VDI"/>
+                    <field name="vdi" />
+                    <field name="methode_paiement_id" />
                 </xpath>
             </field>
         </record>
