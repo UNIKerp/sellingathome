@@ -116,96 +116,94 @@ class ProduitSelligHome(models.Model):
 
     # Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo
     def update_produit_dans_sah(self, product, headers):
-        _logger.info("======================= Debut de mise à jour de l'Article")
-        id_categ = ''
-        # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
-        if product.categ_id:
-            url_categ = "https://demoapi.sellingathome.com/v1/Categories"
-            post_response_categ = requests.get(url_categ, headers=headers)
-            
-            if post_response_categ.status_code == 200:
-                response_data_categ = post_response_categ.json()
-                categ_parent = response_data_categ[0]['Id']
-                j = 0
-                
-                # Parcourir les catégories et comparer les noms
-                for c in response_data_categ:
-                    CategoryLangs = c['CategoryLangs']
-                    for cc in CategoryLangs:
-                        nom_cat = cc['Name']
-                        
-                        # Remplacer res.categ_id.name par product.categ_id.name
-                        if product.categ_id.name == nom_cat:
-                            id_categ = c['Id']
-                            j += 1
-                
-                # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
-                if j == 0:
-                    create_category = {
-                        "Reference": product.categ_id.name,
-                        "ParentCategoryId": categ_parent,
-                        "IsPublished": True,
-                        "CategoryLangs": [
-                            {
-                                "Name": product.categ_id.name,
-                                "Description": 'None',
-                                "ISOValue": "fr",
-                            },
-                        ],
-                    }
-                    
-                    post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
-                    
-                    if post_response_categ_create.status_code == 200:
-                        categ = post_response_categ_create.json()
-                        id_categ = categ['Id']
-            else:
-                _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
-
-        # Gestion des images du produit
-        product_photos = []
-        if product.product_template_image_ids:
-            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-            if not base_url:
-                _logger.error("Base URL is not configured in Odoo. Check 'web.base.url' parameter.")
-                return
-            
-            for index, image in enumerate(product.product_template_image_ids):
-                try:
-                    # Créer une pièce jointe publique pour chaque image
-                    attachment = self.env['ir.attachment'].create({
-                        'name': f'product_image_{product.id}.png',
-                        'type': 'binary',
-                        'datas': image.image_1920, 
-                        'res_model': 'product.template',
-                        'res_id': product.id,
-                        'mimetype': 'image/png', 
-                        'public': True,
-                    })
-
-                    # Vérifier que l'attachement est créé
-                    if attachment:
-                        product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                        photo  = {
-                            "Link": product_image_url,
-                            "ProductId": 120608,
-                            "IsDefault": True,
-                            "IsDeleted": True,
-                            "DeletedDate": "2024-12-24T17:09:59.5386624+01:00",
-                            "RemoteId": 1,
-                            "DisplayOrder": 1
-                        }
-                        product_photos.append(photo)
-                    else:
-                        _logger.error("Failed to create attachment for product image.")
-                except Exception as e:
-                    _logger.error(f"Error while processing product image: {e}")
-
-        
-        # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
+            _logger.info("Début mise à jour de l'article")
+            id_categ = ''
+            if product.categ_id:
+                url_categ = "https://demoapi.sellingathome.com/v1/Categories"
+                post_response_categ = requests.get(url_categ, headers=headers)
+                
+                if post_response_categ.status_code == 200:
+                    response_data_categ = post_response_categ.json()
+                    categ_parent = response_data_categ[0]['Id']
+                    j = 0
+                    
+                    # Parcourir les catégories et comparer les noms
+                    for c in response_data_categ:
+                        CategoryLangs = c['CategoryLangs']
+                        for cc in CategoryLangs:
+                            nom_cat = cc['Name']
+                            
+                            # Remplacer res.categ_id.name par product.categ_id.name
+                            if product.categ_id.name == nom_cat:
+                                id_categ = c['Id']
+                                j += 1
+                    
+                    # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
+                    if j == 0:
+                        create_category = {
+                            "Reference": product.categ_id.name,
+                            "ParentCategoryId": categ_parent,
+                            "IsPublished": True,
+                            "CategoryLangs": [
+                                {
+                                    "Name": product.categ_id.name,
+                                    "Description": 'None',
+                                    "ISOValue": "fr",
+                                },
+                            ],
+                        }
+                        
+                        post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+                        
+                        if post_response_categ_create.status_code == 200:
+                            categ = post_response_categ_create.json()
+                            id_categ = categ['Id']
+                else:
+                    _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
+
+            # Gestion des images du produit
+            product_photos = []
+            if product.product_template_image_ids:
+                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+                if not base_url:
+                    _logger.error("Base URL is not configured in Odoo. Check 'web.base.url' parameter.")
+                    return
+                
+                for index, image in enumerate(product.product_template_image_ids):
+                    try:
+                        # Créer une pièce jointe publique pour chaque image
+                        attachment = self.env['ir.attachment'].create({
+                            'name': f'product_image_{product.id}.png',
+                            'type': 'binary',
+                            'datas': image.image_1920, 
+                            'res_model': 'product.template',
+                            'res_id': product.id,
+                            'mimetype': 'image/png', 
+                            'public': True,
+                        })
+
+                        # Vérifier que l'attachement est créé
+                        if attachment:
+                            product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                            photo  = {
+                                "Link": product_image_url,
+                                "ProductId": 120608,
+                                "IsDefault": True,
+                                "IsDeleted": True,
+                                "DeletedDate": "2024-12-24T17:09:59.5386624+01:00",
+                                "RemoteId": 1,
+                                "DisplayOrder": 1
+                            }
+                            product_photos.append(photo)
+                        else:
+                            _logger.error("Failed to create attachment for product image.")
+                    except Exception as e:
+                        _logger.error(f"Error while processing product image: {e}")
+
+            
+            #Mise à jour du produit si produit est synchronié
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-            _logger.info('====================================== %s',product.produit_sah_id)
             update_data = {
                 "ProductType": 5,
                 "Reference": product.default_code,
@@ -266,7 +264,7 @@ class ProduitSelligHome(models.Model):
             else:
                 _logger.error(f"Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code}")
 
-        _logger.info("======================= Fin de mise à jour de l'Article")
+            _logger.info("======================= Fin de mise à jour de l'Article")
 
     def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
@@ -453,7 +451,7 @@ class ProduitSelligHome(models.Model):
 
 
     def test(self):
-        _logger.inf('==================================== hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+        _logger.info('==================================== hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
 
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
