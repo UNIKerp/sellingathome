@@ -43,7 +43,7 @@
 		</field>
 	</record>
     <record id="action_unikerp_ib_vogt_model_paiement" model="ir.actions.act_window">
-        <field name="name">Modèle de paiement </field>
+        <field name="name">Paiements</field>
         <field name="res_model">paiement.sah</field>
         <field name="view_mode">list,form</field>
     </record>
