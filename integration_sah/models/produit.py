@@ -336,7 +336,7 @@ class ProduitSelligHome(models.Model):
                 "Reference": default_code,
                 "Prices": [
                     {
-                        # "ProductId": id,
+                        "ProductId": id,
                         "BrandTaxRate": 2.1,
                         "BrandTaxName": name,
                         "TwoLetterISOCode": "FR",
@@ -378,7 +378,7 @@ class ProduitSelligHome(models.Model):
 
                 "ProductRelatedProducts": [
                     {
-                        # "ProductId": id,
+                        "ProductId": id,
                         "ProductRemoteId": str(related_product.id),
                         "ProductReference": related_product.default_code,
                         "IsDeleted": False
@@ -453,21 +453,21 @@ class ProduitSelligHome(models.Model):
             _logger.info('================================resultresultresult %s',result)
         return res
 
-    def write(self, vals):
-        headers = self.env['authentication.sah'].establish_connection()
-        rec = super(ProduitSelligHome, self).write(vals)
-        if vals:
-            job_kwargs = {
-                'description': 'Mise à jour du produit dans SAH',
-            }
-            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+    # def write(self, vals):
+    #     headers = self.env['authentication.sah'].establish_connection()
+    #     rec = super(ProduitSelligHome, self).write(vals)
+    #     if vals:
+    #         job_kwargs = {
+    #             'description': 'Mise à jour du produit dans SAH',
+    #         }
+    #         self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
-            ### Modification stock
-            job_kwargs2 = {
-                'description': 'Mise à jour du stock produit',
-            }
-            self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
-        return rec
+    #         ### Modification stock
+    #         job_kwargs2 = {
+    #             'description': 'Mise à jour du stock produit',
+    #         }
+    #         self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
+    #     return rec
 
     def maj_des_stocks(self,is_storable,produit_sah_id,default_code,qty_available,virtual_available):
         headers = self.env['authentication.sah'].establish_connection()
