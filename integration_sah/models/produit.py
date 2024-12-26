@@ -493,7 +493,22 @@ class ProduitSelligHome(models.Model):
             product_photos.append({
                 "Link": product_image_1920,
             })
-        product_photos = {"ProductPhotos": product_photos}
+        _logger.info('=================================== %s',product_photos)
+        product_photos = {
+            "Prices": [
+                {
+                    "Id": product_id.produit_sah_id,
+                    "BrandTaxRate": 2.1,
+                    "BrandTaxName": product_id.name,
+                    "TwoLetterISOCode": "FR",
+                    "PriceExclTax": product_id.list_price,
+                    "PriceInclTax": product_id.list_price * (1 + product_id.taxes_id.amount / 100),
+                    "ProductCost": product_id.standard_price,
+                    "EcoTax": 8.1
+                }
+            ],
+            "ProductPhotos": product_photos
+        }
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
         response_produit = requests.put(url_produit, json=product_photos, headers=headers)
