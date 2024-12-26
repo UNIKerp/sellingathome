@@ -444,6 +444,7 @@ class ProduitSelligHome(models.Model):
         if res and not res.produit_sah_id:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
+                'priority':5,
             }
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
