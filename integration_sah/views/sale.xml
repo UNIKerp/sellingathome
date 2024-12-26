@@ -15,7 +15,7 @@
                     <field name="vdi" />
                     <field name="methode_paiement_id" />
                 </xpath> 
-                <xpath expr="//form/sheet/page[@name='other_information']" position="after">
+                <page name="other_information" position="after">
                     <page string="Info Paiement SAH" name="info_paiement_sah">
                         <group>
                             <field name="paiement_ids"  readonly="1" force_save="1">
@@ -31,7 +31,7 @@
                             </field>
                         </group>
                     </page>
-                </xpath>
+                </page>
             </field>
         </record>
     </data>
