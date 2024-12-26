@@ -110,29 +110,44 @@ class SaleSAH(models.Model):
                     _logger.info('@@@@@@@@ commande dddd%s',commande['Payments'])
                     if paiement_sah:
                         paiement_vals=[]
-                        for p in paiement_sah:
-                            for pc in commandes_odoo.paiement_ids:
-                                mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
-                                if pc.name == p['Name'] or pc.methode == mtp:
-                                    pc.sudo().write({
-                                        'montant': p['Amount'],   
-                                        'numero_transaction': p['TransactionNumber'],  
-                                        'date_paiement': p['PaymentAt'],
-                                        'date_echeance':p['DueAt'],
-                                        'date_validation':p['ValidatedAt'],
+                        if commandes_odoo.paiement_ids:
+                            for p in paiement_sah:
+                                for pc in commandes_odoo.paiement_ids:
+                                    mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
+                                    if pc.name == p['Name'] or pc.methode == mtp:
+                                        pc.sudo().write({
+                                            'montant': p['Amount'],   
+                                            'numero_transaction': p['TransactionNumber'],  
+                                            'date_paiement': p['PaymentAt'],
+                                            'date_echeance':p['DueAt'],
+                                            'date_validation':p['ValidatedAt'],
+                                            })
+                                    else:
+                                        _logger.info('@@@@@@@@dddd%s',p)
+                                        self.env['paiement.sah'].sudo().create({
+                                            'name':p['Name'],  
+                                            'methode': mtp.id if mtp else None,  
+                                            'montant': p['Amount'],   
+                                            'numero_transaction': p['TransactionNumber'],  
+                                            'date_paiement': p['PaymentAt'],
+                                            'date_echeance':p['DueAt'],
+                                            'date_validation':p['ValidatedAt'],
+                                            'order_id': commandes_odoo.id,
                                         })
-                                else:
-                                    _logger.info('@@@@@@@@dddd%s',p)
-                                    commandes_odoo.paiement_ids = self.env['paiement.sah'].sudo().create({
-                                        'name':p['Name'],  
-                                        'methode': mtp.id if mtp else None,  
-                                        'montant': p['Amount'],   
-                                        'numero_transaction': p['TransactionNumber'],  
-                                        'date_paiement': p['PaymentAt'],
-                                        'date_echeance':p['DueAt'],
-                                        'date_validation':p['ValidatedAt'],
-                                        'order_id': commandes_odoo.id,
-                                    })
+                                    commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
+                        else:
+                            for p in paiement_sah:
+                                mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
+                                self.env['paiement.sah'].sudo().create({
+                                    'name':p['Name'],  
+                                    'methode': mtp.id if mtp else None,  
+                                    'montant': p['Amount'],   
+                                    'numero_transaction': p['TransactionNumber'],  
+                                    'date_paiement': p['PaymentAt'],
+                                    'date_echeance':p['DueAt'],
+                                    'date_validation':p['ValidatedAt'],
+                                    'order_id': commandes_odoo.id,
+                                })
                                 commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
                     for elt in commande['Products']:
                         p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
