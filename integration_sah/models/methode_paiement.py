@@ -11,7 +11,7 @@ class MethodePaiement(models.Model):
     _description = "gestion des methodes de paiement"
 
     name = fields.Char(string='Nom', copy=False)
-    value = fields.Char(copy=False)
+    value = fields.Integer(copy=False)
     is_confirme = fields.Boolean(string='Est confirmé',help="Le paiement est confirmé")
     
     _sql_constraints = [

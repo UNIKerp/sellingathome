@@ -57,4 +57,5 @@
             <field name="name">Paiement déclaratif à la livraison</field>
             <field name="value">13</field>
         </record>
+    </data>
 </odoo>
