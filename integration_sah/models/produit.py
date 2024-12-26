@@ -477,14 +477,7 @@ class ProduitSelligHome(models.Model):
                 })
                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
                 product_photos.append({
-                    "Id": 1,
                     "Link": product_image_url,
-                    "ProductId": product_id.produit_sah_id,
-                    "IsDefault": True,
-                    "IsDeleted": True,
-                    "DeletedDate": "2024-12-26T16:14:05.4557869+01:00",
-                    "RemoteId": 1,
-                    "DisplayOrder": 1
                 })
         if product_id.image_1920:
             attachment_img = self.env['ir.attachment'].create({
@@ -498,14 +491,7 @@ class ProduitSelligHome(models.Model):
             })
             product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
             product_photos.append({
-                "Id": 1,
                 "Link": product_image_1920,
-                "ProductId": product_id.produit_sah_id,
-                "IsDefault": True,
-                "IsDeleted": True,
-                "DeletedDate": "2024-12-26T16:14:05.4557869+01:00",
-                "RemoteId": 1,
-                "DisplayOrder": 1
             })
         _logger.info('=================================== %s',product_photos)
         product_photos = {
@@ -534,7 +520,7 @@ class ProduitSelligHome(models.Model):
                     values = elt
                     break
             _logger.info('=================================%s',values)
-            values['ProductPhotos'] = product_photos
+            values['ProductPhotos']['Link'] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2527/product_image_317.png"
             _logger.info('================================= aprss%s',values)
             url_put = f"https://demoapi.sellingathome.com/v1/Products{product_id.produit_sah_id}"
             result = requests.put(url_produit,json=values, headers=headers)
