@@ -371,7 +371,7 @@ class ProduitSelligHome(models.Model):
                     },
                 ],
 
-                "ProductPhotos": product_photos if product_photos else [],
+                # "ProductPhotos": product_photos if product_photos else [],
 
                 "ProductRelatedProducts": [
                     {
@@ -417,37 +417,7 @@ class ProduitSelligHome(models.Model):
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
         ###################################
-        product_photos = []
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        if res.product_template_image_ids:
-            for image in res.product_template_image_ids:
-                attachment = self.env['ir.attachment'].create({
-                    'name': f'product_image_{res.id}.png',
-                    'type': 'binary',
-                    'datas': image.image_1920, 
-                    'res_model': 'product.template',
-                    'res_id': res.id,
-                    'mimetype': 'image/png', 
-                    'public': True,
-                })
-                product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                product_photos.append({
-                    "Link": product_image_url,
-                })
-            if res.image_1920:
-                attachment_img = self.env['ir.attachment'].create({
-                    'name': f'product_image_{res.id}.png',
-                    'type': 'binary',
-                    'datas': res.image_1920, 
-                    'res_model': 'product.template',
-                    'res_id': res.id,
-                    'mimetype': 'image/png', 
-                    'public': True,
-                })
-                product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
-                product_photos.append({
-                    "Link": product_image_1920,
-                })
+       
         ########################################
     
         if res and not res.produit_sah_id:
@@ -491,6 +461,46 @@ class ProduitSelligHome(models.Model):
             requests.put(url2, headers=headers, json=values)
           
 
+    def maj_des_photos_produits(self,product_id):
+        product_photos = []
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        if product_id.product_template_image_ids:
+            for image in product_id.product_template_image_ids:
+                attachment = self.env['ir.attachment'].create({
+                    'name': f'product_image_{product_id.id}.png',
+                    'type': 'binary',
+                    'datas': image.image_1920, 
+                    'res_model': 'product.template',
+                    'res_id': product_id.id,
+                    'mimetype': 'image/png', 
+                    'public': True,
+                })
+                product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                product_photos.append({
+                    "Link": product_image_url,
+                })
+        if product_id.image_1920:
+            attachment_img = self.env['ir.attachment'].create({
+                'name': f'product_image_{product_id.id}.png',
+                'type': 'binary',
+                'datas': product_id.image_1920, 
+                'res_model': 'product.template',
+                'res_id': product_id.id,
+                'mimetype': 'image/png', 
+                'public': True,
+            })
+            product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
+            product_photos.append({
+                "Link": product_image_1920,
+            })
+        product_photos = {"ProductPhotos": product_photos}
+        headers = self.env['authentication.sah'].establish_connection()
+        url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
+        response_produit = requests.put(url_produit, json=product_photos, headers=headers)
+        _logger.info('============================== %s',response_produit)
+
+
+        
 
     def _export_stock_produit(self):
         headers = self.env['authentication.sah'].establish_connection()
@@ -509,7 +519,8 @@ class ProduitSelligHome(models.Model):
         active_ids = self.env.context.get('active_ids')
         for active_id in active_ids:
             product_id = self.env['product.template'].search([('id','=',active_id)])
-            job_kwargs = {
-                    'description': 'Export  produit',
-            }
-            self.with_delay(**job_kwargs).update_produit_dans_sah(product_id, headers)
+            self.maj_des_photos_produits(product_id)
+            # job_kwargs = {
+            #         'description': 'Export  produit',
+            # }
+            # self.with_delay(**job_kwargs).update_produit_dans_sah(product_id, headers)
