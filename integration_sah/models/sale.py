@@ -38,9 +38,11 @@ class SaleSAH(models.Model):
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
                 Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
                 methode_paiement = commande['PaymentMethod']
+                methode_paiement_id=None
                 if methode_paiement:
                     methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
-                paiement_sah = commande['Payments']
+                    if len(methode_paiement) ==1:
+                        methode_paiement_id=methode_paiement
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
 
                 # Mapping des états SAH aux états Odoo
@@ -61,9 +63,26 @@ class SaleSAH(models.Model):
                         "currency_id":Currency.id, 
                         "vdi":client_id.vdi_id.id or False,
                         "state": state_mapping.get(order_state_sah, 'draft'),
-                        "methode_paiement_id":methode_paiement.id if methode_paiement else None,
+                        "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
                     })
                     if order:
+                        paiement_sah = commande['Payments']
+                        if paiement_sah:
+                            paiement_vals=[]
+                            for p in paiement_sah:
+                                mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
+                                paiement_vals.append({
+                                    'name':p['Name'],  
+                                    'methode': mtp.id if mtp else None,  
+                                    'montant': p['Amount'],   
+                                    'numero_transaction': p['TransactionNumber'],  
+                                    'date_paiement': p['PaymentAt'],
+                                    'date_echeance':p['DueAt'],
+                                    'date_validation':p['ValidatedAt'],
+                                    'order_id': order.id,
+                                })
+                                order.methode_paiement_id = mtp.id if mtp else order.methode_paiement_id
+                            self.env['paiement.sah'].sudo().create(paiement_vals)
                         for elt in commande['Products']:
                             p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
                             if p:
@@ -85,8 +104,35 @@ class SaleSAH(models.Model):
                         "currency_id":Currency.id, 
                         "vdi":client_id.vdi_id.id or False,
                         "state": state_mapping.get(order_state_sah, 'draft'),
-                        "methode_paiement_id":methode_paiement.id if methode_paiement else None,
+                        "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
                     })
+                    paiement_sah = commande['Payments']
+                    if paiement_sah:
+                        paiement_vals=[]
+                        for p in paiement_sah:
+                            for pc in commandes_odoo.paiement_ids:
+                                mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
+                                if pc.name == p['Name'] or pc.methode == mtp:
+                                    pc.sudo().write({
+                                        'montant': p['Amount'],   
+                                        'numero_transaction': p['TransactionNumber'],  
+                                        'date_paiement': p['PaymentAt'],
+                                        'date_echeance':p['DueAt'],
+                                        'date_validation':p['ValidatedAt'],
+                                        })
+                                else:
+                                    paiement_vals.append({
+                                        'name':p['Name'],  
+                                        'methode': mtp.id if mtp else None,  
+                                        'montant': p['Amount'],   
+                                        'numero_transaction': p['TransactionNumber'],  
+                                        'date_paiement': p['PaymentAt'],
+                                        'date_echeance':p['DueAt'],
+                                        'date_validation':p['ValidatedAt'],
+                                        'order_id': order.id,
+                                    })
+                                commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
+                        self.env['paiement.sah'].sudo().create(paiement_vals)
                     for elt in commande['Products']:
                         p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
                         if p:

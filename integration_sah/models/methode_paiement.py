@@ -10,13 +10,13 @@ class MethodePaiement(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = "gestion des methodes de paiement"
 
-    name = fields.Char(string='Nom', copy=False)
-    value = fields.Integer(copy=False)
+    name = fields.Char(string='Nom',required=True, copy=False)
+    code = fields.Char(string='Code',required=True, copy=False)
+    value = fields.Integer( copy=False)
     is_confirme = fields.Boolean(string='Est confirmé',help="Le paiement est confirmé")
     
     _sql_constraints = [
-        ('value_uniq', 'unique (value)', "value SAH exists deja!"), ]
-   
+        ('code_uniq', 'unique (code)', "Ce code exists deja!")]
  
 
      
