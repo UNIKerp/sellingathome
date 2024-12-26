@@ -406,14 +406,18 @@ class ProduitSelligHome(models.Model):
                     for line in attribute_line_ids if line.value_ids
                 ]
             }
-            post_response = requests.post(url, json=product_data, headers=headers)
-            _logger.info("========================================response %s",post_response)
-            if post_response.status_code == 200:
-                response_data = post_response.json()
-                _logger.info("========================================response %s",response_data)
-                product_id = response_data.get('Id')
-                objet.produit_sah_id = product_id
-                _logger.info("======================================== %s",objet.produit_sah_id)
+            url_get = f"https://demoapi.sellingathome.com/v1//Products/{objet.produit_sah_id}"
+            response_get =  requests.post(url_get, headers=headers)
+            _logger.info("========================================response_get %s",response_get)
+            if response_get.status_code != 200:
+                post_response = requests.post(url, json=product_data, headers=headers)
+                _logger.info("========================================response %s",post_response)
+                if post_response.status_code == 200:
+                    response_data = post_response.json()
+                    _logger.info("========================================response %s",response_data)
+                    product_id = response_data.get('Id')
+                    objet.produit_sah_id = product_id
+                    _logger.info("======================================== %s",objet.produit_sah_id)
 
     @api.model
     def create(self, vals):
