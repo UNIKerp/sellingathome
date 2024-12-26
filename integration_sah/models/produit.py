@@ -201,13 +201,7 @@ class ProduitSelligHome(models.Model):
                     except Exception as e:
                         _logger.error(f"Error while processing product image: {e}")
 
-            #Product component
-            {
-            "Name": "Componet 2222",
-            "ProductId": product.produit_sah_id,
-            "MaxQuantity": 10
-            }
-            #
+           
             #Mise à jour du produit si produit est synchronié
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
@@ -236,7 +230,13 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                "ProductComponents":ProductComponents,
+                "ProductComponents":[
+                    {
+                    "Name": "Componet 2222",
+                    "ProductId": product.produit_sah_id,
+                    "MaxQuantity": 10
+                    }
+                ],
                 "Categories": [
                     {
                         "Id": id_categ,
