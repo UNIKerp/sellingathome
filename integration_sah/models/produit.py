@@ -271,7 +271,7 @@ class ProduitSelligHome(models.Model):
     def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
-                                    description,accessory_product_ids,attribute_line_ids):
+                                    description,accessory_product_ids,attribute_line_ids,product_photos):
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -376,7 +376,7 @@ class ProduitSelligHome(models.Model):
                     },
                 ],
 
-                # "ProductPhotos": product_photos,
+                "ProductPhotos": product_photos,
 
                 "ProductRelatedProducts": [
                     {
@@ -413,7 +413,6 @@ class ProduitSelligHome(models.Model):
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
                 objet.produit_sah_id = product_id
-                _logger.info('=============== le produit est crée %s',objet.produit_sah_id)
 
     @api.model
     def create(self, vals):
@@ -441,29 +440,28 @@ class ProduitSelligHome(models.Model):
                     "IsDefault": True,
                     "DisplayOrder": 1
                 })
-        if res and not res.produit_sah_id:
+        if res :
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
-                'priority':5,
             }
-            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
-                                    res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
-                                    res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-                                    res.description,res.accessory_product_ids,res.attribute_line_ids)
+            self.with_delay(**job_kwargs).test()
+            # self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+            #                         res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
+            #                         res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
+            #                         res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
         return res
 
 
+    def test(self):
+        _logger.inf('==================================== hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
-       
-        if self.produit_sah_id:
-            if self.env.context.get('from_create'):
-                _logger.info('===========================================%s',self.env.context)
-                return super(ProduitSelligHome, self).write(vals)
+        rec = super(ProduitSelligHome, self).write(vals)
+        if vals:
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
-            _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! l'id sah existe %s", self.produit_sah_id)
             self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
             ### Modification stock
@@ -471,7 +469,6 @@ class ProduitSelligHome(models.Model):
                 'description': 'Mise à jour du stock produit',
             }
             self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
-        rec = super(ProduitSelligHome, self).write(vals)
         return rec
 
     def maj_des_stocks(self,is_storable,produit_sah_id,default_code,qty_available,virtual_available):
