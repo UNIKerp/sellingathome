@@ -5,29 +5,12 @@
 		<field	name="name">methode.paiement.sah.form</field>
 		<field	name="model">methode.paiement.sah</field>
 		<field	name="arch"	type="xml">
-			<form create="false" edit="false">
+			<form create="false">
 				<sheet>
 					<group>
 						<group>
-							<field name="especes"/>
-							<field name="cheque" />
-							<field name="cheque_multi"/>
-							<field name="carte_credit" />
-
-                            <field name="carte_credit_multi"/>
-							<field name="declaratif_carte_credit" />
-							<field name="financement"/>
-							
-						</group>
-						<group>
-							<field name="virement_bancaire"/>
-							<field name="separe"/>
-							<field name="depot_dematerialise"/>
-
-                            <field name="non_remunere"/>
-                            <field name="avantage_gratuit"/>
-							<field name="bon_administratif"/>
-							<field name="declaratif_livraison"/>
+							<field name="name"/>
+							<field name="value" />
                             <field name="is_confirme"/>
 						</group>
 					</group>
@@ -42,24 +25,9 @@
 		<field	name="name">methode.paiement.sah.form</field>
 		<field	name="model">methode.paiement.sah</field>
 		<field	name="arch"	type="xml">
-			<list create="false" edit="false">
-                <field name="especes"/>
-                <field name="cheque" />
-                <field name="cheque_multi"/>
-                <field name="carte_credit" />
-
-                <field name="carte_credit_multi"/>
-                <field name="declaratif_carte_credit" />
-                <field name="financement"/>
-
-                <field name="virement_bancaire"/>
-                <field name="separe"/>
-                <field name="depot_dematerialise"/>
-
-                <field name="non_remunere"/>
-                <field name="avantage_gratuit"/>
-                <field name="bon_administratif"/>
-                <field name="declaratif_livraison"/>
+			<list create="false">
+                <field name="name"/>
+                <field name="value" />
                 <field name="is_confirme"/>
 			</list>
 		</field>
