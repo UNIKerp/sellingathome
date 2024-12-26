@@ -407,6 +407,7 @@ class ProduitSelligHome(models.Model):
                 ]
             }
             post_response = requests.post(url, json=product_data, headers=headers)
+            _logger.info("========================================response %s",response_data)
             if post_response.status_code == 200:
                 response_data = post_response.json()
                 _logger.info("========================================response %s",response_data)
