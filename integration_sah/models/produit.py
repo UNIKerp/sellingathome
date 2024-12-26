@@ -446,11 +446,10 @@ class ProduitSelligHome(models.Model):
                 'description': 'Création produit Odoo vers SAH',
                 'priority':5,
             }
-            result = res.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
                                     res.description,res.accessory_product_ids,res.attribute_line_ids)
-            _logger.info("==============================%s",result)
         return res
 
 
@@ -458,11 +457,11 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
        
         if self.produit_sah_id:
-            job_kwargs = {
-                'description': 'Mise à jour du produit dans SAH',
-            }
-            _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! l'id sah existe %s", self.produit_sah_id)
-            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            # job_kwargs = {
+            #     'description': 'Mise à jour du produit dans SAH',
+            # }
+            # _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! l'id sah existe %s", self.produit_sah_id)
+            # self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
             ### Modification stock
             job_kwargs2 = {
