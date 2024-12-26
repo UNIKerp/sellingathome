@@ -279,6 +279,7 @@ class ProduitSelligHome(models.Model):
         categ_parent =''
         suivi_stock = 1 if is_storable == True else 0
         if categ_id and not objet.produit_sah_id:
+            _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
             
@@ -374,7 +375,7 @@ class ProduitSelligHome(models.Model):
                     },
                 ],
 
-                "ProductPhotos": product_photos,
+                # "ProductPhotos": product_photos,
 
                 "ProductRelatedProducts": [
                     {
@@ -408,6 +409,7 @@ class ProduitSelligHome(models.Model):
             }
             
             post_response = requests.post(url, json=product_data, headers=headers)
+            _logger.info('========================================== %s',post_response)
             if post_response.status_code == 200:
                 response_data = post_response.json()
                 product_id = response_data.get('Id')
@@ -445,7 +447,7 @@ class ProduitSelligHome(models.Model):
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
-            res.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
                                     res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
