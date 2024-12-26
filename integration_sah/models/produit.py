@@ -477,6 +477,7 @@ class ProduitSelligHome(models.Model):
                 })
                 product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
                 product_photos.append({
+                    "Id": 1,
                     "Link": product_image_url,
                     "ProductId": product_id.produit_sah_id,
                     "IsDefault": True,
@@ -497,6 +498,7 @@ class ProduitSelligHome(models.Model):
             })
             product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
             product_photos.append({
+                "Id": 1,
                 "Link": product_image_1920,
                 "ProductId": product_id.produit_sah_id,
                 "IsDefault": True,
