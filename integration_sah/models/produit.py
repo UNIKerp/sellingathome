@@ -526,7 +526,8 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = f"https://demoapi.sellingathome.com/v1/Products"
         response_produit = requests.get(url_produit, headers=headers)
-        _logger.info('============================== %s',response_produit)
+        if response_data.status_code == 200:
+            _logger.info('============================== %s',response_produit.json())
 
 
         
