@@ -278,8 +278,10 @@ class ProduitSelligHome(models.Model):
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if is_storable == True else 0
-        if categ_id and not objet.produit_sah_id:
-            _logger.info("############################################### DEBUT CREATION #################################")
+        job_id = self.env['queue.job'].sudo().search([('product_job','=',objet.id)])
+        _logger.info("############################################### DEBUT CREATION %s #################################",job_id)
+        if categ_id and not objet.produit_sah_id and not job_id:
+           
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
             
@@ -445,6 +447,7 @@ class ProduitSelligHome(models.Model):
         if res and not res.produit_sah_id:
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
+                'product_job':str(res.id),
             }
             reponse = res.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
