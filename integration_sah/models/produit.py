@@ -371,7 +371,7 @@ class ProduitSelligHome(models.Model):
                     },
                 ],
 
-                # "ProductPhotos": product_photos if product_photos else [],
+                "ProductPhotos": product_photos if product_photos else [],
 
                 "ProductRelatedProducts": [
                     {
@@ -520,9 +520,8 @@ class ProduitSelligHome(models.Model):
                     values = elt
                     break
             _logger.info('=================================%s',values)
-            values['Reference']='01118'
-            # for photo in values['ProductPhotos']:
-            #     photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2551/product_image_317.png"
+            for photo in values['ProductPhotos']:
+                photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2551/product_image_317.png"
             _logger.info('================================= aprss%s',values)
             url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
             _logger.info('result======================================%s',url_put)
