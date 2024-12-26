@@ -521,7 +521,7 @@ class ProduitSelligHome(models.Model):
                     break
             _logger.info('=================================%s',values)
             for photo in values['ProductPhotos']:
-                photo["Link"] = "https://demoseller.sellingathome.com/api/s3/sah-files/products/120781/87-26-2f-33-ed-3a-21-f5-62-12-4a-20-34-7f-27-1e-98-76-e9-76.png"
+                photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2551/product_image_317.png"
             _logger.info('================================= aprss%s',values)
             url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
             _logger.info('result======================================%s',url_put)
