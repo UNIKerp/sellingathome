@@ -271,7 +271,7 @@ class ProduitSelligHome(models.Model):
     def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
                                     discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
                                     standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
-                                    description,accessory_product_ids,attribute_line_ids,product_photos):
+                                    description,accessory_product_ids,attribute_line_ids):
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(is_published)
         virtual = type == 'service'
@@ -447,7 +447,7 @@ class ProduitSelligHome(models.Model):
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-                                    res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
+                                    res.description,res.accessory_product_ids,res.attribute_line_ids)
         return res
 
 
