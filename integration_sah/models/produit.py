@@ -527,7 +527,16 @@ class ProduitSelligHome(models.Model):
         url_produit = f"https://demoapi.sellingathome.com/v1/Products"
         response_produit = requests.get(url_produit, headers=headers)
         if response_produit.status_code == 200:
-            _logger.info('============================== %s',response_produit.json())
+            res = response_produit.json()
+            values = {}
+            for elt in res:
+                if elt['Id'] == product_id.produit_sah_id:
+                    values = elt
+                    break
+
+            values['ProductPhotos'] = product_photos
+            url_put = f"https://demoapi.sellingathome.com/v1/Products{product_id.produit_sah_id}"
+            requests.put(url_produit,json=values, headers=headers)
 
 
         
