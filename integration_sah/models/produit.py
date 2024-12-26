@@ -442,31 +442,22 @@ class ProduitSelligHome(models.Model):
                     "IsDefault": True,
                     "DisplayOrder": 1
                 })
-        if res and not res.produit_sah_id:
-            job_kwargs = {
-                'description': 'Création produit Odoo vers SAH',
-            }
-            # self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
-            #                         res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
-            #                         res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-            #                         res.description,res.accessory_product_ids,res.attribute_line_ids)
+        _logger.info("=========================================== la fonction create execute")
+        # if res and not res.produit_sah_id:
+        #     job_kwargs = {
+        #         'description': 'Création produit Odoo vers SAH',
+        #     }
+        #     self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
+        #                             res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
+        #                             res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
+        #                             res.description,res.accessory_product_ids,res.attribute_line_ids,product_photos)
             
         return res
 
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
-        _logger.info("======================================== write s'excute")
-        product_photos = []
-        if not self.produit_sah_id:
-            job_kwargs = {
-                'description': 'Création produit Odoo vers SAH',
-            }
-            self.with_delay(**job_kwargs).creation_produit_odoo_sah(self,self.is_published,self.type,self.allow_out_of_stock_order,self.sale_ok,self.is_storable,self.categ_id,
-                                        self.discountStartDate,self.discountEndDate,self.default_code,self.id,self.name,self.list_price,self.taxes_id,
-                                        self.standard_price,self.barcode,self.weight,self.long_sah,self.haut_sah,self.availableOnHostMinisites,
-                                        self.description,self.accessory_product_ids,self.attribute_line_ids,product_photos)
-        else:
+        if vals and self.produit_sah_id:
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
