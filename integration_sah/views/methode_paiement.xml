@@ -5,7 +5,7 @@
 		<field	name="name">methode.paiement.sah.form</field>
 		<field	name="model">methode.paiement.sah</field>
 		<field	name="arch"	type="xml">
-			<form create="false" >
+			<form create="false" edit="false">
 				<sheet>
 					<group>
 						<group>
@@ -42,7 +42,7 @@
 		<field	name="name">methode.paiement.sah.form</field>
 		<field	name="model">methode.paiement.sah</field>
 		<field	name="arch"	type="xml">
-			<list create="false" >
+			<list create="false" edit="false">
                 <field name="especes"/>
                 <field name="cheque" />
                 <field name="cheque_multi"/>
