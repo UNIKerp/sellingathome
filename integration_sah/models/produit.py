@@ -533,6 +533,18 @@ class ProduitSelligHome(models.Model):
 
             # Étape 4 : Préparer les données pour l'API
             values = {
+                "Prices": [
+                    {
+                        "Id": product_id.produit_sah_id,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": product_id.name,
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": product_id.list_price,
+                        "PriceInclTax": product_id.list_price * (1 + product_id.taxes_id.amount / 100),
+                        "ProductCost": product_id.standard_price,
+                        "EcoTax": 8.1
+                    }
+                ],
                 "ProductPhotos": product_photos_update
             }
 
