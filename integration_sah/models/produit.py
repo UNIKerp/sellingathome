@@ -486,6 +486,66 @@ class ProduitSelligHome(models.Model):
             product_photos = product_data.get('ProductPhotos', [])
             photo_ids = [photo.get('Id') for photo in product_photos if 'Id' in photo]  # Récupérer les IDs
             _logger.info("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s",photo_ids)
+
+            product_photos_update = []
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+
+            if product_id.product_template_image_ids:
+                for image in product_id.product_template_image_ids:
+                    attachment = self.env['ir.attachment'].create({
+                        'name': f'product_image_{product_id.id}.png',
+                        'type': 'binary',
+                        'datas': image.image_1920,
+                        'res_model': 'product.template',
+                        'res_id': product_id.id,
+                        'mimetype': 'image/png',
+                        'public': True,
+                    })
+                    product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                    product_photos_update.append({"Link": product_image_url})
+
+            if product_id.image_1920:
+                attachment_img = self.env['ir.attachment'].create({
+                    'name': f'product_image_{product_id.id}_main.png',
+                    'type': 'binary',
+                    'datas': product_id.image_1920,
+                    'res_model': 'product.template',
+                    'res_id': product_id.id,
+                    'mimetype': 'image/png',
+                    'public': True,
+                })
+                product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
+                product_photos_update.append({"Link": product_image_1920})
+
+            _logger.info('Photos mises à jour : %s', product_photos_update)
+
+            # Étape 4 : Construire les données pour la requête PUT
+            data_update = {
+                "Prices": [
+                    {
+                        "Id": product_id.produit_sah_id,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": product_id.name,
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": product_id.list_price,
+                        "PriceInclTax": product_id.list_price * (1 + (product_id.taxes_id.amount or 0) / 100),
+                        "ProductCost": product_id.standard_price,
+                        "EcoTax": 8.1
+                    }
+                ],
+                "ProductPhotos": product_photos_update
+            }
+
+            # Étape 5 : Envoyer la requête PUT pour mettre à jour les photos
+            url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
+            response_put = requests.put(url_put, json=data_update, headers=headers)
+
+            if response_put.status_code == 200:
+                _logger.info("Photos mises à jour avec succès pour le produit %s", product_id.name)
+            else:
+                _logger.error("Échec de la mise à jour des photos : %s", response_put.text)
+        else:
+            _logger.error("Échec de la récupération du produit : %s", response_produit.text)
             
 
 
