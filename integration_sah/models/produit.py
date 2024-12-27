@@ -331,7 +331,8 @@ class ProduitSelligHome(models.Model):
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
-            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
+            self.creation_produit_odoo_sah(res)
+            # self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
         return res
 
     """ Modification d'un produit """
