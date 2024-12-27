@@ -31,10 +31,10 @@ class NomenclatureSelligHome(models.Model):
             _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",post_response_produit.status_code)
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
-                _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",response_data_produit['ProductRelatedProducts'])
+                _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",response_data_produit['AttachedProducts'])
                 response_data_produit['AttachedProducts'] = [ {'GroupId': 119741, 'ProductId': 119708, 'ProductRemoteId': None, 'ProductCombinationId': 0, 'Quantity': 2, 'DisplayOrder': 1, 'Deleted': True } ]
        
-                _logger.info('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP%s',response_data_produit['ProductRelatedProducts'])
+                _logger.info('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP%s',response_data_produit['AttachedProducts'])
 
             
                 url_produit_modif = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
