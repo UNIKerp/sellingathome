@@ -274,7 +274,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos": product_photos,
+            "ProductPhotos": [{'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2779/product_image_453.png'}],
 
             "ProductRelatedProducts": [
                 {
