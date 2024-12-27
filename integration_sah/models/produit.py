@@ -524,10 +524,10 @@ class ProduitSelligHome(models.Model):
                 product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
                 
                 # Ajouter une photo supplémentaire sans ID (si elle n'existe pas déjà)
-                product_photos_update.append({
-                    "Id": None,
-                    "Link": product_image_1920,
-                })
+                # product_photos_update.append({
+                #     "Id": None,
+                #     "Link": product_image_1920,
+                # })
 
             _logger.info("Photos à mettre à jour : %s", product_photos_update)
 
