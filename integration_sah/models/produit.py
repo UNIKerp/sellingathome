@@ -239,7 +239,7 @@ class ProduitSelligHome(models.Model):
         else:
             discount_end_date = None
        
-        listp ={'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/3097/product_image_494.jpg', 'IsDefault': True}
+        listp ={'Link':'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/3097/product_image_494.jpg'}
       
         product_data = {
             "ProductType": 5,
@@ -310,8 +310,8 @@ class ProduitSelligHome(models.Model):
                 for line in product_id.attribute_line_ids if line.value_ids
             ]
         }
-        # if not product_photos:
-        #     product_data.pop("ProductPhotos", None)
+        if not product_photos:
+            product_data.pop("ProductPhotos", None)
 
         _logger.info('====================================== %s', product_photos)
         post_response = requests.post(url, json=product_data, headers=headers)
