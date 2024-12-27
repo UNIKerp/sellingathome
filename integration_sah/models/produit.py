@@ -186,7 +186,8 @@ class ProduitSelligHome(models.Model):
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if product_id.is_storable == True else 0
-    
+        product_photos = self.creation_images_du_produit(product_id)
+        _logger.info('*****************************************product_photos %s',product_photos)
         if product_id.categ_id and not product_id.produit_sah_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
@@ -273,7 +274,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            # "ProductPhotos": product_photos if product_photos else [],
+            "ProductPhotos": product_photos,
 
             "ProductRelatedProducts": [
                 {
@@ -357,102 +358,41 @@ class ProduitSelligHome(models.Model):
             requests.put(url2, headers=headers, json=values)
           
 
+    """ Creation des images du produits """
+    def creation_images_du_produit(self, product_id):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        photos_produit = []
+        if product_id.product_template_image_ids:
+            for image in product_id.product_template_image_ids:
+                attachment = self.env['ir.attachment'].create({
+                    'name': f'product_image_{product_id.id}_{i}.png',
+                    'type': 'binary',
+                    'datas': image.image_1920,
+                    'res_model': 'product.template',
+                    'res_id': product_id.id,
+                    'mimetype': 'image/png',
+                    'public': True,
+                })
+                url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                photos_produit.append({
+                    "Link": url_img,
+                })
 
-    def maj_des_photos_produits(self, product_id):
-        try:
-            headers = self.env['authentication.sah'].establish_connection()
-            if not headers:
-                _logger.error("Échec de l'établissement de la connexion.")
-                return
-
-            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
-            response_produit = requests.get(url_produit, headers=headers)
-
-            if response_produit.status_code == 200:
-                product_data = response_produit.json()
-                _logger.info("Produit data récupérée : %s", product_data)
-
-                # Obtenir les photos existantes depuis SAH
-                product_photos_existing = product_data.get('ProductPhotos', [])
-                sah_photos = [
-                    {
-                        "Id": photo.get('Id'),
-                        "Link": photo.get('Link'),
-                        "Name": photo.get('Link').split('/')[-1]
-                    }
-                    for photo in product_photos_existing
-                ]
-                _logger.info("Photos existantes dans SAH : %s", sah_photos)
-
-                # Obtenir les noms des photos dans Odoo
-                base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-                odoo_photos = []
-                if product_id.product_template_image_ids:
-                    for i, image in enumerate(product_id.product_template_image_ids):
-                        photo_name = f'product_image_{product_id.id}_{i}.png'
-                        odoo_photos.append({
-                            "Name": photo_name,
-                            "Image": image.image_1920,
-                        })
-
-                # Ajouter l'image principale si elle existe
-                if product_id.image_1920:
-                    photo_name = f'product_image_{product_id.id}.png'
-                    odoo_photos.append({
-                        "Name": photo_name,
-                        "Image": product_id.image_1920,
-                    })
-
-                _logger.info("Photos dans Odoo : %s", odoo_photos)
-
-                # Comparer les noms des photos pour identifier les correspondances
-                product_photos_update = []
-                for odoo_photo in odoo_photos:
-                    matching_sah_photo = next((photo for photo in sah_photos if photo['Name'] == odoo_photo['Name']), None)
-
-                    # Créer ou mettre à jour la photo en fonction de la correspondance
-                    if matching_sah_photo:
-                        product_photos_update.append({
-                            "Id": matching_sah_photo['Id'],
-                            "Link": f"{base_url}/web/content/{odoo_photo['Name']}",
-                        })
-                    else:
-                        product_photos_update.append({
-                            "Id": None,
-                            "Link": f"{base_url}/web/content/{odoo_photo['Name']}",
-                        })
-
-                _logger.info("Photos à mettre à jour : %s", product_photos_update)
-
-                values = {
-                    "Prices": [
-                        {
-                            "Id": product_id.produit_sah_id,
-                            "BrandTaxRate": 2.1,
-                            "BrandTaxName": product_id.name,
-                            "TwoLetterISOCode": "FR",
-                            "PriceExclTax": product_id.list_price,
-                            "PriceInclTax": product_id.list_price * (1 + (product_id.taxes_id.amount / 100)),
-                            "ProductCost": product_id.standard_price,
-                            "EcoTax": 8.1,
-                        }
-                    ],
-                    "ProductPhotos": product_photos_update,
-                }
-
-                url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
-                response_put = requests.put(url_put, json=values, headers=headers)
-
-                if response_put.status_code == 200:
-                    _logger.info("Mise à jour des photos réussie : %s", response_put.json())
-                else:
-                    _logger.error("Échec de la mise à jour des photos : %s", response_put.text)
-
-            else:
-                _logger.error("Échec de la récupération des données produit : %s", response_produit.text)
-
-        except Exception as e:
-            _logger.error("Erreur inattendue dans la mise à jour des photos : %s", str(e))
+        if product_id.image_1920:
+            attachment = self.env['ir.attachment'].create({
+                'name': f'product_image_{product_id.id}.png',
+                'type': 'binary',
+                'datas': product_id.image_1920,
+                'res_model': 'product.template',
+                'res_id': product_id.id,
+                'mimetype': 'image/png',
+                'public': True,
+            })
+            url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+            photos_produit.append({
+                "Link": url_img,
+            })
+        return photos_produit
 
             
 
