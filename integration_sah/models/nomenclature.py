@@ -35,7 +35,6 @@ class NomenclatureSelligHome(models.Model):
                 response_data_produit['AttachedProducts'] = [ {'GroupId': 119741, 'ProductId': 119708, 'ProductRemoteId': None, 'ProductCombinationId': 0, 'Quantity': 2, 'DisplayOrder': 1, 'Deleted': True } ]
        
                 _logger.info('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP%s',response_data_produit['AttachedProducts'])
-
             
                 url_produit_modif = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
                 response = requests.put(url_produit_modif, json= response_data_produit, headers=headers)
