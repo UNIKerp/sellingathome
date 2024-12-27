@@ -480,20 +480,20 @@ class ProduitSelligHome(models.Model):
         response_produit = requests.get(url_produit, headers=headers)
         if response_produit.status_code == 200:
             _logger.info("!!!!!!!!!!!!!!!!!!!!!!! %s",response_produit.json())
-            res = response_produit.json()
-            values = {}
-            for elt in res:
-                if elt['Id'] == product_id.produit_sah_id:
-                    values = elt
-                    break
-            _logger.info('=================================%s',values)
-            for photo in values['ProductPhotos']:
-                photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2551/product_image_317.png"
-            _logger.info('================================= aprss%s',values)
-            url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
-            _logger.info('result======================================%s',url_put)
-            result = requests.put(url_put,json=values, headers=headers)
-            _logger.info('================================= result%s',result)
+            # res = response_produit.json()
+            # values = {}
+            # for elt in res:
+            #     if elt['Id'] == product_id.produit_sah_id:
+            #         values = elt
+            #         break
+            # _logger.info('=================================%s',values)
+            # for photo in values['ProductPhotos']:
+            #     photo["Link"] = "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2551/product_image_317.png"
+            # _logger.info('================================= aprss%s',values)
+            # url_put = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
+            # _logger.info('result======================================%s',url_put)
+            # result = requests.put(url_put,json=values, headers=headers)
+            # _logger.info('================================= result%s',result)
 
 
 
