@@ -371,7 +371,6 @@ class ProduitSelligHome(models.Model):
     """ Creation des images du produits """
     def creation_images_du_produit(self, product_id):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        _logger.info('@@@@@@@@@@@@@@@@@@aaaaa%s',base_url)
         directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
         photos_produit = []
         if product_id.image_1920:
@@ -429,6 +428,7 @@ class ProduitSelligHome(models.Model):
                     playload['ProductPhotos'][i]['Link'] = photos_produit[i]['Link']
                 else:
                     playload['ProductPhotos'].append(i)
+            _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",playload['ProductPhotos'])
             return playload['ProductPhotos']
             
 
