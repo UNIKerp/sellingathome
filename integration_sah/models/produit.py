@@ -68,6 +68,9 @@ class ProduitSelligHome(models.Model):
     """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
         if product.produit_sah_id:
+            #Photos
+            self.maj_images_du_produit(product)
+            #
             id_categ = ''
             if product.categ_id:
                 url_categ = "https://demoapi.sellingathome.com/v1/Categories"
@@ -366,7 +369,9 @@ class ProduitSelligHome(models.Model):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         photos_produit = []
         if product_id.product_template_image_ids:
+            i = 1
             for image in product_id.product_template_image_ids:
+                i = i+1
                 attachment = self.env['ir.attachment'].create({
                     'name': f'product_image_{product_id.id}_{i}.png',
                     'type': 'binary',
@@ -397,6 +402,56 @@ class ProduitSelligHome(models.Model):
             })
         return photos_produit
 
+
+    """ Mise à jour des images du produits """
+    def maj_images_du_produit(self,product_id,vals):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        photos_produit = []
+        url = f"https://demoapi.sellingathome.com/v1/Products{product_id.produit_sah_id}" 
+        response =  requests.get(url, headers=headers)
+        if response.status_code == 200:
+            playload = response.json()
+            if 'product_template_image_ids' in vals and product_id.product_template_image_ids:
+                i = 1
+                for image in product_id.product_template_image_ids:
+                    i = i+1
+                    name = f'product_image_{product_id.id}_{i}.png'
+                    attachment =  self.env['ir.attachment'].search([('name','=',name),('res_model','=','product.template'),('res_id','=',product_id.id)])
+                    if not attachment:
+                        attachment = self.env['ir.attachment'].create({
+                            'name': name,
+                            'type': 'binary',
+                            'datas': image.image_1920,
+                            'res_model': 'product.template',
+                            'res_id': product_id.id,
+                            'mimetype': 'image/png',
+                            'public': True,
+                        })
+                        url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                        photos_produit.append({
+                            "Link": url_img,
+                        })
+
+            if 'image_1920' in vals and product_id.image_1920:
+                name = f'product_image_{product_id.id}.png'
+                attachment =  self.env['ir.attachment'].search([('name','=',name),('res_model','=','product.template'),('res_id','=',product_id.id)])
+                if attachment:
+                    attachment.sudo().unlink()
+                attachment = self.env['ir.attachment'].create({
+                    'name': name,
+                    'type': 'binary',
+                    'datas': product_id.image_1920,
+                    'res_model': 'product.template',
+                    'res_id': product_id.id,
+                    'mimetype': 'image/png',
+                    'public': True,
+                })
+                url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+                photos_produit.append({
+                    "Link": url_img,
+                })
+            _logger.info('============================================= !!!!!!!!!!!!!!! %s',playload)
+            _logger.info('============================================= photos_produit %s',photos_produit)
             
 
 
