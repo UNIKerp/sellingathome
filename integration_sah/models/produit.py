@@ -427,7 +427,7 @@ class ProduitSelligHome(models.Model):
                     # Remplacer les liens existants
                     playload['ProductPhotos'][i]['Link'] = photos_produit[i]['Link']
                 else:
-                    playload['ProductPhotos'].append(i)
+                    playload['ProductPhotos'].append(photos_produit[i])
             _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",playload['ProductPhotos'])
             return playload['ProductPhotos']
             
