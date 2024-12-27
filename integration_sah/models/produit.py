@@ -136,7 +136,7 @@ class ProduitSelligHome(models.Model):
                 "Weight": product.weight,
                 "IsPublished": True,
                 "InventoryMethod": 1 if product.is_storable == True else 0,
-                # "ProductPhotos": photos_maj,
+                "ProductPhotos": photos_maj,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -423,10 +423,13 @@ class ProduitSelligHome(models.Model):
         if response.status_code == 200:
             playload = response.json()
             photos_produit = self.creation_images_du_produit(product_id)
-            _logger.info('=============================== %s',playload['ProductPhotos'])
-            _logger.info('=============================== %s',photos_produit)
-            playload['ProductPhotos'] = [{'Link': photo['Link']} for photo in photos_produit]
-            return playload
+            for i in range(len(photos_produit)):
+                if i < len(playload['ProductPhotos']):
+                    # Remplacer les liens existants
+                    playload['ProductPhotos'][i]['Link'] = photos_produit[i]['Link']
+                else:
+                    playload['ProductPhotos'].append(i)
+            return playload['ProductPhotos']
             
 
 
