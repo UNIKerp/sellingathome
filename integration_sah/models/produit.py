@@ -333,22 +333,22 @@ class ProduitSelligHome(models.Model):
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
         return res
 
-    """ Modification d'un produit """
-    def write(self, vals):
-        headers = self.env['authentication.sah'].establish_connection()
-        rec = super(ProduitSelligHome, self).write(vals)
-        if vals and self.produit_sah_id:
-            job_kwargs = {
-                'description': 'Mise à jour du produit dans SAH',
-            }
-            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+    # """ Modification d'un produit """
+    # def write(self, vals):
+    #     headers = self.env['authentication.sah'].establish_connection()
+    #     rec = super(ProduitSelligHome, self).write(vals)
+    #     if vals and self.produit_sah_id:
+    #         job_kwargs = {
+    #             'description': 'Mise à jour du produit dans SAH',
+    #         }
+    #         self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
-            ### Modification stock
-            job_kwargs2 = {
-                'description': 'Mise à jour du stock produit',
-            }
-            self.with_delay(**job_kwargs2).maj_des_stocks(self)
-        return rec
+    #         ### Modification stock
+    #         job_kwargs2 = {
+    #             'description': 'Mise à jour du stock produit',
+    #         }
+    #         self.with_delay(**job_kwargs2).maj_des_stocks(self)
+    #     return rec
 
 
 
