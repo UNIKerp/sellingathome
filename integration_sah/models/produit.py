@@ -70,7 +70,7 @@ class ProduitSelligHome(models.Model):
     def update_produit_dans_sah(self, product, headers):
         if product.produit_sah_id:
             #Photos
-            photos_maj = self.maj_images_du_produit(product)
+            photos_maj = self.creation_images_du_produit(product)
             #
             id_categ = ''
             if product.categ_id:
