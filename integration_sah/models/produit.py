@@ -274,7 +274,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":  json.loads(json.dumps(product_photos)),
+            "ProductPhotos":   product_photos[:],
 
             "ProductRelatedProducts": [
                 {
@@ -308,7 +308,7 @@ class ProduitSelligHome(models.Model):
         if not product_photos:
             _logger.info('=======================================================pas de photos')
             product_data.pop("ProductPhotos", None)
-        
+        _logger.info('***************************** %s',product_data['ProductPhotos'])
         post_response = requests.post(url, json=product_data, headers=headers)
         if post_response.status_code == 200:
             response_data = post_response.json()
