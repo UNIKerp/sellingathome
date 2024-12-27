@@ -403,7 +403,7 @@ class ProduitSelligHome(models.Model):
             })
             url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
             photos_produit.append({
-                'Link': url_img,
+                'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/integration_sah/static/description/icon.png',
                 'IsDefault': True,
             })
 
