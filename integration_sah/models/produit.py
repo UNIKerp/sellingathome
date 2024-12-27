@@ -238,7 +238,9 @@ class ProduitSelligHome(models.Model):
             discount_end_date = discount_end_date.isoformat()
         else:
             discount_end_date = None
-        listp = [{'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2948/product_image_476_2.jpg', 'IsDefault': False}, {'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2949/product_image_476.jpg', 'IsDefault': True}]
+        listp=[]
+        for l in product_photos:
+            listp.append(l)
         _logger.info('sssstype listp%s', type(listp))
         _logger.info('sssstype product_photos%s', type(product_photos))
         product_data = {
