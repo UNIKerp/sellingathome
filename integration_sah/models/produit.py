@@ -173,7 +173,6 @@ class ProduitSelligHome(models.Model):
             else:
                 _logger.error(f"Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code}")
 
-            _logger.info("======================= Fin de mise à jour de l'Article")
 
     
     #
@@ -322,7 +321,6 @@ class ProduitSelligHome(models.Model):
                 'description': 'Création produit Odoo vers SAH',
             }
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
-
         return res
 
     """ Modification d'un produit """
@@ -333,7 +331,7 @@ class ProduitSelligHome(models.Model):
             job_kwargs = {
                 'description': 'Mise à jour du produit dans SAH',
             }
-            # self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
             ### Modification stock
             job_kwargs2 = {
