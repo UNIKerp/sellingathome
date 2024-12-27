@@ -241,7 +241,6 @@ class ProduitSelligHome(models.Model):
             "Reference": product_id.default_code,
             "Prices": [
                 {
-                    # "ProductId": id,
                     "BrandTaxRate": 2.1,
                     "BrandTaxName": product_id.name,
                     "TwoLetterISOCode": "FR",
@@ -279,7 +278,6 @@ class ProduitSelligHome(models.Model):
 
             "ProductRelatedProducts": [
                 {
-                    # "ProductId": id,
                     "ProductRemoteId": str(related_product.id),
                     "ProductReference": related_product.default_code,
                     "IsDeleted": False
