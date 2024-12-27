@@ -237,18 +237,18 @@ class ProduitSelligHome(models.Model):
             discount_end_date = None
 
         product_data = {
-            # "ProductType": 5,
+            "ProductType": 5,
             "Reference": product_id.default_code,
             "Prices": [
                 {
                     # "ProductId": id,
-                    # "BrandTaxRate": 2.1,
+                    "BrandTaxRate": 2.1,
                     "BrandTaxName": product_id.name,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": product_id.list_price,
                     "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
                     "ProductCost": product_id.standard_price,
-                    # "EcoTax": 8.1
+                    "EcoTax": 8.1
                 }
             ],
             "Barcode": product_id.barcode,
