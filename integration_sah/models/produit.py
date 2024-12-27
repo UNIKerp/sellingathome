@@ -187,8 +187,6 @@ class ProduitSelligHome(models.Model):
         categ_parent =''
         suivi_stock = 1 if product_id.is_storable == True else 0
         product_photos = self.creation_images_du_produit(product_id)
-        product_photos = json.loads(product_photos.replace("'", '"'))
-        _logger.info('*****************************************product_photos %s',product_photos)
         if product_id.categ_id and not product_id.produit_sah_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
@@ -275,7 +273,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            # "ProductPhotos": product_photos,
+            "ProductPhotos": product_photos,
 
             "ProductRelatedProducts": [
                 {
@@ -307,11 +305,8 @@ class ProduitSelligHome(models.Model):
             ]
         }
         if not product_photos:
-            _logger.info('=======================================================pas de photos')
             product_data.pop("ProductPhotos", None)
-        else:
-            product_data["ProductPhotos"] = product_photos
-    
+       
         post_response = requests.post(url, json=product_data, headers=headers)
         if post_response.status_code == 200:
             response_data = post_response.json()
