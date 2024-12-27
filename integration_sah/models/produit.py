@@ -393,7 +393,7 @@ class ProduitSelligHome(models.Model):
         if product_id.product_template_image_ids:
             i = 0
             for image in product_id.product_template_image_ids:
-                image_data = base64.b64decode(image.datas)
+                image_data = base64.b64decode(image.image_1920)
                 i += 1
                 if not os.path.exists(directory):
                     os.makedirs(directory)
