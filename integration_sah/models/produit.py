@@ -31,7 +31,7 @@ class ProduitSelligHome(models.Model):
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
 
-    """ Création des produits de SAH dans Odoo """"
+    """ Création des produits de SAH dans Odoo """
     def create_article_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
