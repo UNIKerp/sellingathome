@@ -373,7 +373,8 @@ class ProduitSelligHome(models.Model):
     """ Creation des images du produits """
     def creation_images_du_produit(self, product_id):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        directory = '/integration_sah/static/description/tmp'
+        _logger,info('aaaaa%s',base_url)
+        directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
         photos_produit = []
         if product_id.image_1920:
             image_data = base64.b64decode(product_id.image_1920)
@@ -384,7 +385,7 @@ class ProduitSelligHome(models.Model):
             file_path = os.path.join(directory, image_filename)
             with open(file_path, 'wb') as f:
                 f.write(image_data)
-            link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
+            link = f"{base_url}/directory/{image_filename}"
            
             photos_produit.append({
                 'Link': link,
@@ -401,7 +402,7 @@ class ProduitSelligHome(models.Model):
                 file_path = os.path.join(directory, image_filename)
                 with open(file_path, 'wb') as f:
                     f.write(image_data)
-                link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
+                link = f"{base_url}/directory/{image_filename}"
                 photos_produit.append({
                     'Link': link,
                     'IsDefault': False,
