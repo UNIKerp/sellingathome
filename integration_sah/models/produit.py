@@ -368,53 +368,47 @@ class ProduitSelligHome(models.Model):
             }
             requests.put(url2, headers=headers, json=values)
           
-    @api.model
-    def save_image_from_binary(self,product_id):
+    
+
+    """ Creation des images du produits """
+    def creation_images_du_produit(self, product_id):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
+        photos_produit = []
         if product_id.image_1920:
             image_data = base64.b64decode(product_id.image_1920)
-            directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
+            
             if not os.path.exists(directory):
                 os.makedirs(directory)
             image_filename = "image_1920.png"
             file_path = os.path.join(directory, image_filename)
             with open(file_path, 'wb') as f:
                 f.write(image_data)
-            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
-            _logger.info('===================================convert image to link %s',link)
-            return link
-
-    """ Creation des images du produits """
-    def creation_images_du_produit(self, product_id):
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        photos_produit = []
-        # if product_id.product_template_image_ids:
-        #     i = 1
-        #     for image in product_id.product_template_image_ids:
-        #         i = i+1
-                
-        #         url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-        #         photos_produit.append({
-        #             'Link': url_img,
-        #             'IsDefault': False,
-        #         })
-
-        if product_id.image_1920:
-            # attachment = self.env['ir.attachment'].create({
-            #     'name': f'product_image_{product_id.id}.jpg',
-            #     'type': 'binary',
-            #     'datas': product_id.image_1920,
-            #     'res_model': 'product.template',
-            #     'res_id': product_id.id,
-            #     'mimetype': 'image/png',
-            #     'public': True,
-            # })
-            url_img = self.save_image_from_binary(product_id)
+           
             photos_produit.append({
-                'Link': url_img,
+                'Link': link,
                 'IsDefault': True,
             })
+        if product_id.product_template_image_ids:
+            i = 0
+            for image in product_id.product_template_image_ids:
+                image_data = base64.b64decode(image.datas)
+                i += 1
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                image_filename = f"image_supp_{i}.png"
+                file_path = os.path.join(directory, image_filename)
+                with open(file_path, 'wb') as f:
+                    f.write(image_data)
+                link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
+                photos_produit.append({
+                    'Link': link,
+                    'IsDefault': False,
+                })
 
+       
+        _logger.info('===================================photos_produit %s',photos_produit)
         return photos_produit
 
 
