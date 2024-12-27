@@ -43,6 +43,5 @@ class NomenclatureSelligHome(models.Model):
                 if response.status_code != 200:
                    _logger.info('Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
                 
-                return product
 
 
