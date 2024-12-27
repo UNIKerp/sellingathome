@@ -41,8 +41,8 @@ class NomenclatureSelligHome(models.Model):
                 # try:
                 response = requests.put(url_produit_modif, json= response_data_produit, headers=headers)
                 _logger.info("Statut de la réponse : %s, Contenu : %s", response.status_code, response.text)
-                if response.status_code != 200:
-                    raise Exception("Erreur lors de la modification du produit : %s" % response.text)
+                # if response.status_code != 200:
+                #     raise Exception("Erreur lors de la modification du produit : %s" % response.text)
                 # except requests.exceptions.RequestException as e:
                 #     _logger.error("Erreur lors de la requête PUT : %s", str(e))
                 #     raise
