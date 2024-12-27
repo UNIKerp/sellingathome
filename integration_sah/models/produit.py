@@ -238,7 +238,7 @@ class ProduitSelligHome(models.Model):
 
         product_data = {
             "ProductType": 5,
-            "Reference": default_code,
+            "Reference": product_id.default_code,
             "Prices": [
                 {
                     # "ProductId": id,
