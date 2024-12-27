@@ -274,7 +274,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos": product_photos,
+            # "ProductPhotos": product_photos,
 
             "ProductRelatedProducts": [
                 {
@@ -308,7 +308,9 @@ class ProduitSelligHome(models.Model):
         if not product_photos:
             _logger.info('=======================================================pas de photos')
             product_data.pop("ProductPhotos", None)
-        product_data = json.dumps(product_data)
+        else:
+            product_data["ProductPhotos"] = product_photos
+    
         post_response = requests.post(url, json=product_data, headers=headers)
         if post_response.status_code == 200:
             response_data = post_response.json()
@@ -380,7 +382,7 @@ class ProduitSelligHome(models.Model):
                 })
                 url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
                 photos_produit.append({
-                    "Link": str(url_img),
+                    "Link": url_img,
                 })
 
         if product_id.image_1920:
@@ -395,7 +397,7 @@ class ProduitSelligHome(models.Model):
             })
             url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
             photos_produit.append({
-                "Link": str(url_img),
+                "Link": url_img,
             })
         return photos_produit
 
