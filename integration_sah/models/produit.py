@@ -239,7 +239,7 @@ class ProduitSelligHome(models.Model):
         else:
             discount_end_date = None
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        listp =[]
+        listp =''
         if product_id.image_1920:
             attachment = self.env['ir.attachment'].create({
                 'name': f'product_image_{product_id.id}.jpg',
@@ -251,10 +251,10 @@ class ProduitSelligHome(models.Model):
                 'public': True,
             })
             url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-            listp.append({
+            listp={
                 'Link': url_img,
                 'IsDefault': True,
-            })
+            }
         
         _logger.info('sssstype listp%s', listp)
         _logger.info('sssstype product_photos%s', type(product_photos))
@@ -296,7 +296,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":listp,
+            "ProductPhotos":[listp],
 
             "ProductRelatedProducts": [
                 {
