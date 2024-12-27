@@ -519,7 +519,7 @@ class ProduitSelligHome(models.Model):
             job_kwargs2 = {
                 'description': 'Export stock',
             }
-            self.with_delay(**job_kwargs2).maj_des_stocks(product_id.is_storable,product_id.produit_sah_id,product_id.default_code,product_id.qty_available,product_id.virtual_available)
+            self.with_delay(**job_kwargs2).maj_des_stocks(product_id)
         
         
 
