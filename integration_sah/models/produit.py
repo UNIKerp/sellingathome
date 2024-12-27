@@ -239,7 +239,7 @@ class ProduitSelligHome(models.Model):
         else:
             discount_end_date = None
        
-        listp ={'Link': 'https: //demoseller.sellingathome.com/api/s3/sah-files/products/120834/9b-9c-4b-8d-61-f7-10-cd-d0-34-28-f4-23-35-69-ce-76-d7-13-de.jpg'}
+        lisp ={'Link':'https://demoseller.sellingathome.com/api/s3/sah-files/products/120834/9b-9c-4b-8d-61-f7-10-cd-d0-34-28-f4-23-35-69-ce-76-d7-13-de.jpg'}
       
         product_data = {
             "ProductType": 5,
@@ -279,7 +279,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":[{'Id':100,'Link': 'https: //demoseller.sellingathome.com/api/s3/sah-files/products/120834/9b-9c-4b-8d-61-f7-10-cd-d0-34-28-f4-23-35-69-ce-76-d7-13-de.jpg'}],
+            "ProductPhotos":[lisp],
 
             "ProductRelatedProducts": [
                 {
