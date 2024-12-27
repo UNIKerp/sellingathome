@@ -305,6 +305,8 @@ class ProduitSelligHome(models.Model):
                 for line in product_id.attribute_line_ids if line.value_ids
             ]
         }
+        if not product_photos:
+            product_data.pop("ProductPhotos", None)
         
         post_response = requests.post(url, json=product_data, headers=headers)
         if post_response.status_code == 200:
