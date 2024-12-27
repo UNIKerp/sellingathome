@@ -379,7 +379,7 @@ class ProduitSelligHome(models.Model):
                 objet.produit_sah_id = int(product_id)
                 _logger.info('==========================================*************** %s',objet.produit_sah_id)
 
-    """@api.model
+    @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
         ###################################
@@ -394,7 +394,7 @@ class ProduitSelligHome(models.Model):
                                     res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
                                     res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
                                     res.description,res.accessory_product_ids,res.attribute_line_ids)
-        return res"""
+        return res
 
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
@@ -476,7 +476,7 @@ class ProduitSelligHome(models.Model):
         #     "ProductPhotos": product_photos
         # }
         headers = self.env['authentication.sah'].establish_connection()
-        url_produit = f"https://demoapi.sellingathome.com/v1/Products"
+        url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
         response_produit = requests.get(url_produit, headers=headers)
         if response_produit.status_code == 200:
             _logger.info("!!!!!!!!!!!!!!!!!!!!!!! %s",response_produit.json())
