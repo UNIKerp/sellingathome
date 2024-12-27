@@ -370,33 +370,19 @@ class ProduitSelligHome(models.Model):
           
     @api.model
     def save_image_from_binary(self,product_id):
-        # Assurez-vous que vous avez les données binaires dans le champ 'image'
         if product_id.image_1920:
-            # Décoder l'image depuis le format base64
             image_data = base64.b64decode(product_id.image_1920)
-            
-            # Définir le répertoire où l'image sera enregistrée
-            directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
-            
-            # Créer le répertoire si nécessaire
+            directory = 'integration_sah/static/description/tmp'
             if not os.path.exists(directory):
                 os.makedirs(directory)
-            
-            # Nom de l'image, ici basé sur le champ 'name' ou autre logique
             image_filename = "image_1920.png"
-            
-            # Chemin du fichier
             file_path = os.path.join(directory, image_filename)
-            
-            # Enregistrer l'image
             with open(file_path, 'wb') as f:
                 f.write(image_data)
-            
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
-            _logger.info("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s",link)
-            
             return link
+
     """ Creation des images du produits """
     def creation_images_du_produit(self, product_id):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
