@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 import json
 from PIL import Image
 from io import BytesIO
-photos = []
+
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
@@ -239,7 +239,7 @@ class ProduitSelligHome(models.Model):
         else:
             discount_end_date = None
        
-        listp ={'Link':'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/3097/product_image_494.jpg'}
+        listp ={'Link': 'https: //demoseller.sellingathome.com/api/s3/sah-files/products/120834/9b-9c-4b-8d-61-f7-10-cd-d0-34-28-f4-23-35-69-ce-76-d7-13-de.jpg'}
       
         product_data = {
             "ProductType": 5,
