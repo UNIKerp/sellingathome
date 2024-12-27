@@ -251,10 +251,7 @@ class ProduitSelligHome(models.Model):
                 'public': True,
             })
             url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-            listp={
-                'Link': url_img,
-                'IsDefault': True,
-            }
+            listp={ 'Link': f'{base_url}/web/content/{attachment.id}/{attachment.name}','IsDefault': True}
         
         _logger.info('sssstype listp%s', listp)
         _logger.info('sssstype product_photos%s', type(product_photos))
