@@ -274,7 +274,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":  json.loads(json.dumps(product_photos)),,
+            "ProductPhotos":  json.loads(json.dumps(product_photos)),
 
             "ProductRelatedProducts": [
                 {
