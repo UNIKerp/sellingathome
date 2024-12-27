@@ -404,7 +404,7 @@ class ProduitSelligHome(models.Model):
 
 
     """ Mise à jour des images du produits """
-    def maj_images_du_produit(self,product_id,vals):
+    def maj_images_du_produit(self,product_id):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         photos_produit = []
         url = f"https://demoapi.sellingathome.com/v1/Products{product_id.produit_sah_id}" 
