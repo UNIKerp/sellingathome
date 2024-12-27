@@ -9,7 +9,7 @@ from odoo.tools import config
 import pytz
 import logging
 _logger = logging.getLogger(__name__)
-
+import json
 from PIL import Image
 from io import BytesIO
 
@@ -274,7 +274,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos": product_photos,
+            "ProductPhotos":  json.loads(json.dumps(product_photos)),,
 
             "ProductRelatedProducts": [
                 {
