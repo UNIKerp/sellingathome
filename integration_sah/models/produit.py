@@ -69,7 +69,7 @@ class ProduitSelligHome(models.Model):
     def update_produit_dans_sah(self, product, headers):
         if product.produit_sah_id:
             #Photos
-            self.maj_images_du_produit(product)
+            photos_maj = self.maj_images_du_produit(product)
             #
             id_categ = ''
             if product.categ_id:
@@ -135,6 +135,7 @@ class ProduitSelligHome(models.Model):
                 "Weight": product.weight,
                 "IsPublished": True,
                 "InventoryMethod": 1 if product.is_storable == True else 0,
+                "ProductPhotos": photos_maj,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -453,6 +454,8 @@ class ProduitSelligHome(models.Model):
                 })
             _logger.info('============================================= !!!!!!!!!!!!!!! %s',playload)
             _logger.info('============================================= photos_produit %s',photos_produit)
+            playload['ProductPhotos'] = [{'Link': photo['Link']} for photo in photos_produit]
+            return playload
             
 
 
