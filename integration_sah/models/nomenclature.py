@@ -38,14 +38,14 @@ class NomenclatureSelligHome(models.Model):
 
             
                 url_produit_modif = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
-                try:
-                    response = requests.put(url_produit_modif, json= response_data_produit, headers=headers)
-                    _logger.info("Statut de la réponse : %s, Contenu : %s", response.status_code, response.text)
-                    if response.status_code != 200:
-                        raise Exception("Erreur lors de la modification du produit : %s" % response.text)
-                except requests.exceptions.RequestException as e:
-                    _logger.error("Erreur lors de la requête PUT : %s", str(e))
-                    raise
+                # try:
+                response = requests.put(url_produit_modif, json= response_data_produit, headers=headers)
+                _logger.info("Statut de la réponse : %s, Contenu : %s", response.status_code, response.text)
+                if response.status_code != 200:
+                    raise Exception("Erreur lors de la modification du produit : %s" % response.text)
+                # except requests.exceptions.RequestException as e:
+                #     _logger.error("Erreur lors de la requête PUT : %s", str(e))
+                #     raise
                 return product
 
 
