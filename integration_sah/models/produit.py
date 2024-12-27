@@ -428,57 +428,58 @@ class ProduitSelligHome(models.Model):
           
 
     def maj_des_photos_produits(self,product_id):
-        product_photos = []
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        if product_id.product_template_image_ids:
-            for image in product_id.product_template_image_ids:
-                attachment = self.env['ir.attachment'].create({
-                    'name': f'product_image_{product_id.id}.png',
-                    'type': 'binary',
-                    'datas': image.image_1920, 
-                    'res_model': 'product.template',
-                    'res_id': product_id.id,
-                    'mimetype': 'image/png', 
-                    'public': True,
-                })
-                product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                product_photos.append({
-                    "Link": product_image_url,
-                })
-        if product_id.image_1920:
-            attachment_img = self.env['ir.attachment'].create({
-                'name': f'product_image_{product_id.id}.png',
-                'type': 'binary',
-                'datas': product_id.image_1920, 
-                'res_model': 'product.template',
-                'res_id': product_id.id,
-                'mimetype': 'image/png', 
-                'public': True,
-            })
-            product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
-            product_photos.append({
-                "Link": product_image_1920,
-            })
-        _logger.info('=================================== %s',product_photos)
-        product_photos = {
-            "Prices": [
-                {
-                    "Id": product_id.produit_sah_id,
-                    "BrandTaxRate": 2.1,
-                    "BrandTaxName": product_id.name,
-                    "TwoLetterISOCode": "FR",
-                    "PriceExclTax": product_id.list_price,
-                    "PriceInclTax": product_id.list_price * (1 + product_id.taxes_id.amount / 100),
-                    "ProductCost": product_id.standard_price,
-                    "EcoTax": 8.1
-                }
-            ],
-            "ProductPhotos": product_photos
-        }
+        # product_photos = []
+        # base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        # if product_id.product_template_image_ids:
+        #     for image in product_id.product_template_image_ids:
+        #         attachment = self.env['ir.attachment'].create({
+        #             'name': f'product_image_{product_id.id}.png',
+        #             'type': 'binary',
+        #             'datas': image.image_1920, 
+        #             'res_model': 'product.template',
+        #             'res_id': product_id.id,
+        #             'mimetype': 'image/png', 
+        #             'public': True,
+        #         })
+        #         product_image_url = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+        #         product_photos.append({
+        #             "Link": product_image_url,
+        #         })
+        # if product_id.image_1920:
+        #     attachment_img = self.env['ir.attachment'].create({
+        #         'name': f'product_image_{product_id.id}.png',
+        #         'type': 'binary',
+        #         'datas': product_id.image_1920, 
+        #         'res_model': 'product.template',
+        #         'res_id': product_id.id,
+        #         'mimetype': 'image/png', 
+        #         'public': True,
+        #     })
+        #     product_image_1920 = f'{base_url}/web/content/{attachment_img.id}/{attachment_img.name}'
+        #     product_photos.append({
+        #         "Link": product_image_1920,
+        #     })
+        # _logger.info('=================================== %s',product_photos)
+        # product_photos = {
+        #     "Prices": [
+        #         {
+        #             "Id": product_id.produit_sah_id,
+        #             "BrandTaxRate": 2.1,
+        #             "BrandTaxName": product_id.name,
+        #             "TwoLetterISOCode": "FR",
+        #             "PriceExclTax": product_id.list_price,
+        #             "PriceInclTax": product_id.list_price * (1 + product_id.taxes_id.amount / 100),
+        #             "ProductCost": product_id.standard_price,
+        #             "EcoTax": 8.1
+        #         }
+        #     ],
+        #     "ProductPhotos": product_photos
+        # }
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = f"https://demoapi.sellingathome.com/v1/Products"
         response_produit = requests.get(url_produit, headers=headers)
         if response_produit.status_code == 200:
+            _logger.info("!!!!!!!!!!!!!!!!!!!!!!! %s",response_produit.json())
             res = response_produit.json()
             values = {}
             for elt in res:
