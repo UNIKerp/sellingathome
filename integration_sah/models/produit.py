@@ -183,7 +183,7 @@ class ProduitSelligHome(models.Model):
         est_publie = bool(product_id.is_published)
         virtual = type == 'service'
         rupture_stock = bool(product_id.allow_out_of_stock_order)
-        is_sale = bool(.product_idsale_ok)
+        is_sale = bool(product_id.sale_ok)
         id_categ = ''
         categ_parent =''
         suivi_stock = 1 if is_storable == True else 0
