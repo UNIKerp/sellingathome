@@ -13,6 +13,7 @@ import json
 from PIL import Image
 from io import BytesIO
 
+
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
@@ -367,43 +368,71 @@ class ProduitSelligHome(models.Model):
             }
             requests.put(url2, headers=headers, json=values)
           
-
+    @api.model
+    def save_image_from_binary(self,product_id):
+        # Assurez-vous que vous avez les données binaires dans le champ 'image'
+        if product_id.image_1920:
+            # Décoder l'image depuis le format base64
+            image_data = base64.b64decode(product_id.image_1920)
+            
+            # Définir le répertoire où l'image sera enregistrée
+            directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
+            
+            # Créer le répertoire si nécessaire
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            
+            # Nom de l'image, ici basé sur le champ 'name' ou autre logique
+            image_filename = "image_1920.png"
+            
+            # Chemin du fichier
+            file_path = os.path.join(directory, image_filename)
+            
+            # Enregistrer l'image
+            with open(file_path, 'wb') as f:
+                f.write(image_data)
+            
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
+            _logger.info("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s",link)
+            
+            return link
     """ Creation des images du produits """
     def creation_images_du_produit(self, product_id):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         photos_produit = []
-        if product_id.product_template_image_ids:
-            i = 1
-            for image in product_id.product_template_image_ids:
-                i = i+1
-                attachment = self.env['ir.attachment'].create({
-                    'name': f'product_image_{product_id.id}_{i}.jpg',
-                    'type': 'binary',
-                    'datas': image.image_1920,
-                    'res_model': 'product.template',
-                    'res_id': product_id.id,
-                    'mimetype': 'image/png',
-                    'public': True,
-                })
-                url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                photos_produit.append({
-                    'Link': url_img,
-                    'IsDefault': False,
-                })
+        # if product_id.product_template_image_ids:
+        #     i = 1
+        #     for image in product_id.product_template_image_ids:
+        #         i = i+1
+        #         attachment = self.env['ir.attachment'].create({
+        #             'name': f'product_image_{product_id.id}_{i}.jpg',
+        #             'type': 'binary',
+        #             'datas': image.image_1920,
+        #             'res_model': 'product.template',
+        #             'res_id': product_id.id,
+        #             'mimetype': 'image/png',
+        #             'public': True,
+        #         })
+        #         url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+        #         photos_produit.append({
+        #             'Link': url_img,
+        #             'IsDefault': False,
+        #         })
 
         if product_id.image_1920:
-            attachment = self.env['ir.attachment'].create({
-                'name': f'product_image_{product_id.id}.jpg',
-                'type': 'binary',
-                'datas': product_id.image_1920,
-                'res_model': 'product.template',
-                'res_id': product_id.id,
-                'mimetype': 'image/png',
-                'public': True,
-            })
-            url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+            # attachment = self.env['ir.attachment'].create({
+            #     'name': f'product_image_{product_id.id}.jpg',
+            #     'type': 'binary',
+            #     'datas': product_id.image_1920,
+            #     'res_model': 'product.template',
+            #     'res_id': product_id.id,
+            #     'mimetype': 'image/png',
+            #     'public': True,
+            # })
+            url_img = self.save_image_from_binary(product_id)
             photos_produit.append({
-                'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/integration_sah/static/description/icon.png',
+                'Link': url_img,
                 'IsDefault': True,
             })
 
