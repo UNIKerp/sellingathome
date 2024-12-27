@@ -388,6 +388,7 @@ class ProduitSelligHome(models.Model):
             photos_produit.append({
                 'Link': link,
                 'IsDefault': True,
+                'Deleted': True
             })
         if product_id.product_template_image_ids:
             i = 0
@@ -404,6 +405,7 @@ class ProduitSelligHome(models.Model):
                 photos_produit.append({
                     'Link': link,
                     'IsDefault': False,
+                    'Deleted': True
                 })
 
        
