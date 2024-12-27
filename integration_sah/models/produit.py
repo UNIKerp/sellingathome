@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 import json
 from PIL import Image
 from io import BytesIO
-
+photos = []
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
 
@@ -279,7 +279,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":product_photos,
+            "ProductPhotos":photos,
 
             "ProductRelatedProducts": [
                 {
@@ -331,8 +331,7 @@ class ProduitSelligHome(models.Model):
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
-            self.creation_produit_odoo_sah(res)
-            # self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
         return res
 
     """ Modification d'un produit """
@@ -407,6 +406,8 @@ class ProduitSelligHome(models.Model):
                 'Link': url_img,
                 'IsDefault': True,
             })
+        global photos
+        photos = photos_produit
         return photos_produit
 
 
