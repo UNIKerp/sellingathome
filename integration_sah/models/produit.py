@@ -70,7 +70,7 @@ class ProduitSelligHome(models.Model):
     def update_produit_dans_sah(self, product, headers):
         if product.produit_sah_id:
             #Photos
-            photos_maj = self.creation_images_du_produit(product)
+            # photos_maj = self.creation_images_du_produit(product)
             #
             id_categ = ''
             if product.categ_id:
@@ -136,7 +136,7 @@ class ProduitSelligHome(models.Model):
                 "Weight": product.weight,
                 "IsPublished": True,
                 "InventoryMethod": 1 if product.is_storable == True else 0,
-                "ProductPhotos": photos_maj,
+                # "ProductPhotos": photos_maj,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
