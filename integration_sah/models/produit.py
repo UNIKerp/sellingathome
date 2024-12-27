@@ -411,7 +411,7 @@ class ProduitSelligHome(models.Model):
         response =  requests.get(url, headers=headers)
         if response.status_code == 200:
             playload = response.json()
-            if 'product_template_image_ids' in vals and product_id.product_template_image_ids:
+            if product_id.product_template_image_ids:
                 i = 1
                 for image in product_id.product_template_image_ids:
                     i = i+1
@@ -432,7 +432,7 @@ class ProduitSelligHome(models.Model):
                             "Link": url_img,
                         })
 
-            if 'image_1920' in vals and product_id.image_1920:
+            if product_id.image_1920:
                 name = f'product_image_{product_id.id}.png'
                 attachment =  self.env['ir.attachment'].search([('name','=',name),('res_model','=','product.template'),('res_id','=',product_id.id)])
                 if attachment:
