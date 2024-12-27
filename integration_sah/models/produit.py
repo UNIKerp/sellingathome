@@ -372,7 +372,7 @@ class ProduitSelligHome(models.Model):
     def save_image_from_binary(self,product_id):
         if product_id.image_1920:
             image_data = base64.b64decode(product_id.image_1920)
-            directory = 'integration_sah/static/description/tmp'
+            directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
             if not os.path.exists(directory):
                 os.makedirs(directory)
             image_filename = "image_1920.png"
@@ -381,6 +381,7 @@ class ProduitSelligHome(models.Model):
                 f.write(image_data)
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
+            _logger.info('===================================convert image to link %s',link)
             return link
 
     """ Creation des images du produits """
@@ -391,15 +392,7 @@ class ProduitSelligHome(models.Model):
         #     i = 1
         #     for image in product_id.product_template_image_ids:
         #         i = i+1
-        #         attachment = self.env['ir.attachment'].create({
-        #             'name': f'product_image_{product_id.id}_{i}.jpg',
-        #             'type': 'binary',
-        #             'datas': image.image_1920,
-        #             'res_model': 'product.template',
-        #             'res_id': product_id.id,
-        #             'mimetype': 'image/png',
-        #             'public': True,
-        #         })
+                
         #         url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
         #         photos_produit.append({
         #             'Link': url_img,
