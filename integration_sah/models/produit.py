@@ -169,9 +169,9 @@ class ProduitSelligHome(models.Model):
             }
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             if put_response_produit.status_code == 200:
-                _logger.info(f"Article {product.name} mis à jour avec succès sur l'API SAH")
+                _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
             else:
-                _logger.error(f"Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code}")
+                _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
 
 
     
