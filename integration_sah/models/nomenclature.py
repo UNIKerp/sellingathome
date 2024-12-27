@@ -46,6 +46,6 @@ class NomenclatureSelligHome(models.Model):
                 # except requests.exceptions.RequestException as e:
                 #     _logger.error("Erreur lors de la requête PUT : %s", str(e))
                 #     raise
-                return product
+                # return product
 
 
