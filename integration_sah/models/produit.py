@@ -116,72 +116,67 @@ class ProduitSelligHome(models.Model):
                 else:
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
                     
-            url = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-            headers = self.env['authentication.sah'].establish_connection()
-            response =  requests.get(url, headers=headers)
-            if response.status_code == 200:
-                playload = response.json()
-                # update_data = {
-                #     "ProductType": 5,
-                #     "Reference": product.default_code,
-                #     "Prices": [
-                #         {
-                #             "Id": product.produit_sah_id,
-                #             "BrandTaxRate": 2.1,
-                #             "BrandTaxName": product.name,
-                #             "TwoLetterISOCode": "FR",
-                #             "PriceExclTax": product.list_price,
-                #             "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
-                #             "ProductCost": product.standard_price,
-                #             "EcoTax": 8.1
-                #         }
-                #     ],
-                #     "Barcode": product.barcode,
-                #     "Weight": product.weight,
-                #     "IsPublished": True,
-                #     "InventoryMethod": 1 if product.is_storable == True else 0,
-                #     "ProductPhotos": photos_maj,
-                #     'ProductLangs': [
-                #         {
-                #             'Name': product.name, 
-                #             'Description': product.description_sale, 
-                #             'ISOValue': 'fr'
-                #         }
-                #     ],
-                
-                #     "Categories": [
-                #         {
-                #             "Id": id_categ,
-                #         }
-                #     ],
-                #     "Combinations": [
-                #         {
-                #             "ProductAttributes": [
-                #                 {
-                #                     "AttributeId": value.attribute_id.id,
-                #                     "Attribute": value.attribute_id.name,
-                #                     "Value": value.name,
-                #                     "WeightAdjustement": product.weight,
-                #                     "ProductAttributeLangs": [
-                #                         {
-                #                             "Name": value.attribute_id.name,
-                #                             "Value": value.name,
-                #                             "ISOValue": 'fr'
-                #                         }
-                #                     ]
-                #                 }
-                #                 for value in line.value_ids
-                #             ]
-                #         }
-                #         for line in product.attribute_line_ids if line.value_ids
-                #     ]
-                # }
-                playload['ProductPhotos'] = photos_maj
-                put_response_produit = requests.put(url, json=playload, headers=headers)
-                if put_response_produit.status_code == 200:
-                    _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
-                else:
-                    _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
+            update_data = {
+                "ProductType": 5,
+                "Reference": product.default_code,
+                "Prices": [
+                    {
+                        "Id": product.produit_sah_id,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": product.name,
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": product.list_price,
+                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
+                        "ProductCost": product.standard_price,
+                        "EcoTax": 8.1
+                    }
+                ],
+                "Barcode": product.barcode,
+                "Weight": product.weight,
+                "IsPublished": True,
+                "InventoryMethod": 1 if product.is_storable == True else 0,
+                "ProductPhotos": photos_maj,
+                'ProductLangs': [
+                    {
+                        'Name': product.name, 
+                        'Description': product.description_sale, 
+                        'ISOValue': 'fr'
+                    }
+                ],
+               
+                "Categories": [
+                    {
+                        "Id": id_categ,
+                    }
+                ],
+                "Combinations": [
+                    {
+                        "ProductAttributes": [
+                            {
+                                "AttributeId": value.attribute_id.id,
+                                "Attribute": value.attribute_id.name,
+                                "Value": value.name,
+                                "WeightAdjustement": product.weight,
+                                "ProductAttributeLangs": [
+                                    {
+                                        "Name": value.attribute_id.name,
+                                        "Value": value.name,
+                                        "ISOValue": 'fr'
+                                    }
+                                ]
+                            }
+                            for value in line.value_ids
+                        ]
+                    }
+                    for line in product.attribute_line_ids if line.value_ids
+                ]
+            }
+            put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
+            if put_response_produit.status_code == 200:
+                _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
+            else:
+                _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
 
 
     
