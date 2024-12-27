@@ -310,8 +310,8 @@ class ProduitSelligHome(models.Model):
                 for line in product_id.attribute_line_ids if line.value_ids
             ]
         }
-        if not product_photos:
-            product_data.pop("ProductPhotos", None)
+        # if not product_photos:
+        #     product_data.pop("ProductPhotos", None)
 
         _logger.info('====================================== %s', product_photos)
         post_response = requests.post(url, json=product_data, headers=headers)
