@@ -277,7 +277,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos": [{'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2914/product_image_472.png', "IsDefault": True}],
+            "ProductPhotos":product_photos,
 
             "ProductRelatedProducts": [
                 {
@@ -376,7 +376,7 @@ class ProduitSelligHome(models.Model):
             for image in product_id.product_template_image_ids:
                 i = i+1
                 attachment = self.env['ir.attachment'].create({
-                    'name': f'product_image_{product_id.id}_{i}.png',
+                    'name': f'product_image_{product_id.id}_{i}.jpg',
                     'type': 'binary',
                     'datas': image.image_1920,
                     'res_model': 'product.template',
@@ -392,7 +392,7 @@ class ProduitSelligHome(models.Model):
 
         if product_id.image_1920:
             attachment = self.env['ir.attachment'].create({
-                'name': f'product_image_{product_id.id}.png',
+                'name': f'product_image_{product_id.id}.jpg',
                 'type': 'binary',
                 'datas': product_id.image_1920,
                 'res_model': 'product.template',
