@@ -116,7 +116,7 @@ class ProduitSelligHome(models.Model):
                 else:
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
                     
-            url = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
+            url = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             headers = self.env['authentication.sah'].establish_connection()
             response =  requests.get(url, headers=headers)
             if response.status_code == 200:
