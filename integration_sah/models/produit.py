@@ -388,8 +388,8 @@ class ProduitSelligHome(models.Model):
                 })
                 url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
                 photos_produit.append({
-                    "Link": url_img,
-                    "IsDefault": False,
+                    'Link': url_img,
+                    'IsDefault': False,
                 })
 
         if product_id.image_1920:
@@ -404,8 +404,8 @@ class ProduitSelligHome(models.Model):
             })
             url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
             photos_produit.append({
-                "Link": url_img,
-                "IsDefault": True,
+                'Link': url_img,
+                'IsDefault': True,
             })
         return photos_produit
 
