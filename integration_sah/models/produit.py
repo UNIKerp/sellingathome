@@ -387,7 +387,7 @@ class ProduitSelligHome(models.Model):
             link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
            
             photos_produit.append({
-                'Link': link,
+                'Link': "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/integration_sah/static/description/icon.png",
                 'IsDefault': True,
             })
         if product_id.product_template_image_ids:
