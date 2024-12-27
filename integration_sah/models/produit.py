@@ -492,7 +492,7 @@ class ProduitSelligHome(models.Model):
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
 
             if product_id.product_template_image_ids:
-                for image in product_id.product_template_image_ids:
+                for i, image in enumerate(product_id.product_template_image_ids):
                     attachment = self.env['ir.attachment'].create({
                         'name': f'product_image_{product_id.id}_{i}.png',
                         'type': 'binary',
