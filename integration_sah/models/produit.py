@@ -279,7 +279,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":[listp],
+            "ProductPhotos":[{'Id':109385}],
 
             "ProductRelatedProducts": [
                 {
