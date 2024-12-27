@@ -136,7 +136,7 @@ class ProduitSelligHome(models.Model):
                 "Weight": product.weight,
                 "IsPublished": True,
                 "InventoryMethod": 1 if product.is_storable == True else 0,
-                "ProductPhotos": photos_maj,
+                # "ProductPhotos": photos_maj,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
@@ -172,6 +172,7 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
+            update_data['ProductPhotos'] = photos_maj
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             if put_response_produit.status_code == 200:
                 _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
