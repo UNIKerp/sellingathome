@@ -186,7 +186,7 @@ class ProduitSelligHome(models.Model):
         is_sale = bool(product_id.sale_ok)
         id_categ = ''
         categ_parent =''
-        suivi_stock = 1 if is_storable == True else 0
+        suivi_stock = 1 if product_id.is_storable == True else 0
     
         if categ_id and not objet.produit_sah_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
