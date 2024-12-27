@@ -479,7 +479,16 @@ class ProduitSelligHome(models.Model):
         url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
         response_produit = requests.get(url_produit, headers=headers)
         if response_produit.status_code == 200:
-            _logger.info("!!!!!!!!!!!!!!!!!!!!!!! %s",response_produit.json())
+            product_data = response_produit.json()
+            _logger.info("Produit data récupérée : %s", product_data)
+            
+            # Étape 3 : Récupérer les IDs des photos
+            product_photos = product_data.get('ProductPhotos', [])
+            photo_ids = [photo.get('Id') for photo in product_photos if 'Id' in photo]  # Récupérer les IDs
+            _logger.info("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s",photo_ids)
+            
+
+
             # res = response_produit.json()
             # values = {}
             # for elt in res:
