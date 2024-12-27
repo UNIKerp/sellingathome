@@ -70,7 +70,7 @@ class ProduitSelligHome(models.Model):
     def update_produit_dans_sah(self, product, headers):
         if product.produit_sah_id:
             #Photos
-            # photos_maj = self.creation_images_du_produit(product)
+            photos_maj = self.maj_images_du_produit(product)
             #
             id_categ = ''
             if product.categ_id:
@@ -422,47 +422,9 @@ class ProduitSelligHome(models.Model):
         response =  requests.get(url, headers=headers)
         if response.status_code == 200:
             playload = response.json()
-            if product_id.product_template_image_ids:
-                i = 1
-                for image in product_id.product_template_image_ids:
-                    i = i+1
-                    name = f'product_image_{product_id.id}_{i}.png'
-                    attachment =  self.env['ir.attachment'].search([('name','=',name),('res_model','=','product.template'),('res_id','=',product_id.id)])
-                    if not attachment:
-                        attachment = self.env['ir.attachment'].create({
-                            'name': name,
-                            'type': 'binary',
-                            'datas': image.image_1920,
-                            'res_model': 'product.template',
-                            'res_id': product_id.id,
-                            'mimetype': 'image/png',
-                            'public': True,
-                        })
-                        url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                        photos_produit.append({
-                            "Link": url_img,
-                        })
-
-            if product_id.image_1920:
-                name = f'product_image_{product_id.id}.png'
-                attachment =  self.env['ir.attachment'].search([('name','=',name),('res_model','=','product.template'),('res_id','=',product_id.id)])
-                if attachment:
-                    attachment.sudo().unlink()
-                attachment = self.env['ir.attachment'].create({
-                    'name': name,
-                    'type': 'binary',
-                    'datas': product_id.image_1920,
-                    'res_model': 'product.template',
-                    'res_id': product_id.id,
-                    'mimetype': 'image/png',
-                    'public': True,
-                })
-                url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-                photos_produit.append({
-                    "Link": url_img,
-                })
-            _logger.info('============================================= !!!!!!!!!!!!!!! %s',playload)
-            _logger.info('============================================= photos_produit %s',photos_produit)
+            photos_produit = self.creation_images_du_produit(product_id)
+            _logger.info('=============================== %s',playload['ProductPhotos'])
+            _logger.info('=============================== %s',photos_produit)
             playload['ProductPhotos'] = [{'Link': photo['Link']} for photo in photos_produit]
             return playload
             
