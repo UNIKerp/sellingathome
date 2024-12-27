@@ -279,7 +279,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":[lisp],
+            "ProductPhotos":photos_produit,
 
             "ProductRelatedProducts": [
                 {
