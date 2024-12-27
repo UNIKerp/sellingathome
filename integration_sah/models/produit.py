@@ -238,23 +238,9 @@ class ProduitSelligHome(models.Model):
             discount_end_date = discount_end_date.isoformat()
         else:
             discount_end_date = None
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+       
         listp ={'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/3097/product_image_494.jpg', 'IsDefault': True}
-        # if product_id.image_1920:
-        #     attachment = self.env['ir.attachment'].create({
-        #         'name': f'product_image_{product_id.id}.jpg',
-        #         'type': 'binary',
-        #         'datas': product_id.image_1920,
-        #         'res_model': 'product.template',
-        #         'res_id': product_id.id,
-        #         'mimetype': 'image/jpg',
-        #         'public': True,
-        #     })
-        #     url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
-        #     listp={ 'Link': f'{base_url}/web/content/{attachment.id}/{attachment.name}','IsDefault': True}
-        
-        _logger.info('sssstype listp%s', listp)
-        _logger.info('sssstype product_photos%s', type(product_photos))
+      
         product_data = {
             "ProductType": 5,
             "Reference": product_id.default_code,
