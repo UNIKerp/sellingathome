@@ -385,7 +385,7 @@ class ProduitSelligHome(models.Model):
             file_path = os.path.join(directory, image_filename)
             with open(file_path, 'wb') as f:
                 f.write(image_data)
-            link = f"{base_url}/directory/{image_filename}"
+            link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
            
             photos_produit.append({
                 'Link': link,
@@ -402,7 +402,7 @@ class ProduitSelligHome(models.Model):
                 file_path = os.path.join(directory, image_filename)
                 with open(file_path, 'wb') as f:
                     f.write(image_data)
-                link = f"{base_url}/directory/{image_filename}"
+                link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
                 photos_produit.append({
                     'Link': link,
                     'IsDefault': False,
