@@ -238,7 +238,7 @@ class ProduitSelligHome(models.Model):
             discount_end_date = discount_end_date.isoformat()
         else:
             discount_end_date = None
-
+        tt = [{'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2948/product_image_476_2.jpg', 'IsDefault': False}, {'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2949/product_image_476.jpg', 'IsDefault': True}]
         product_data = {
             "ProductType": 5,
             "Reference": product_id.default_code,
@@ -277,7 +277,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":[{'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2948/product_image_476_2.jpg', 'IsDefault': False}, {'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2949/product_image_476.jpg', 'IsDefault': True}],
+            "ProductPhotos":tt,
 
             "ProductRelatedProducts": [
                 {
@@ -312,7 +312,7 @@ class ProduitSelligHome(models.Model):
             product_data.pop("ProductPhotos", None)
 
         _logger.info('====================================== %s', product_photos)
-        _logger.info('====================================== %s', product_data['ProductPhotos'])
+    
         post_response = requests.post(url, json=product_data, headers=headers)
         if post_response.status_code == 200:
             response_data = post_response.json()
