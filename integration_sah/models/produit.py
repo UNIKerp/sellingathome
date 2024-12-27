@@ -373,7 +373,7 @@ class ProduitSelligHome(models.Model):
     """ Creation des images du produits """
     def creation_images_du_produit(self, product_id):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
+        directory = '/integration_sah/static/description/tmp'
         photos_produit = []
         if product_id.image_1920:
             image_data = base64.b64decode(product_id.image_1920)
@@ -387,7 +387,7 @@ class ProduitSelligHome(models.Model):
             link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
            
             photos_produit.append({
-                'Link': "https://unikerp-sellingathome-staging-17258348.dev.odoo.com/integration_sah/static/description/icon.png",
+                'Link': link,
                 'IsDefault': True,
             })
         if product_id.product_template_image_ids:
