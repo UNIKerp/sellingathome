@@ -247,7 +247,7 @@ class ProduitSelligHome(models.Model):
                 'datas': product_id.image_1920,
                 'res_model': 'product.template',
                 'res_id': product_id.id,
-                'mimetype': 'image/png',
+                'mimetype': 'image/jpg',
                 'public': True,
             })
             url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
