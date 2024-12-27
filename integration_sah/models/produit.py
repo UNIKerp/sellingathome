@@ -274,7 +274,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos": str(product_photos),
+            "ProductPhotos": product_photos,
 
             "ProductRelatedProducts": [
                 {
@@ -306,7 +306,7 @@ class ProduitSelligHome(models.Model):
             ]
         }
         if not product_photos:
-            _logger.info('======================================================= pas de photos')
+            _logger.info('=======================================================pas de photos')
             product_data.pop("ProductPhotos", None)
         
         post_response = requests.post(url, json=product_data, headers=headers)
