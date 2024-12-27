@@ -187,6 +187,7 @@ class ProduitSelligHome(models.Model):
         categ_parent =''
         suivi_stock = 1 if product_id.is_storable == True else 0
         product_photos = self.creation_images_du_produit(product_id)
+        product_photos = [{'Link': photo['Link']} for photo in product_photos if 'Link' in photo]
         _logger.info('*****************************************product_photos %s',product_photos)
         if product_id.categ_id and not product_id.produit_sah_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
@@ -274,7 +275,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":   product_photos[:],
+            "ProductPhotos":  product_photos,
 
             "ProductRelatedProducts": [
                 {
