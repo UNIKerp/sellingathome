@@ -238,8 +238,25 @@ class ProduitSelligHome(models.Model):
             discount_end_date = discount_end_date.isoformat()
         else:
             discount_end_date = None
-        listp = [{"Link": 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2948/product_image_476_2.jpg', 'IsDefault': False}, {'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2949/product_image_476.jpg', 'IsDefault': True}]
-        _logger.info('sssstype listp%s', type(listp))
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        listp =[]
+        if product_id.image_1920:
+            attachment = self.env['ir.attachment'].create({
+                'name': f'product_image_{product_id.id}.jpg',
+                'type': 'binary',
+                'datas': product_id.image_1920,
+                'res_model': 'product.template',
+                'res_id': product_id.id,
+                'mimetype': 'image/png',
+                'public': True,
+            })
+            url_img = f'{base_url}/web/content/{attachment.id}/{attachment.name}'
+            listp.append({
+                'Link': url_img,
+                'IsDefault': True,
+            })
+        
+        _logger.info('sssstype listp%s', listp)
         _logger.info('sssstype product_photos%s', type(product_photos))
         product_data = {
             "ProductType": 5,
@@ -279,7 +296,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":photos,
+            "ProductPhotos":listp,
 
             "ProductRelatedProducts": [
                 {
@@ -406,8 +423,7 @@ class ProduitSelligHome(models.Model):
                 'Link': url_img,
                 'IsDefault': True,
             })
-        global photos
-        photos = photos_produit
+
         return photos_produit
 
 
