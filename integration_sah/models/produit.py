@@ -389,7 +389,7 @@ class ProduitSelligHome(models.Model):
                 odoo_photos = []
                 if product_id.product_template_image_ids:
                     for i, image in enumerate(product_id.product_template_image_ids):
-                        photo_name = f'product_image_{product_id.id}_{i}.webp'
+                        photo_name = f'product_image_{product_id.id}_{i}.png'
                         odoo_photos.append({
                             "Name": photo_name,
                             "Image": image.image_1920,
@@ -397,7 +397,7 @@ class ProduitSelligHome(models.Model):
 
                 # Ajouter l'image principale si elle existe
                 if product_id.image_1920:
-                    photo_name = f'product_image_{product_id.id}.webp'
+                    photo_name = f'product_image_{product_id.id}.png'
                     odoo_photos.append({
                         "Name": photo_name,
                         "Image": product_id.image_1920,
