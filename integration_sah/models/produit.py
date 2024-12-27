@@ -239,7 +239,7 @@ class ProduitSelligHome(models.Model):
         else:
             discount_end_date = None
        
-        lisp ={'Link':'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/3143/product_image_507.jpg'}
+        lisp ={'Link':'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/integration_sah/static/description/icon.png'}
       
         product_data = {
             "ProductType": 5,
