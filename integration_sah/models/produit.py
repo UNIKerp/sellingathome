@@ -238,7 +238,7 @@ class ProduitSelligHome(models.Model):
             discount_end_date = discount_end_date.isoformat()
         else:
             discount_end_date = None
-       
+        tt = [{'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2948/product_image_476_2.jpg', 'IsDefault': False}, {'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2949/product_image_476.jpg', 'IsDefault': True}]
         product_data = {
             "ProductType": 5,
             "Reference": product_id.default_code,
@@ -277,7 +277,7 @@ class ProduitSelligHome(models.Model):
                 },
             ],
 
-            "ProductPhotos":product_id.description,
+            "ProductPhotos":product_photos,
 
             "ProductRelatedProducts": [
                 {
@@ -312,7 +312,6 @@ class ProduitSelligHome(models.Model):
             product_data.pop("ProductPhotos", None)
 
         _logger.info('====================================== %s', product_photos)
-    
         post_response = requests.post(url, json=product_data, headers=headers)
         if post_response.status_code == 200:
             response_data = post_response.json()
@@ -327,29 +326,28 @@ class ProduitSelligHome(models.Model):
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
         if res:
-            res.description = "[{'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2948/product_image_476_2.jpg', 'IsDefault': False}, {'Link': 'https://unikerp-sellingathome-staging-17258348.dev.odoo.com/web/content/2949/product_image_476.jpg', 'IsDefault': True}]"
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
         return res
 
-    # """ Modification d'un produit """
-    # def write(self, vals):
-    #     headers = self.env['authentication.sah'].establish_connection()
-    #     rec = super(ProduitSelligHome, self).write(vals)
-    #     if vals and self.produit_sah_id:
-    #         job_kwargs = {
-    #             'description': 'Mise à jour du produit dans SAH',
-    #         }
-    #         self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+    """ Modification d'un produit """
+    def write(self, vals):
+        headers = self.env['authentication.sah'].establish_connection()
+        rec = super(ProduitSelligHome, self).write(vals)
+        if vals and self.produit_sah_id:
+            job_kwargs = {
+                'description': 'Mise à jour du produit dans SAH',
+            }
+            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
-    #         ### Modification stock
-    #         job_kwargs2 = {
-    #             'description': 'Mise à jour du stock produit',
-    #         }
-    #         self.with_delay(**job_kwargs2).maj_des_stocks(self)
-    #     return rec
+            ### Modification stock
+            job_kwargs2 = {
+                'description': 'Mise à jour du stock produit',
+            }
+            self.with_delay(**job_kwargs2).maj_des_stocks(self)
+        return rec
 
 
 
