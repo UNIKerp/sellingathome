@@ -315,6 +315,8 @@ class ProduitSelligHome(models.Model):
             _logger.info("========== Création avec sucés du produit ; %s ==========",response_data)
             product_id.produit_sah_id = int(response_data.get('Id'))
             _logger.info('========== ID SAH DU PRODUIT  %s ==========',product_id.produit_sah_id)
+        else:
+            _logger.info('========== Erreur de creation du produit %s ==========',post_response)
 
     """ Redéfiniton de la fonction création du produit """
     @api.model
