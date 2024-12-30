@@ -43,23 +43,25 @@ class SaleSAH(models.Model):
                 _logger.warning(f"Aucun client trouvé pour la commande {id_commande}.")
                 continue
             
-            url_cmd = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
+            url_cmd = f"https://demoapi.sellingathome.com/v1/Orders"
+            post_response_produit = requests.get(url_cmd, headers=headers)
+            _logger.info('====================================%s',post_response_produit.json())
             
-            try:
-                post_response_produit = requests.get(url_cmd, headers=headers, timeout=120)
+            # try:
+            #     post_response_produit = requests.get(url_cmd, headers=headers, timeout=120)
 
-                if post_response_produit.status_code == 200:
-                    response_data_produit = post_response_produit.json()
-                    response_data_produit['Status'] = "Validated"
-                    _logger.info('========================================== %s',response_data_produit)
-                    response = requests.put(url_cmd, json=response_data_produit, headers=headers)
-                    if response.status_code == 200:
-                        _logger.info(f"Commande {id_commande} mise à jour avec succès.")
-                        _logger.info("Response from API: %s", response.json())
+            #     if post_response_produit.status_code == 200:
+            #         response_data_produit = post_response_produit.json()
+            #         response_data_produit['Status'] = "Validated"
+            #         _logger.info('========================================== %s',response_data_produit)
+            #         response = requests.put(url_cmd, json=response_data_produit, headers=headers)
+            #         if response.status_code == 200:
+            #             _logger.info(f"Commande {id_commande} mise à jour avec succès.")
+            #             _logger.info("Response from API: %s", response.json())
                 
 
-            except requests.RequestException as e:
-                _logger.error(f"Erreur de requête pour la commande {id_commande}: {str(e)}")
+            # except requests.RequestException as e:
+            #     _logger.error(f"Erreur de requête pour la commande {id_commande}: {str(e)}")
         
         return f"{len(orders_to_update)} commandes mises à jour avec succès en Expédié."
 
