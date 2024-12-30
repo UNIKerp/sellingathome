@@ -31,39 +31,43 @@ class SaleSAH(models.Model):
         _logger.info("orders  orders %s",orders)
         orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
         _logger.info("orders_to_update  orders_to_update %s",orders_to_update)
-        headers = self.env['authentication.sah'].establish_connection()
+       
 
         for order in orders_to_update:
             id_commande = order.id_order_sh
-            url_cmd = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
-
             client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
             _logger.info("client_id  client_id %s",client_id.name)
             if not client_id:
                 _logger.warning(f"Aucun client trouvé pour la commande {id_commande}.")
                 continue
-            
-            customer_payload = {
-                "Id": client_id.id_client_sah,
-                
-            }
+            headers = self.env['authentication.sah'].establish_connection()
+            url_cmd = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
+            post_response_produit = requests.get(url_cmd, headers=headers, timeout=120)
 
-            payload = {
-                "Id": id_commande,
-                "Status": "Expédié",
-                "Customer": customer_payload
-            }
+            if post_response_produit.status_code == 200:
+                response_data_produit = post_response_produit.json()
+                _logger.info("response_data_produit response_data_produit %s",response_data_produit)
+                customer_payload = {
+                    "Id": client_id.id_client_sah,
+                    
+                }
 
-            try:
-                response = requests.put(url_cmd, json=payload, headers=headers)
+                payload = {
+                    "Id": id_commande,
+                    "Status": "Expédié",
+                    "Customer": customer_payload
+                }
 
-                if response.status_code == 200:
-                    _logger.info("SUCESSSSSSSSSSSSSSSSSSSSSSS %s",response.json())
-                    _logger.info(f"Commande {id_commande} mise à jour avec succès.")
-                else:
-                    _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
-            except requests.RequestException as e:
-                _logger.error(f"Erreur réseau pour la commande {id_commande}: {str(e)}")
+                try:
+                    response = requests.put(url_cmd, json=payload, headers=headers)
+
+                    if response.status_code == 200:
+                        _logger.info("SUCESSSSSSSSSSSSSSSSSSSSSSS %s",response.json())
+                        _logger.info(f"Commande {id_commande} mise à jour avec succès.")
+                    else:
+                        _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
+                except requests.RequestException as e:
+                    _logger.error(f"Erreur réseau pour la commande {id_commande}: {str(e)}")
 
     
 
