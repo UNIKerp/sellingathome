@@ -459,8 +459,13 @@ class ProduitSelligHome(models.Model):
         active_ids = self.env.context.get('active_ids')
         for active_id in active_ids:
             product_id = self.env['product.template'].search([('id','=',active_id)])
-            self.maj_des_photos_produits(product_id)
-            # job_kwargs = {
-            #         'description': 'Export  produit',
-            # }
-            # self.with_delay(**job_kwargs).update_produit_dans_sah(product_id, headers)
+            if product_id.produit_sah_id:
+                job_kwargs = {
+                        'description': 'Export  produit',
+                }
+                self.with_delay(**job_kwargs).update_produit_dans_sah(product_id, headers)
+            else:
+                job_kwargs = {
+                    'description': 'Création produit Odoo vers SAH',
+                }
+                self.with_delay(**job_kwargs).creation_produit_odoo_sah(product_id)
