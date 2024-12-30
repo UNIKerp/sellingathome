@@ -37,11 +37,11 @@ class NomenclatureSelligHome(models.Model):
                         {
                         # "GroupId": 1,
                         "ProductId": product_id.product_tmpl_id.produit_sah_id,
-                        "ProductRemoteId": "sample string 3",
-                        "ProductCombinationId": 4,
+                        # "ProductRemoteId": "sample string 3",
+                        # "ProductCombinationId": 4,
                         "Quantity": 2,
-                        "DisplayOrder": 1,
-                        "Deleted": True
+                        # "DisplayOrder": 1,
+                        # "Deleted": True
                         }
                 ]
                 _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb!! %s',response_data_produit)
