@@ -432,6 +432,7 @@ class ProduitSelligHome(models.Model):
                 # Supprimer les liens excédentaires dans playload['ProductPhotos']
                 if len(playload['ProductPhotos']) > len(photos_produit):
                     playload['ProductPhotos'] = playload['ProductPhotos'][:len(photos_produit)]
+                    _logger.info('************************************ %s',playload['ProductPhotos'])
             _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",playload['ProductPhotos'])
             return playload['ProductPhotos']
             
