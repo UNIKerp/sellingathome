@@ -45,15 +45,6 @@ class SaleSAH(models.Model):
                         methode_paiement_id=methode_paiement
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
 
-                # Mapping des états SAH aux états Odoo
-                state_mapping = {
-                    'pending': 'draft',
-                    'confirmed': 'sale',
-                    'shipped': 'sent',
-                    'delivered': 'done'
-                }
-                order_state_sah = commande.get('Status', 'pending')  # Par défaut 'pending' si l'état n'est pas défini
-                _logger.info(order_state_sah)
 
                 if not commandes_odoo and client_id:
                     order = commandes_odoo.create({
@@ -62,7 +53,6 @@ class SaleSAH(models.Model):
                         "partner_id":client_id.id,
                         "currency_id":Currency.id, 
                         "vdi":client_id.vdi_id.id or False,
-                        "state": state_mapping.get(order_state_sah, 'draft'),
                         "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
                     })
                     if order:
@@ -102,7 +92,6 @@ class SaleSAH(models.Model):
                         "partner_id":client_id.id, 
                         "currency_id":Currency.id, 
                         "vdi":client_id.vdi_id.id or False,
-                        "state": state_mapping.get(order_state_sah, 'draft'),
                         "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
                     })
                     paiement_sah = commande['Payments']
