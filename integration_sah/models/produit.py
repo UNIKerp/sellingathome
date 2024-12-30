@@ -428,6 +428,10 @@ class ProduitSelligHome(models.Model):
                     playload['ProductPhotos'][i]['Link'] = photos_produit[i]['Link']
                 else:
                     playload['ProductPhotos'].append(photos_produit[i])
+
+                # Supprimer les liens excédentaires dans playload['ProductPhotos']
+                if len(playload['ProductPhotos']) > len(photos_produit):
+                    playload['ProductPhotos'] = playload['ProductPhotos'][:len(photos_produit)]
             _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",playload['ProductPhotos'])
             return playload['ProductPhotos']
             
