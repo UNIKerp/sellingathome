@@ -431,7 +431,7 @@ class ProduitSelligHome(models.Model):
 
                 # Supprimer les liens excédentaires dans playload['ProductPhotos']
                 for i in range(len(photos_produit), len(playload['ProductPhotos'])):
-                    playload['ProductPhotos'][i]['Link'] = ''
+                    playload['ProductPhotos'][i]['IsDeleted'] = True
                     _logger.info('************************************ %s',playload['ProductPhotos'])
             _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",playload['ProductPhotos'])
             return playload['ProductPhotos']
