@@ -432,7 +432,7 @@ class ProduitSelligHome(models.Model):
             # Remplacer les liens excédentaires par du vide
             for i in range(len(photos_produit), len(playload['ProductPhotos'])):
                 playload['ProductPhotos'][i]['Link'] = '' 
-                logger.info("============================================Remplacer les liens excédentaires par du vide %s", playload['ProductPhotos'][i])
+                _logger.info("============================================Remplacer les liens excédentaires par du vide %s", playload['ProductPhotos'][i])
 
             _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",playload['ProductPhotos'])
             return playload['ProductPhotos']
