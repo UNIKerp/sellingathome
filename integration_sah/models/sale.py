@@ -35,7 +35,7 @@ class SaleSAH(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         
         for order in orders_to_update:
-            id_commande = order.id_order_sh
+            id_commande = '232863'
             client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
             _logger.info("Client found: %s", client_id.name if client_id else "None")
             
