@@ -12,30 +12,47 @@ class NomenclatureSelligHome(models.Model):
 
     @api.model
     def create(self, vals):
-        res = super(NomenclatureSelligHome, self).create(vals)
-        if res:
-            self.creation_nomenclature_produits(res)
-            print("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
-        return res
+        headers = self.env['authentication.sah'].establish_connection()
+        rec = super(NomenclatureSelligHome, self).create(vals)
+        if rec:
+            self.creation_nomenclature_produits(rec,headers)
+        return rec
+    
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(NomenclatureSelligHome, self).write(vals)
-        
+        self.creation_nomenclature_produits(self,headers)
         return rec
     
-    def creation_nomenclature_produits(self,res):
-        if res.product_tmpl_id.produit_sah_id:
+    def creation_nomenclature_produits(self,product_id,headers):
+        if product_id.product_tmpl_id.produit_sah_id:
             headers = self.env['authentication.sah'].establish_connection()
-            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.product_tmpl_id.produit_sah_id}"
             post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
             _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",post_response_produit.status_code)
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
                 _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",response_data_produit['AttachedProducts'])
-                response_data_produit['AttachedProducts'] = [ {'GroupId': 119741, 'ProductId': 119708, 'ProductRemoteId': None, 'ProductCombinationId': 0, 'Quantity': 2, 'DisplayOrder': 1, 'Deleted': True } ]
-                _logger.info('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP%s',response_data_produit['AttachedProducts'])
-                url_produit_modif = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
-                response = requests.put(url_produit_modif, json= response_data_produit, headers=headers)
+                datas = [
+                        {
+                        # "GroupId": 1,
+                        "ProductId": product_id.product_tmpl_id.produit_sah_id,
+                        "Quantity": 2,
+                        "DisplayOrder": 1,
+                        "Deleted": True
+                        },
+                        {
+                        # "GroupId": 1,
+                        "ProductId": product_id.product_tmpl_id.produit_sah_id,
+                        "Quantity": 4,
+                        "DisplayOrder": 1,
+                        "Deleted": True
+                        }
+                ]
+                response_data_produit['AttachedProducts'] = datas
+                _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb %s',response_data_produit)
+               
+                response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("Statut de la réponse : %s, Contenu : %s", response.status_code, response.text)
                 if response.status_code != 200:
                    _logger.info('Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
