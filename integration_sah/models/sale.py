@@ -35,7 +35,7 @@ class SaleSAH(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         
         for order in orders_to_update:
-            id_commande = '232863'
+            id_commande = order.id_order_sh
             client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
             _logger.info("Client found: %s", client_id.name if client_id else "None")
             
@@ -61,7 +61,7 @@ class SaleSAH(models.Model):
 
                 payload = {
                     "Id": id_commande,
-                    "Status": "Expédié",
+                    "Status": "Validated",
                     "Customer": customer_payload
                 }
 
