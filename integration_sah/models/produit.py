@@ -429,10 +429,11 @@ class ProduitSelligHome(models.Model):
                 else:
                     playload['ProductPhotos'].append(photos_produit[i])
 
-                # Supprimer les liens excédentaires dans playload['ProductPhotos']
-                for i in range(len(photos_produit), len(playload['ProductPhotos'])):
-                    playload['ProductPhotos'][i]['ProductId'] = 0
-                    _logger.info('************************************ %s',playload['ProductPhotos'])
+            # Supprimer les liens excédentaires dans playload['ProductPhotos']
+            if len(playload['ProductPhotos']) > len(photos_produit):
+                playload['ProductPhotos'] = playload['ProductPhotos'][:len(photos_produit)]
+                _logger.info('************************************ %s',playload['ProductPhotos'])
+                
             _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",playload['ProductPhotos'])
             return playload['ProductPhotos']
             
