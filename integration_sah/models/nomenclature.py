@@ -35,7 +35,7 @@ class NomenclatureSelligHome(models.Model):
                 _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",response_data_produit['AttachedProducts'])
                 datas = [
                         {
-                        # "GroupId": 1,
+                        "GroupId": 1,
                         "ProductId": product_id.product_tmpl_id.produit_sah_id,
                         # "ProductRemoteId": "sample string 3",
                         # "ProductCombinationId": 4,
