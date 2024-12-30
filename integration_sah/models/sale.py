@@ -57,7 +57,7 @@ class SaleSAH(models.Model):
                 response = requests.put(url_cmd, json=payload, headers=headers)
 
                 if response.status_code == 200:
-                    _logger.info("SUCESSSSSSSSSSSSSSSSSSSSSSS")
+                    _logger.info("SUCESSSSSSSSSSSSSSSSSSSSSSS %s",response.json())
                     _logger.info(f"Commande {id_commande} mise à jour avec succès.")
                 else:
                     _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
