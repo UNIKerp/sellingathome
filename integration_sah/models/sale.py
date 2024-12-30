@@ -33,19 +33,22 @@ class SaleSAH(models.Model):
         _logger.info("Orders to update (done delivery): %s", orders_to_update)
 
         headers = self.env['authentication.sah'].establish_connection()
+        url_cmd = f"https://demoapi.sellingathome.com/v1/Orders"
+        post_response_produit = requests.get(url_cmd, headers=headers)
+        _logger.info('====================================%s',post_response_produit.json())
         
-        for order in orders_to_update:
-            id_commande = order.id_order_sh
-            client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
-            _logger.info("Client found: %s", client_id.name if client_id else "None")
+        # for order in orders_to_update:
+        #     id_commande = order.id_order_sh
+        #     client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
+        #     _logger.info("Client found: %s", client_id.name if client_id else "None")
             
-            if not client_id:
-                _logger.warning(f"Aucun client trouvé pour la commande {id_commande}.")
-                continue
+        #     if not client_id:
+        #         _logger.warning(f"Aucun client trouvé pour la commande {id_commande}.")
+        #         continue
             
-            url_cmd = f"https://demoapi.sellingathome.com/v1/Orders"
-            post_response_produit = requests.get(url_cmd, headers=headers)
-            _logger.info('====================================%s',post_response_produit.json())
+        #     url_cmd = f"https://demoapi.sellingathome.com/v1/Orders"
+        #     post_response_produit = requests.get(url_cmd, headers=headers)
+        #     _logger.info('====================================%s',post_response_produit.json())
             
             # try:
             #     post_response_produit = requests.get(url_cmd, headers=headers, timeout=120)
