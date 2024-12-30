@@ -27,7 +27,7 @@ class SaleSAH(models.Model):
 
     @api.model
     def get_orders_with_done_delivery(self):
-        orders = self.search([('id_order_sh', '!=', False)])
+        orders = self.search([('id_order_sh', '!=', False),('state', '!=', 'sale')])
         _logger.info("orders  orders %s",orders)
         orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
         _logger.info("orders_to_update  orders_to_update %s",orders_to_update)
