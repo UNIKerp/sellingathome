@@ -46,7 +46,7 @@ class NomenclatureSelligHome(models.Model):
                         }
                 ]
                 _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb!! %s',response_data_produit)
-                response_data_produit['AttachedProducts'][0]['Quantity'] = 2
+                response_data_produit['AttachedProducts'] = datas
                 _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb %s',response_data_produit)
                
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
