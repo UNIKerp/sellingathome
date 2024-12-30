@@ -28,7 +28,9 @@ class SaleSAH(models.Model):
     @api.model
     def get_orders_with_done_delivery(self):
         orders = self.search([('id_order_sh', '!=', False)])
+        _logger.info("orders  orders %s",orders)
         orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
+        _logger.info("orders_to_update  orders_to_update %s",orders_to_update)
         headers = self.env['authentication.sah'].establish_connection()
 
         for order in orders_to_update:
@@ -36,6 +38,7 @@ class SaleSAH(models.Model):
             url_cmd = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
 
             client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
+            _logger.info("client_id  client_id %s",client_id.name)
             if not client_id:
                 _logger.warning(f"Aucun client trouvé pour la commande {id_commande}.")
                 continue
@@ -64,7 +67,7 @@ class SaleSAH(models.Model):
     
 
     def get_commande(self):
-        url_commande = 'https://demoapi.sellingathome.com/v1/Orders'            
+        url_commande = 'https://demoapi.sellingathome.com/v1/Orders'           
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
