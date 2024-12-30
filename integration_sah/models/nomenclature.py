@@ -36,20 +36,21 @@ class NomenclatureSelligHome(models.Model):
                 datas = [
                         {
                         # "GroupId": 1,
-                        # "ProductId": 2,
+                        "ProductId": product_id.product_tmpl_id.produit_sah_id,
                         "Quantity": 2,
                         "DisplayOrder": 1,
                         "Deleted": True
                         },
                         {
                         # "GroupId": 1,
-                        # "ProductId": 2,
+                        "ProductId": product_id.product_tmpl_id.produit_sah_id,
                         "Quantity": 4,
                         "DisplayOrder": 1,
                         "Deleted": True
                         }
                 ]
                 response_data_produit['AttachedProducts'] = datas
+                _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb %s',response_data_produit)
                
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("Statut de la réponse : %s, Contenu : %s", response.status_code, response.text)
