@@ -10,7 +10,14 @@ _logger = logging.getLogger(__name__)
 class NomenclatureSelligHome(models.Model):
     _inherit = "mrp.bom"
 
-  
+    @api.model
+    def create(self, vals):
+        headers = self.env['authentication.sah'].establish_connection()
+        rec = super(NomenclatureSelligHome, self).create(vals)
+        if rec:
+            self.creation_nomenclature_produits(rec,headers)
+        return rec
+    
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(NomenclatureSelligHome, self).write(vals)
