@@ -27,47 +27,70 @@ class SaleSAH(models.Model):
 
     @api.model
     def get_orders_with_done_delivery(self):
-        orders = self.search([('id_order_sh', '!=', False),('state', '=', 'sale')])
-        _logger.info("orders  orders %s",orders)
+        # Recherche des commandes avec 'id_order_sh' et en état 'sale'
+        orders = self.search([('id_order_sh', '!=', False), ('state', '=', 'sale')])
+        _logger.info("Orders found: %s", orders)
+        
+        # Filtrage des commandes dont tous les pickings sont terminés ('done')
         orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
-        _logger.info("orders_to_update  orders_to_update %s",orders_to_update)
-       
+        _logger.info("Orders to update (done delivery): %s", orders_to_update)
 
+        # Etablissement de la connexion aux API SellingAtHome
+        headers = self.env['authentication.sah'].establish_connection()
+        
+        # Pour chaque commande à mettre à jour
         for order in orders_to_update:
             id_commande = order.id_order_sh
+            # Recherche du client associé à la commande
             client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
-            _logger.info("client_id  client_id %s",client_id.name)
+            _logger.info("Client found: %s", client_id.name if client_id else "None")
+            
             if not client_id:
                 _logger.warning(f"Aucun client trouvé pour la commande {id_commande}.")
                 continue
-            headers = self.env['authentication.sah'].establish_connection()
+            
+            # URL de l'API pour récupérer la commande
             url_cmd = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
-            post_response_produit = requests.get(url_cmd, headers=headers, timeout=120)
+            
+            try:
+                # Récupération des données de la commande via l'API
+                post_response_produit = requests.get(url_cmd, headers=headers, timeout=120)
 
-            if post_response_produit.status_code == 200:
-                response_data_produit = post_response_produit.json()
-                _logger.info("response_data_produit response_data_produit %s",response_data_produit)
+                # Si la réponse est réussie, on traite les données
+                if post_response_produit.status_code == 200:
+                    response_data_produit = post_response_produit.json()
+                    _logger.info("Commande récupérée: %s", response_data_produit)
+                else:
+                    _logger.error(f"Échec de récupération de la commande {id_commande}: {post_response_produit.text}")
+                    continue  # Passer à la commande suivante si la récupération échoue
+
+                # Préparation du payload pour la mise à jour du statut
                 customer_payload = {
                     "Id": client_id.id_client_sah,
-                    
                 }
 
                 payload = {
                     "Id": id_commande,
-                    "Status": "Expédié",
+                    "Status": "Expédié",  # Changer le statut ici
                     "Customer": customer_payload
                 }
 
-                try:
-                    response = requests.put(url_cmd, json=payload, headers=headers)
+                # Mise à jour de la commande via l'API
+                response = requests.put(url_cmd, json=payload, headers=headers)
 
-                    if response.status_code == 200:
-                        _logger.info("SUCESSSSSSSSSSSSSSSSSSSSSSS %s",response.json())
-                        _logger.info(f"Commande {id_commande} mise à jour avec succès.")
-                    else:
-                        _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
-                except requests.RequestException as e:
-                    _logger.error(f"Erreur réseau pour la commande {id_commande}: {str(e)}")
+                # Vérification de la réponse de l'API
+                if response.status_code == 200:
+                    _logger.info(f"Commande {id_commande} mise à jour avec succès.")
+                    _logger.info("Response from API: %s", response.json())
+                else:
+                    _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
+
+            except requests.RequestException as e:
+                _logger.error(f"Erreur de requête pour la commande {id_commande}: {str(e)}")
+        
+        # Retourne le nombre de commandes mises à jour avec succès
+        return f"{len(orders_to_update)} commandes mises à jour avec succès en Expédié."
+
 
     
 
