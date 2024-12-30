@@ -35,8 +35,19 @@ class SaleSAH(models.Model):
             id_commande = order.id_order_sh
             url_cmd = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
 
+            client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
+            if not client_id:
+                _logger.warning(f"Aucun client trouvé pour la commande {id_commande}.")
+                continue
+            
+            customer_payload = {
+                "Id": client_id.id_client_sah,
+                
+            }
+
             payload = {
-                "Status": "Expédié"
+                "Status": "Expédié",
+                "Customer": customer_payload
             }
 
             try:
