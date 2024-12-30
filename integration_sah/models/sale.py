@@ -57,13 +57,13 @@ class SaleSAH(models.Model):
                 response = requests.put(url_cmd, json=payload, headers=headers)
 
                 if response.status_code == 200:
+                    _logger.info("SUCESSSSSSSSSSSSSSSSSSSSSSS")
                     _logger.info(f"Commande {id_commande} mise à jour avec succès.")
                 else:
                     _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
             except requests.RequestException as e:
                 _logger.error(f"Erreur réseau pour la commande {id_commande}: {str(e)}")
 
-        return f"{len(orders)} commandes mises à jour avec succès en Expédié."
     
 
     def get_commande(self):
