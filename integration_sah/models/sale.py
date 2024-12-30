@@ -24,6 +24,34 @@ class SaleSAH(models.Model):
     paiement_ids = fields.One2many('paiement.sah','order_id',string="Paiement SAH",help='le paiement dans SAH')
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
+
+    @api.model
+    def get_orders_with_done_delivery(self):
+        orders = self.search([('id_order_sh', '!=', False)])
+        orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
+        headers = self.env['authentication.sah'].establish_connection()
+
+        for order in orders_to_update:
+            id_commande = order.id_order_sh
+            url_cmd = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
+
+            payload = {
+                "Status": "Expédié"
+            }
+
+            try:
+                response = requests.put(url_cmd, json=payload, headers=headers)
+
+                if response.status_code == 200:
+                    _logger.info(f"Commande {id_commande} mise à jour avec succès.")
+                else:
+                    _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
+                    raise UserError(f"Erreur lors de la mise à jour de la commande {id_commande}. Réponse : {response.text}")
+            except requests.RequestException as e:
+                _logger.error(f"Erreur réseau pour la commande {id_commande}: {str(e)}")
+                raise UserError(f"Erreur réseau lors de la mise à jour de la commande {id_commande}.")
+
+        return f"{len(orders)} commandes mises à jour avec succès en Expédié."
     
 
     def get_commande(self):
