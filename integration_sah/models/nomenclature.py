@@ -37,7 +37,7 @@ class NomenclatureSelligHome(models.Model):
                 datas = [
                         {
                         # "GroupId": 1,
-                        "ProductId": 120904,
+                        "ProductId": 120909,
                         # "ProductRemoteId": "sample string 3",
                         # "ProductCombinationId": 4,
                         "Quantity": 2,
@@ -46,7 +46,7 @@ class NomenclatureSelligHome(models.Model):
                         }
                 ]
                 _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb!! %s',response_data_produit)
-                response_data_produit['AttachedProducts'] = datas
+                response_data_produit['AttachedProducts'][0]['Quantity'] = 2
                 _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb %s',response_data_produit)
                
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
