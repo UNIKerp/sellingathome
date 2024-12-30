@@ -33,10 +33,11 @@ class NomenclatureSelligHome(models.Model):
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
                 _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",response_data_produit['AttachedProducts'])
+                # [{'GroupId': 120909, 'ProductId': 119741, 'ProductRemoteId': None, 'ProductCombinationId': 0, 'Quantity': 1, 'DisplayOrder': 1, 'Deleted': False}]
                 datas = [
                         {
-                        "GroupId": 1,
-                        "ProductId": product_id.product_tmpl_id.produit_sah_id,
+                        # "GroupId": 1,
+                        "ProductId": 120904,
                         # "ProductRemoteId": "sample string 3",
                         # "ProductCombinationId": 4,
                         "Quantity": 2,
