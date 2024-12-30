@@ -24,34 +24,34 @@ class NomenclatureSelligHome(models.Model):
         self.creation_nomenclature_produits(self,headers)
         return rec
     
-    def creation_nomenclature_produits(self,product_id,headers):
-        if product_id.product_tmpl_id.produit_sah_id:
+    def creation_nomenclature_produits(self,res,headers):
+        if res.product_tmpl_id.produit_sah_id:
             headers = self.env['authentication.sah'].establish_connection()
-            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.product_tmpl_id.produit_sah_id}"
-            post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
+            post_response_produit = requests.get(url_produit, headers=headers)
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
-                _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",product_id.product_tmpl_id.produit_sah_id)
-                # [{'GroupId': 120909, 'ProductId': 119741, 'ProductRemoteId': None, 'ProductCombinationId': 0, 'Quantity': 1, 'DisplayOrder': 1, 'Deleted': False}]
-                datas = [
-                        {
-                        "GroupId": product_id.product_tmpl_id.produit_sah_id,
-                        "ProductId": 120904,
-                        # "ProductRemoteId": "sample string 3",
-                        # "ProductCombinationId": 4,
-                        "Quantity": 2,
-                        # "DisplayOrder": 1,
-                        # "Deleted": True
-                        }
-                ]
-                _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb!! %s',response_data_produit)
-                response_data_produit['AttachedProducts'] = datas
-                _logger.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb %s',response_data_produit)
-               
+                if res.bom_line_ids:
+                    liste_composant = []
+                    for line in res.bom_line_ids:
+                        if line.product_id:
+                            if  line.product_id.product_tmpl_id and  line.product_id.product_tmpl_id.produit_sah_id:
+                                datas =  {
+                                    "GroupId": res.product_tmpl_id.produit_sah_id,
+                                    "ProductId": line.product_id.product_tmpl_id.produit_sah_id,
+                                    'ProductRemoteId': None,
+                                    'ProductCombinationId': 0,
+                                    'Quantity': line.product_qty,
+                                    'DisplayOrder': 1,
+                                    'Deleted': True
+                                }
+                                liste_composant.append(datas)
+                _logger.info('=============================== Avant : %s',response_data_produit)     
+                response_data_produit['AttachedProducts'] = liste_composant
+                _logger.info('=============================== Apres : %s',response_data_produit)
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
-                _logger.info("Statut de la réponse : %s, Contenu : %s", response.status_code, response.text)
-                if response.status_code != 200:
-                   _logger.info('Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+                _logger.info("================================ Résultat final : %s",response)
+            
                 
 
 
