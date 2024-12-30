@@ -35,7 +35,7 @@ class SaleSAH(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         
         for order in orders_to_update:
-            id_commande = '232863'
+            id_commande = order.id_order_sh
             client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
             _logger.info("Client found: %s", client_id.name if client_id else "None")
             
@@ -50,28 +50,13 @@ class SaleSAH(models.Model):
 
                 if post_response_produit.status_code == 200:
                     response_data_produit = post_response_produit.json()
-                    _logger.info("Commande récupérée: %s", response_data_produit)
-                else:
-                    _logger.error(f"Échec de récupération de la commande {id_commande}: {post_response_produit.text}")
-                    continue
-
-                customer_payload = {
-                    "Id": client_id.id_client_sah,
-                }
-
-                payload = {
-                    "Id": id_commande,
-                    "Status": "Validated",
-                    "Customer": customer_payload
-                }
-
-                response = requests.put(url_cmd, json=payload, headers=headers)
-
-                if response.status_code == 200:
-                    _logger.info(f"Commande {id_commande} mise à jour avec succès.")
-                    _logger.info("Response from API: %s", response.json())
-                else:
-                    _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
+                    response_data_produit['Status'] = "Validated"
+                    _logger.info('========================================== %s',response_data_produit)
+                    response = requests.put(url_cmd, json=response_data_produit, headers=headers)
+                    if response.status_code == 200:
+                        _logger.info(f"Commande {id_commande} mise à jour avec succès.")
+                        _logger.info("Response from API: %s", response.json())
+                
 
             except requests.RequestException as e:
                 _logger.error(f"Erreur de requête pour la commande {id_commande}: {str(e)}")
