@@ -46,10 +46,8 @@ class SaleSAH(models.Model):
                     _logger.info(f"Commande {id_commande} mise à jour avec succès.")
                 else:
                     _logger.error(f"Échec de mise à jour pour la commande {id_commande}: {response.text}")
-                    raise UserError(f"Erreur lors de la mise à jour de la commande {id_commande}. Réponse : {response.text}")
             except requests.RequestException as e:
                 _logger.error(f"Erreur réseau pour la commande {id_commande}: {str(e)}")
-                raise UserError(f"Erreur réseau lors de la mise à jour de la commande {id_commande}.")
 
         return f"{len(orders)} commandes mises à jour avec succès en Expédié."
     
