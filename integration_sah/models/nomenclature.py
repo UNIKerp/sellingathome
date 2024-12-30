@@ -37,7 +37,7 @@ class NomenclatureSelligHome(models.Model):
                 datas = [
                         {
                         # "GroupId": 1,
-                        "ProductId": 120904,
+                        "ProductId": 120909,
                         # "ProductRemoteId": "sample string 3",
                         # "ProductCombinationId": 4,
                         "Quantity": 2,
