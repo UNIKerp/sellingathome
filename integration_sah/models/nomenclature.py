@@ -33,7 +33,7 @@ class NomenclatureSelligHome(models.Model):
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
                 _logger.info("IIIIIIIIIIjjjjjjjjjjjjjjjjjjjjjjjIIIIIIIIIIIIII%s",response_data_produit['AttachedProducts'])
-                datas = {
+                datas = [
                         {
                         # "GroupId": 1,
                         # "ProductId": 2,
@@ -48,7 +48,7 @@ class NomenclatureSelligHome(models.Model):
                         "DisplayOrder": 1,
                         "Deleted": True
                         }
-                }
+                ]
                 response_data_produit['AttachedProducts'] = datas
                
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
