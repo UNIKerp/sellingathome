@@ -49,7 +49,7 @@ class SaleSAH(models.Model):
             }
 
             payload = {
-                "Status": "Expédié",
+                "Status": "Livraison",
                 "Customer": customer_payload
             }
 
