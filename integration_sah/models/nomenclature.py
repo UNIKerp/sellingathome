@@ -31,7 +31,6 @@ class NomenclatureSelligHome(models.Model):
             post_response_produit = requests.get(url_produit, headers=headers)
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
-                _logger.info("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL%s",response_data_produit)
                 if res.bom_line_ids:
                     liste_composant = []
                     for line in res.bom_line_ids:
@@ -49,9 +48,9 @@ class NomenclatureSelligHome(models.Model):
                                 liste_composant.append(datas)
                 _logger.info('=============================== Avant : %s',response_data_produit)     
                 response_data_produit['AttachedProducts'] = liste_composant
-                _logger.info('=============================== Apres : %s',response_data_produit)
+                _logger.info('===============================j Apres : %s',response_data_produit)
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
-                _logger.info("================================ Résultat final : %s",response)
+                _logger.info("================================d Résultat final : %s",response)
             
                 
 
