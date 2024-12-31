@@ -48,9 +48,9 @@ class NomenclatureSelligHome(models.Model):
                                 liste_composant.append(datas)
                 _logger.info('=============================== Avant : %s',response_data_produit)     
                 response_data_produit['AttachedProducts'] = liste_composant
-                _logger.info('=============================== Apres : %s',response_data_produit)
+                _logger.info('===============================j Apres : %s',response_data_produit)
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
-                _logger.info("================================ Résultat final : %s",response)
+                _logger.info("================================d Résultat final : %s",response)
             
                 
 
