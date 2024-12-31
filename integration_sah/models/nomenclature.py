@@ -59,7 +59,6 @@ class NomenclatureSelligHome(models.Model):
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
             post_response_produit = requests.get(url_produit, headers=headers)
-            liste_composant = []
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
                 _logger.info('ggggggggggggggggggggggggggggggggggggggggggggggggggg%s',response_data_produit)
@@ -69,9 +68,8 @@ class NomenclatureSelligHome(models.Model):
                    'ProductReference': '0001bague', 
                    'IsDeleted': None
                 }
-                liste_composant.append(datas)
                 _logger.info('=======================jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj======== Avant : %s',response_data_produit)     
-                response_data_produit['ProductRelatedProducts'] = liste_composant
+                response_data_produit['ProductRelatedProducts'] = [datas]
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("===================kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk============= Résultat final : %s",response)
 
