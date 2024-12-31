@@ -78,131 +78,131 @@ class SaleSAH(models.Model):
         if response.status_code == 200:
             commandes_sah = response.json()
             _logger.info("commandes_sah commandes_sah %s",commandes_sah)
-        #     for commande in commandes_sah:      
-        #         id_order = commande['Id']
-        #         commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
-        #         client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
-        #         Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
-        #         methode_paiement = commande['PaymentMethod']
-        #         methode_paiement_id=None
-        #         if methode_paiement:
-        #             methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
-        #             if len(methode_paiement) ==1:
-        #                 methode_paiement_id=methode_paiement
-        #         # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
+            for commande in commandes_sah:      
+                id_order = commande['Id']
+                commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
+                client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
+                Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
+                methode_paiement = commande['PaymentMethod']
+                methode_paiement_id=None
+                if methode_paiement:
+                    methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
+                    if len(methode_paiement) ==1:
+                        methode_paiement_id=methode_paiement
+                # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
 
 
-        #         if not commandes_odoo and client_id:
-        #             order = commandes_odoo.create({
-        #                 "id_order_sh":commande['Id'],
-        #                 "name":commande['OrderRefCode'],
-        #                 "partner_id":client_id.id,
-        #                 "currency_id":Currency.id, 
-        #                 "vdi":client_id.vdi_id.id or False,
-        #                 "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
-        #             })
-        #             if order:
-        #                 paiement_sah = commande['Payments']
-        #                 if paiement_sah:
-        #                     paiement_vals=[]
-        #                     for p in paiement_sah:
-        #                         mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
-        #                         self.env['paiement.sah'].sudo().create({
-        #                             'name':p['Name'],  
-        #                             'methode': mtp.id if mtp else None,  
-        #                             'montant': p['Amount'],   
-        #                             'numero_transaction': p['TransactionNumber'], 
-        #                             'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
-        #                             'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
-        #                             'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
-        #                             'order_id': order.id,
-        #                         })
-        #                         order.methode_paiement_id = mtp.id if mtp else order.methode_paiement_id
-        #                 for elt in commande['Products']:
-        #                     p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
-        #                     if p:
-        #                         self.env['sale.order.line'].create({
-        #                         "id_order_line_sh":elt["Id"],
-        #                         "name":p.name,
-        #                         "order_id":order.id,
-        #                         'product_id':p.product_variant_id.id,
-        #                         'product_template_id':p.id,
-        #                         'product_uom_qty': elt['Quantity'],
-        #                         'price_unit': elt['UnitPriceExcltax'], 
-        #                         'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
-        #                         })
+                if not commandes_odoo and client_id:
+                    order = commandes_odoo.create({
+                        "id_order_sh":commande['Id'],
+                        "name":commande['OrderRefCode'],
+                        "partner_id":client_id.id,
+                        "currency_id":Currency.id, 
+                        "vdi":client_id.vdi_id.id or False,
+                        "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
+                    })
+                    if order:
+                        paiement_sah = commande['Payments']
+                        if paiement_sah:
+                            paiement_vals=[]
+                            for p in paiement_sah:
+                                mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
+                                self.env['paiement.sah'].sudo().create({
+                                    'name':p['Name'],  
+                                    'methode': mtp.id if mtp else None,  
+                                    'montant': p['Amount'],   
+                                    'numero_transaction': p['TransactionNumber'], 
+                                    'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
+                                    'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
+                                    'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
+                                    'order_id': order.id,
+                                })
+                                order.methode_paiement_id = mtp.id if mtp else order.methode_paiement_id
+                        for elt in commande['Products']:
+                            p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
+                            if p:
+                                self.env['sale.order.line'].create({
+                                "id_order_line_sh":elt["Id"],
+                                "name":p.name,
+                                "order_id":order.id,
+                                'product_id':p.product_variant_id.id,
+                                'product_template_id':p.id,
+                                'product_uom_qty': elt['Quantity'],
+                                'price_unit': elt['UnitPriceExcltax'], 
+                                'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
+                                })
 
-        #         elif commandes_odoo:
-        #             commandes_odoo.write({ 
-        #                 "name":commande['OrderRefCode'], 
-        #                 "partner_id":client_id.id, 
-        #                 "currency_id":Currency.id, 
-        #                 "vdi":client_id.vdi_id.id or False,
-        #                 "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
-        #             })
-        #             paiement_sah = commande['Payments']
+                elif commandes_odoo:
+                    commandes_odoo.write({ 
+                        "name":commande['OrderRefCode'], 
+                        "partner_id":client_id.id, 
+                        "currency_id":Currency.id, 
+                        "vdi":client_id.vdi_id.id or False,
+                        "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
+                    })
+                    paiement_sah = commande['Payments']
                     
-        #             if paiement_sah:
-        #                 paiement_vals=[]
-        #                 if commandes_odoo.paiement_ids:
-        #                     for p in paiement_sah:
-        #                         for pc in commandes_odoo.paiement_ids:
-        #                             mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
-        #                             if pc.name == p['Name'] or pc.methode == mtp:
-        #                                 pc.sudo().write({
-        #                                     'montant': p['Amount'],   
-        #                                     'numero_transaction': p['TransactionNumber'],  
-        #                                     'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
-        #                                     'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
-        #                                     'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
-        #                                     })
-        #                             else:
-        #                                 self.env['paiement.sah'].sudo().create({
-        #                                     'name':p['Name'],  
-        #                                     'methode': mtp.id if mtp else None,  
-        #                                     'montant': p['Amount'],   
-        #                                     'numero_transaction': p['TransactionNumber'],  
-        #                                     'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
-        #                                     'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
-        #                                     'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
-        #                                     'order_id': commandes_odoo.id,
-        #                                 })
-        #                             commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
-        #                 else:
-        #                     for p in paiement_sah:
-        #                         mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
-        #                         self.env['paiement.sah'].sudo().create({
-        #                             'name':p['Name'],  
-        #                             'methode': mtp.id if mtp else None,  
-        #                             'montant': p['Amount'],   
-        #                             'numero_transaction': p['TransactionNumber'],  
-        #                             'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
-        #                             'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
-        #                             'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
-        #                             'order_id': commandes_odoo.id,
-        #                         })
-        #                         commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
-        #             for elt in commande['Products']:
-        #                 p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
-        #                 if p:
-        #                     j=0
-        #                     for l in commandes_odoo.order_line:
-        #                         if l.id_order_line_sh==elt["Id"]:
-        #                             l.write({'product_uom_qty': elt['Quantity'],'price_unit': elt['UnitPriceExcltax'], 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])] })
-        #                             j+=1
-        #                     if j==0:
-        #                         self.env['sale.order.line'].create({
-        #                         "id_order_line_sh":elt["Id"],
-        #                         "name":p.name,
-        #                         "order_id":commandes_odoo.id,
-        #                         'product_id':p.product_variant_id.id,
-        #                         'product_template_id':p.id,
-        #                         'product_uom_qty': elt['Quantity'],
-        #                         'price_unit': elt['UnitPriceExcltax'], 
-        #                         'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
-        #                         })
-        # else:
-        #     _logger.info(f"Erreur {response.status_code}: {response.text}")
+                    if paiement_sah:
+                        paiement_vals=[]
+                        if commandes_odoo.paiement_ids:
+                            for p in paiement_sah:
+                                for pc in commandes_odoo.paiement_ids:
+                                    mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
+                                    if pc.name == p['Name'] or pc.methode == mtp:
+                                        pc.sudo().write({
+                                            'montant': p['Amount'],   
+                                            'numero_transaction': p['TransactionNumber'],  
+                                            'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
+                                            'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
+                                            'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
+                                            })
+                                    else:
+                                        self.env['paiement.sah'].sudo().create({
+                                            'name':p['Name'],  
+                                            'methode': mtp.id if mtp else None,  
+                                            'montant': p['Amount'],   
+                                            'numero_transaction': p['TransactionNumber'],  
+                                            'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
+                                            'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
+                                            'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
+                                            'order_id': commandes_odoo.id,
+                                        })
+                                    commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
+                        else:
+                            for p in paiement_sah:
+                                mtp = self.env['methode.paiement.sah'].search([('code','=',p['Method'])])
+                                self.env['paiement.sah'].sudo().create({
+                                    'name':p['Name'],  
+                                    'methode': mtp.id if mtp else None,  
+                                    'montant': p['Amount'],   
+                                    'numero_transaction': p['TransactionNumber'],  
+                                    'date_paiement': datetime.strptime(str(p['PaymentAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['PaymentAt']!=None else None,
+                                    'date_echeance':datetime.strptime(str(p['DueAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['DueAt']!=None else None,
+                                    'date_validation': datetime.strptime(str(p['ValidatedAt']), "%Y-%m-%dT%H:%M:%S.%f") if p['ValidatedAt']!=None else None,
+                                    'order_id': commandes_odoo.id,
+                                })
+                                commandes_odoo.methode_paiement_id = mtp.id if mtp else commandes_odoo.methode_paiement_id, 
+                    for elt in commande['Products']:
+                        p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
+                        if p:
+                            j=0
+                            for l in commandes_odoo.order_line:
+                                if l.id_order_line_sh==elt["Id"]:
+                                    l.write({'product_uom_qty': elt['Quantity'],'price_unit': elt['UnitPriceExcltax'], 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])] })
+                                    j+=1
+                            if j==0:
+                                self.env['sale.order.line'].create({
+                                "id_order_line_sh":elt["Id"],
+                                "name":p.name,
+                                "order_id":commandes_odoo.id,
+                                'product_id':p.product_variant_id.id,
+                                'product_template_id':p.id,
+                                'product_uom_qty': elt['Quantity'],
+                                'price_unit': elt['UnitPriceExcltax'], 
+                                'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
+                                })
+        else:
+            _logger.info(f"Erreur {response.status_code}: {response.text}")
        
             
     def _get_or_create_tax(self, tax_rate):
