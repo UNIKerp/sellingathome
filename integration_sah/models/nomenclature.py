@@ -64,17 +64,14 @@ class NomenclatureSelligHome(models.Model):
                 _logger.info('ggggggggggggggggggggggggggggggggggggggggggggggggggg%s',response_data_produit)
                 liste_composant = []
                 datas =  {
-                    "GroupId": 120909,
-                    "ProductId": 120904,
-                    'ProductRemoteId': None,
-                    'ProductCombinationId': 0,
-                    'Quantity': 9,
-                    'DisplayOrder': 9,
-                    'Deleted': True
+                   'ProductId': 119732, 
+                   'ProductRemoteId': None, 
+                   'ProductReference': '0001bague', 
+                   'IsDeleted': None
                 }
                 liste_composant.append(datas)
                 _logger.info('=======================jjjjjjjjjjjjjjjjjjjjjjjjjjjjj======== Avant : %s',response_data_produit)     
-                response_data_produit['AttachedProducts'] = liste_composant
+                response_data_produit['ProductRelatedProducts'] = liste_composant
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("===================kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk============= Résultat final : %s",response)
 
