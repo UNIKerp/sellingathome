@@ -37,10 +37,19 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             com = response.json()
-            com['Status'] = 'Validated'
-            payments = com.get('Payments')
-            if payments and isinstance(payments, list):
-                payments[0]['ValidatedAt'] = '2024-12-31T09:47:15.635388'
+            
+            com['Payments'] = [
+                {
+                    'Name': 'CB déclaratif', 
+                    'Method': 'declarativecreditcard', 
+                    'Amount': 38.0, 
+                    'TransactionNumber': '', 
+                    'PaymentAt': '2024-05-30T15:17:49.993464', 
+                    'DueAt': '2024-05-30T15:17:49.993464', 
+                    'ValidatedAt': '2024-05-30T15:17:49.993464'
+                }
+            ]
+
             _logger.info('====================================%s',response.json())
             resp = requests.put(url_commande, json=com, headers=headers)
             if resp.status_code == 200:
