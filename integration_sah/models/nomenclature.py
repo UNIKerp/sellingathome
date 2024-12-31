@@ -65,7 +65,7 @@ class NomenclatureSelligHome(models.Model):
                     'ProductReference': '00009', 
                     'IsDeleted': None
                 }
-                response_data_produit['AttachedProducts'] = [datas]
+                response_data_produit['ProductRelatedProducts'] = [datas]
                 _logger.info('===============================j Apres : %s',response_data_produit)
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("================================dd Résultat final : %s",response)
