@@ -31,6 +31,11 @@ class SaleSAH(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         payload = {
             "Status": "Validated",
+            "Customer": {
+                "Id": self.partner_id.id_client_sah,
+                "RemoteId": "sample string 1",
+                "RemoteReference": "sample string 2"
+            },
             "Payments": [{
                 "Name": "CB déclaratif",
                 "Method": "declarativecreditcard",
