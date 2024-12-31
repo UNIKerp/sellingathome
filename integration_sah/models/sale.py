@@ -31,12 +31,13 @@ class SaleSAH(models.Model):
         
         # orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
         # _logger.info("Orders to update (done delivery): %s", orders_to_update)
-        id_commande = "233821"
+        id_commande = "233486"
         url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"          
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             com = response.json()
+            com['Status'] = 'Validated'
             com['Payments'][0]['ValidatedAt'] = '2024-12-31T09:47:15.635388'
             _logger.info('====================================%s',response.json())
             resp = requests.put(url_commande, json=com, headers=headers)
