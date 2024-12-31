@@ -39,7 +39,7 @@ class SaleSAH(models.Model):
             com = response.json()
             com['Status'] = 'Validated'
             _logger.info('====================================%s',response.json())
-            resp = requests.put(com, json=response_data_produit, headers=headers)
+            resp = requests.put(url_commande, json=com, headers=headers)
             if resp.status_code == 200:
                 _logger.info(f"Commande {id_commande} mise à jour avec succès.")
         # for order in orders_to_update:
