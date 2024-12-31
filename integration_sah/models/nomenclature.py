@@ -62,19 +62,14 @@ class NomenclatureSelligHome(models.Model):
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
                 _logger.info('ggggggggggggggggggggggggggggggggggggggggggggggggggg%s',response_data_produit)
-                liste_composant = []
                 datas =  {
-                    "GroupId": 120909,
-                    "ProductId": 120904,
-                    'ProductRemoteId': None,
-                    'ProductCombinationId': 0,
-                    'Quantity': 9,
-                    'DisplayOrder': 9,
-                    'Deleted': True
+                   'ProductId': 119732, 
+                   'ProductRemoteId': None, 
+                   'ProductReference': '0001bague', 
+                   'IsDeleted': None
                 }
-                liste_composant.append(datas)
-                _logger.info('=======================jjjjjjjjjjjjjjjjjjjjjjjjjjjjj======== Avant : %s',response_data_produit)     
-                response_data_produit['AttachedProducts'] = liste_composant
+                _logger.info('=======================jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj======== Avant : %s',response_data_produit)     
+                response_data_produit['ProductRelatedProducts'] = [datas]
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("===================kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk============= Résultat final : %s",response)
 
