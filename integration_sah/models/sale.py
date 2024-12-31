@@ -26,12 +26,12 @@ class SaleSAH(models.Model):
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
 
     def get_orders_with_done_delivery(self):
-        id_commande = "233486"
+        id_commande = 233486
         url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"          
         headers = self.env['authentication.sah'].establish_connection()
         
         # Ensure the customer exists before proceeding
-        customer_id = self.partner_id.id_client_sah
+        customer_id = 344453
         if not customer_id:
             _logger.error("Customer ID is missing. Cannot proceed with the order.")
             return
