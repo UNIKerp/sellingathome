@@ -27,39 +27,14 @@ class SaleSAH(models.Model):
 
     def get_orders_with_done_delivery(self):
         id_commande = 233486
-        url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"          
+        url_commande = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"          
         headers = self.env['authentication.sah'].establish_connection()
         
-        # Ensure the customer exists before proceeding
-        customer_id = 344453
-        if not customer_id:
-            _logger.error("Customer ID is missing. Cannot proceed with the order.")
-            return
-
-        # Check if customer exists in the system (this is just an example, adjust as needed)
-        url_customer = f"https://demoapi.sellingathome.com/v1/Customers/{customer_id}"
-        response_customer = requests.get(url_customer, headers=headers)
-
-        if response_customer.status_code != 200:
-            _logger.error("Customer not found or unauthorized. Response: %s", response_customer.json())
-            return
 
         # Customer exists, proceed with the order update
         payload = {
-            "Id": 233486,
-            "Status": "Validated",
-            "Customer": {
-                "Id": customer_id,
-            },
-            "Payments": [{
-                "Name": "CB déclaratif",
-                "Method": "declarativecreditcard",
-                "Amount": 37.0,
-                "TransactionNumber": "",
-                "PaymentAt": "2024-05-30T15:17:49.993464",
-                "DueAt": "2024-05-30T15:17:49.993464",
-                "ValidatedAt": "2024-05-30T15:17:49.993464"
-            }]
+            "OrderId": id_commande,
+            "Status": 1,
         }
 
         response = requests.put(url_commande, json=payload, headers=headers)
@@ -70,105 +45,6 @@ class SaleSAH(models.Model):
         else:
             _logger.error("Erreur : %s", response.text)
             print("Erreur :", response.status_code, response.text)
-        # Fetch the order details
-        # response = requests.get(url_commande, headers=headers)
-        # if response.status_code == 200:
-        #     com = response.json()
-        #     _logger.info(f"Commande récupérée : {com}")  # Log initial pour vérifier l'état de la commande
-
-        #     # Vérifiez si 'Payments' est None
-        #     if com.get('Payments') is None:
-        #         _logger.warning("La clé 'Payments' est None avant modification.")
-
-        #     # Replace 'Payments' with predefined data
-        #     com['Payments'] = [
-        #         {
-        #             'Name': 'CB déclaratif', 
-        #             'Method': 'declarativecreditcard', 
-        #             'Amount': 38.0, 
-        #             'TransactionNumber': '', 
-        #             'PaymentAt': '2024-05-30T15:17:49.993464', 
-        #             'DueAt': '2024-05-30T15:17:49.993464', 
-        #             'ValidatedAt': '2024-05-30T15:17:49.993464'
-        #         }
-        #     ]
-        #     com['Status'] = 'Validated'
-
-        #     _logger.info(f"Commande après modification : {com}")  # Log après modification
-
-        #     # Update the order with modified data
-        #     resp = requests.put(url_commande, json=com, headers=headers)
-        #     if resp.status_code == 200:
-        #         updated_com = resp.json()
-        #         _logger.info(f"Commande {id_commande} mise à jour avec succès : {updated_com}")
-
-        #         # Vérifier si la mise à jour correspond aux modifications attendues
-        #         if updated_com.get('Status') == 'Validated' and updated_com.get('Payments') is not None:
-        #             _logger.info("Les modifications ont été appliquées avec succès.")
-        #         else:
-        #             _logger.warning(f"La commande mise à jour ne correspond pas aux modifications attendues : {updated_com}")
-        #     else:
-        #         _logger.error(f"Erreur lors de la mise à jour de la commande {id_commande}: {resp.status_code} - {resp.text}")
-        # else:
-        #     _logger.error(f"Erreur lors de la récupération de la commande {id_commande}: {response.status_code} - {response.text}")
-        # orders = self.search([('id_order_sh', '!=', False), ('state', '=', 'sale')])
-        # _logger.info("Orders found: %s", orders)
-        
-        # orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
-        # _logger.info("Orders to update (done delivery): %s", orders_to_update)
-        # id_commande = "233486"
-        # url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"          
-        # headers = self.env['authentication.sah'].establish_connection()
-        # response = requests.get(url_commande, headers=headers)
-        # if response.status_code == 200:
-        #     com = response.json()
-            
-        #     com['Payments'] = [
-        #         {
-        #             'Name': 'CB déclaratif', 
-        #             'Method': 'declarativecreditcard', 
-        #             'Amount': 38.0, 
-        #             'TransactionNumber': '', 
-        #             'PaymentAt': '2024-05-30T15:17:49.993464', 
-        #             'DueAt': '2024-05-30T15:17:49.993464', 
-        #             'ValidatedAt': '2024-05-30T15:17:49.993464'
-        #         }
-        #     ]
-
-        #     _logger.info('====================================%s',response.json())
-        #     resp = requests.put(url_commande, json=com, headers=headers)
-        #     if resp.status_code == 200:
-        #         _logger.info(f"Commande {resp.json()} mise à jour avec succès.")
-        # for order in orders_to_update:
-        #     id_commande = order.id_order_sh
-        #     client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
-        #     _logger.info("Client found: %s", client_id.name if client_id else "None")
-            
-        #     if not client_id:
-        #         _logger.warning(f"Aucun client trouvé pour la commande {id_commande}.")
-        #         continue
-            
-        #     url_cmd = f"https://demoapi.sellingathome.com/v1/Orders"
-        #     post_response_produit = requests.get(url_cmd, headers=headers)
-        #     _logger.info('====================================%s',post_response_produit.json())
-            
-            # try:
-            #     post_response_produit = requests.get(url_cmd, headers=headers, timeout=120)
-
-            #     if post_response_produit.status_code == 200:
-            #         response_data_produit = post_response_produit.json()
-            #         response_data_produit['Status'] = "Validated"
-            #         _logger.info('========================================== %s',response_data_produit)
-            #         response = requests.put(url_cmd, json=response_data_produit, headers=headers)
-            #         if response.status_code == 200:
-            #             _logger.info(f"Commande {id_commande} mise à jour avec succès.")
-            #             _logger.info("Response from API: %s", response.json())
-                
-
-            # except requests.RequestException as e:
-            #     _logger.error(f"Erreur de requête pour la commande {id_commande}: {str(e)}")
-        
-        # return f"{len(orders_to_update)} commandes mises à jour avec succès en Expédié."
 
 
     
