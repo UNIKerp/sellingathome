@@ -29,48 +29,67 @@ class SaleSAH(models.Model):
         id_commande = "233486"
         url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"          
         headers = self.env['authentication.sah'].establish_connection()
+        payload = {
+            "Status": "Validated",
+            "Payments": [{
+                "Name": "CB déclaratif",
+                "Method": "declarativecreditcard",
+                "Amount": 38.0,
+                "TransactionNumber": "",
+                "PaymentAt": "2024-05-30T15:17:49.993464",
+                "DueAt": "2024-05-30T15:17:49.993464",
+                "ValidatedAt": "2024-05-30T15:17:49.993464"
+            }]
+        }
+
+        response = requests.put(url, json=payload, headers=headers)
+
+        if response.status_code == 200:
+            print("Commande mise à jour :", response.json())
+        else:
+            print("Erreur :", response.status_code, response.text)
         
         # Fetch the order details
-        response = requests.get(url_commande, headers=headers)
-        if response.status_code == 200:
-            com = response.json()
-            _logger.info(f"Commande récupérée : {com}")  # Log initial pour vérifier l'état de la commande
+        # response = requests.get(url_commande, headers=headers)
+        # if response.status_code == 200:
+        #     com = response.json()
+        #     _logger.info(f"Commande récupérée : {com}")  # Log initial pour vérifier l'état de la commande
 
-            # Vérifiez si 'Payments' est None
-            if com.get('Payments') is None:
-                _logger.warning("La clé 'Payments' est None avant modification.")
+        #     # Vérifiez si 'Payments' est None
+        #     if com.get('Payments') is None:
+        #         _logger.warning("La clé 'Payments' est None avant modification.")
 
-            # Replace 'Payments' with predefined data
-            com['Payments'] = [
-                {
-                    'Name': 'CB déclaratif', 
-                    'Method': 'declarativecreditcard', 
-                    'Amount': 38.0, 
-                    'TransactionNumber': '', 
-                    'PaymentAt': '2024-05-30T15:17:49.993464', 
-                    'DueAt': '2024-05-30T15:17:49.993464', 
-                    'ValidatedAt': '2024-05-30T15:17:49.993464'
-                }
-            ]
-            com['Status'] = 'Validated'
+        #     # Replace 'Payments' with predefined data
+        #     com['Payments'] = [
+        #         {
+        #             'Name': 'CB déclaratif', 
+        #             'Method': 'declarativecreditcard', 
+        #             'Amount': 38.0, 
+        #             'TransactionNumber': '', 
+        #             'PaymentAt': '2024-05-30T15:17:49.993464', 
+        #             'DueAt': '2024-05-30T15:17:49.993464', 
+        #             'ValidatedAt': '2024-05-30T15:17:49.993464'
+        #         }
+        #     ]
+        #     com['Status'] = 'Validated'
 
-            _logger.info(f"Commande après modification : {com}")  # Log après modification
+        #     _logger.info(f"Commande après modification : {com}")  # Log après modification
 
-            # Update the order with modified data
-            resp = requests.put(url_commande, json=com, headers=headers)
-            if resp.status_code == 200:
-                updated_com = resp.json()
-                _logger.info(f"Commande {id_commande} mise à jour avec succès : {updated_com}")
+        #     # Update the order with modified data
+        #     resp = requests.put(url_commande, json=com, headers=headers)
+        #     if resp.status_code == 200:
+        #         updated_com = resp.json()
+        #         _logger.info(f"Commande {id_commande} mise à jour avec succès : {updated_com}")
 
-                # Vérifier si la mise à jour correspond aux modifications attendues
-                if updated_com.get('Status') == 'Validated' and updated_com.get('Payments') is not None:
-                    _logger.info("Les modifications ont été appliquées avec succès.")
-                else:
-                    _logger.warning(f"La commande mise à jour ne correspond pas aux modifications attendues : {updated_com}")
-            else:
-                _logger.error(f"Erreur lors de la mise à jour de la commande {id_commande}: {resp.status_code} - {resp.text}")
-        else:
-            _logger.error(f"Erreur lors de la récupération de la commande {id_commande}: {response.status_code} - {response.text}")
+        #         # Vérifier si la mise à jour correspond aux modifications attendues
+        #         if updated_com.get('Status') == 'Validated' and updated_com.get('Payments') is not None:
+        #             _logger.info("Les modifications ont été appliquées avec succès.")
+        #         else:
+        #             _logger.warning(f"La commande mise à jour ne correspond pas aux modifications attendues : {updated_com}")
+        #     else:
+        #         _logger.error(f"Erreur lors de la mise à jour de la commande {id_commande}: {resp.status_code} - {resp.text}")
+        # else:
+        #     _logger.error(f"Erreur lors de la récupération de la commande {id_commande}: {response.status_code} - {response.text}")
         # orders = self.search([('id_order_sh', '!=', False), ('state', '=', 'sale')])
         # _logger.info("Orders found: %s", orders)
         
