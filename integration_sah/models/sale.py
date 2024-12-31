@@ -43,6 +43,7 @@ class SaleSAH(models.Model):
         }
 
         response = requests.put(url_commande, json=payload, headers=headers)
+        _logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ %s",response.json())
 
         if response.status_code == 200:
             print("Commande mise à jour :", response.json())
