@@ -59,7 +59,14 @@ class SaleSAH(models.Model):
             # Update the order with modified data
             resp = requests.put(url_commande, json=com, headers=headers)
             if resp.status_code == 200:
-                _logger.info(f"Commande {id_commande} mise à jour avec succès : {resp.json()}")
+                updated_com = resp.json()
+                _logger.info(f"Commande {id_commande} mise à jour avec succès : {updated_com}")
+
+                # Vérifier si la mise à jour correspond aux modifications attendues
+                if updated_com.get('Status') == 'Validated' and updated_com.get('Payments') is not None:
+                    _logger.info("Les modifications ont été appliquées avec succès.")
+                else:
+                    _logger.warning(f"La commande mise à jour ne correspond pas aux modifications attendues : {updated_com}")
             else:
                 _logger.error(f"Erreur lors de la mise à jour de la commande {id_commande}: {resp.status_code} - {resp.text}")
         else:
