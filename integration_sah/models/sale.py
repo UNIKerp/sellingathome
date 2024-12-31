@@ -27,24 +27,27 @@ class SaleSAH(models.Model):
 
     def get_orders_with_done_delivery(self):
         id_commande = 233486
-        url_commande = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"          
+        url_commande = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"
         headers = self.env['authentication.sah'].establish_connection()
+        response_ = requests.get(url_commande, headers=headers)
+        if response_.status_code == 200:
+            _logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ %s",response_.json())  
+        
         
 
-        # Customer exists, proceed with the order update
-        payload = {
-            "OrderId": 233486,
-            "Status": 3,
-        }
+        # payload = {
+        #     "OrderId": 233486,
+        #     "Status": 3,
+        # }
 
-        response = requests.put(url_commande, json=payload, headers=headers)
+        # response = requests.put(url_commande, json=payload, headers=headers)
         
-        if response.status_code == 200:
-            _logger.info("Commande mise à jour : %s", response.json())
-            print("Commande mise à jour :", response.json())
-        else:
-            _logger.error("Erreur : %s", response.text)
-            print("Erreur :", response.status_code, response.text)
+        # if response.status_code == 200:
+        #     _logger.info("Commande mise à jour : %s", response.json())
+        #     print("Commande mise à jour :", response.json())
+        # else:
+        #     _logger.error("Erreur : %s", response.text)
+        #     print("Erreur :", response.status_code, response.text)
 
 
     
