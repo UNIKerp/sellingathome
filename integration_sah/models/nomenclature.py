@@ -16,7 +16,7 @@ class NomenclatureSelligHome(models.Model):
         rec = super(NomenclatureSelligHome, self).create(vals)
         if rec:
             self.creation_nomenclature_produits(rec,headers)
-            self.test_modification_produits(rec,headers)
+            # self.test_modification_produits(rec,headers)
         return rec
     
     def write(self, vals):
