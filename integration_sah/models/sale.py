@@ -29,12 +29,26 @@ class SaleSAH(models.Model):
         id_commande = "233486"
         url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"          
         headers = self.env['authentication.sah'].establish_connection()
+        
+        # Ensure the customer exists before proceeding
+        customer_id = self.partner_id.id_client_sah
+        if not customer_id:
+            _logger.error("Customer ID is missing. Cannot proceed with the order.")
+            return
+
+        # Check if customer exists in the system (this is just an example, adjust as needed)
+        url_customer = f"https://demoapi.sellingathome.com/v1/Customers/{customer_id}"
+        response_customer = requests.get(url_customer, headers=headers)
+
+        if response_customer.status_code != 200:
+            _logger.error("Customer not found or unauthorized. Response: %s", response_customer.json())
+            return
+
+        # Customer exists, proceed with the order update
         payload = {
             "Status": "Validated",
             "Customer": {
-                "Id": self.partner_id.id_client_sah,
-                "RemoteId": "sample string 1",
-                "RemoteReference": "sample string 2"
+                "Id": customer_id,
             },
             "Payments": [{
                 "Name": "CB déclaratif",
@@ -48,13 +62,13 @@ class SaleSAH(models.Model):
         }
 
         response = requests.put(url_commande, json=payload, headers=headers)
-        _logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ %s",response.json())
-
+        
         if response.status_code == 200:
+            _logger.info("Commande mise à jour : %s", response.json())
             print("Commande mise à jour :", response.json())
         else:
+            _logger.error("Erreur : %s", response.text)
             print("Erreur :", response.status_code, response.text)
-        
         # Fetch the order details
         # response = requests.get(url_commande, headers=headers)
         # if response.status_code == 200:
