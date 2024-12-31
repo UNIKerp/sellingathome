@@ -70,7 +70,7 @@ class NomenclatureSelligHome(models.Model):
                    'IsDeleted': None
                 }
                 liste_composant.append(datas)
-                _logger.info('=======================jjjjjjjjjjjjjjjjjjjjjjjjjjjjj======== Avant : %s',response_data_produit)     
+                _logger.info('=======================jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj======== Avant : %s',response_data_produit)     
                 response_data_produit['ProductRelatedProducts'] = liste_composant
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("===================kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk============= Résultat final : %s",response)
