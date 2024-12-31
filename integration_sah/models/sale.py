@@ -33,26 +33,8 @@ class SaleSAH(models.Model):
 
         # Customer exists, proceed with the order update
         payload = {
-            "OrderId": 1,
-            "OrderRemoteId": "sample string 2",
-            "Status": 1,
-            "Products": [
-                {
-                "Id": 1,
-                "Line": 1,
-                "RemoteLine": "sample string 1",
-                "Quantity": 2
-                },
-                {
-                "Id": 1,
-                "Line": 1,
-                "RemoteLine": "sample string 1",
-                "Quantity": 2
-                }
-            ],
-            "ShippingReference": "sample string 3",
-            "AjustStock": True,
-            "TrackingUrl": "sample string 5"
+            "OrderId": 233486,
+            "Status": 3,
         }
 
         response = requests.put(url_commande, json=payload, headers=headers)
