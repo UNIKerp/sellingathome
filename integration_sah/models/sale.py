@@ -53,7 +53,7 @@ class SaleSAH(models.Model):
             "Payments": [{
                 "Name": "CB déclaratif",
                 "Method": "declarativecreditcard",
-                "Amount": 38.0,
+                "Amount": 37.0,
                 "TransactionNumber": "",
                 "PaymentAt": "2024-05-30T15:17:49.993464",
                 "DueAt": "2024-05-30T15:17:49.993464",
