@@ -28,11 +28,9 @@ class SaleSAH(models.Model):
     def get_orders_with_done_delivery(self):
         id_commande = '233486'
         url_commande = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"
+        _logger.info("url_commande url_commande",url_commande)
         headers = self.env['authentication.sah'].establish_connection()
         
-        
-        
-
         payload = {
             "OrderId": 233486,
             "Status": 3,
