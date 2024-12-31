@@ -37,7 +37,7 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             com = response.json()
-            com['Payments']['ValidatedAt'] = '2024-12-31T09:47:15.635388'
+            com['Payments'][0]['ValidatedAt'] = '2024-12-31T09:47:15.635388'
             _logger.info('====================================%s',response.json())
             resp = requests.put(url_commande, json=com, headers=headers)
             if resp.status_code == 200:
