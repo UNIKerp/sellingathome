@@ -57,7 +57,7 @@ class SaleSAH(models.Model):
             _logger.info(f"Commande après modification : {com}")  # Log après modification
 
             # Update the order with modified data
-            resp = requests.put(url_commande, json={com}, headers=headers)
+            resp = requests.put(url_commande, json=com, headers=headers)
             if resp.status_code == 200:
                 _logger.info(f"Commande {id_commande} mise à jour avec succès : {resp.json()}")
             else:
