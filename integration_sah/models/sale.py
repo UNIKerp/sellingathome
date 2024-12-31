@@ -52,6 +52,7 @@ class SaleSAH(models.Model):
                     'ValidatedAt': '2024-05-30T15:17:49.993464'
                 }
             ]
+            com['Status'] = 'Validated'
 
             _logger.info(f"Commande après modification : {com}")  # Log après modification
 
