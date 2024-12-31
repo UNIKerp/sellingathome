@@ -16,7 +16,7 @@ class NomenclatureSelligHome(models.Model):
         rec = super(NomenclatureSelligHome, self).create(vals)
         if rec:
             self.creation_nomenclature_produits(rec,headers)
-            self.creation_des_api_nsene(rec,res)
+            self.creation_des_api_nsene(rec)
         return rec
     
     def write(self, vals):
