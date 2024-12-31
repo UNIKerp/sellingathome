@@ -68,7 +68,7 @@ class NomenclatureSelligHome(models.Model):
                 response_data_produit['AttachedProducts'] = [datas]
                 _logger.info('===============================j Apres : %s',response_data_produit)
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
-                _logger.info("================================d Résultat final : %s",response)
+                _logger.info("================================dd Résultat final : %s",response)
 
                 
 
