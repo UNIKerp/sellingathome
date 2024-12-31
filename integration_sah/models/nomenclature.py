@@ -57,9 +57,9 @@ class NomenclatureSelligHome(models.Model):
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{rec.product_tmpl_id.produit_sah_id}"
             post_response_produit = requests.get(url_produit, headers=headers)
-            _logger.info("UUUUUUUUUVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV%s",post_response_produit)
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
+                _logger.info("UUUUUUUUUVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV%s",response_data_produit)
                 datas = {
                     'ProductId': 119741, 
                     'ProductRemoteId': None, 
