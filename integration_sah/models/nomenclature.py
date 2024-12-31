@@ -16,7 +16,6 @@ class NomenclatureSelligHome(models.Model):
         rec = super(NomenclatureSelligHome, self).create(vals)
         if rec:
             self.creation_nomenclature_produits(rec,headers)
-            self.creation_des_api_nsene(rec)
         return rec
     
     def write(self, vals):
@@ -52,24 +51,6 @@ class NomenclatureSelligHome(models.Model):
                 _logger.info('===============================j Apres : %s',response_data_produit)
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("================================d Résultat final : %s",response)
-    def creation_des_api_nsene(self,rec):
-        if rec.product_tmpl_id.produit_sah_id:
-            headers = self.env['authentication.sah'].establish_connection()
-            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{rec.product_tmpl_id.produit_sah_id}"
-            post_response_produit = requests.get(url_produit, headers=headers)
-            if post_response_produit.status_code == 200:
-                response_data_produit = post_response_produit.json()
-                _logger.info("UUUUUUUUUVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV%s",response_data_produit)
-                datas = {
-                    'ProductId': 119741, 
-                    'ProductRemoteId': None, 
-                    'ProductReference': '00009', 
-                    'IsDeleted': None
-                }
-                response_data_produit['ProductRelatedProducts'] = [datas]
-                _logger.info('===============================jj Apres : %s',response_data_produit)
-                response = requests.put(url_produit, json= response_data_produit, headers=headers)
-                _logger.info("================================dd Résultat final : %s",response)
 
                 
 
