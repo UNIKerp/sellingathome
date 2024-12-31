@@ -46,6 +46,7 @@ class SaleSAH(models.Model):
 
         # Customer exists, proceed with the order update
         payload = {
+            "Id": 233486,
             "Status": "Validated",
             "Customer": {
                 "Id": customer_id,
