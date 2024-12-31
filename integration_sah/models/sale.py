@@ -71,7 +71,7 @@ class SaleSAH(models.Model):
             # except requests.RequestException as e:
             #     _logger.error(f"Erreur de requête pour la commande {id_commande}: {str(e)}")
         
-        return f"{len(orders_to_update)} commandes mises à jour avec succès en Expédié."
+        # return f"{len(orders_to_update)} commandes mises à jour avec succès en Expédié."
 
 
     
