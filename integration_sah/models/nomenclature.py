@@ -52,7 +52,7 @@ class NomenclatureSelligHome(models.Model):
                 _logger.info('===============================j Apres : %s',response_data_produit)
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("================================d Résultat final : %s",response)
-    def creation_des_api_nsene(self,res):
+    def creation_des_api_nsene(self,rec):
         if res.product_tmpl_id.produit_sah_id:
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
