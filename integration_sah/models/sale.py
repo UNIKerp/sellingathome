@@ -32,7 +32,7 @@ class SaleSAH(models.Model):
         orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
         _logger.info("Orders to update (done delivery): %s", orders_to_update)
         id_commande = "233486"
-        url_commande = f"https://demoapi.sellingathome.com/v1/Orders{id_commande}"          
+        url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"          
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
         _logger.info('====================================%s',response.json())
