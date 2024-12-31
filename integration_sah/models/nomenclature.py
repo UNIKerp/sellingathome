@@ -60,16 +60,16 @@ class NomenclatureSelligHome(models.Model):
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
             post_response_produit = requests.get(url_produit, headers=headers)
             if post_response_produit.status_code == 200:
-                response_data_produit = post_response_produit.json()
-                _logger.info('ggggggggggggggggggggggggggggggggggggggggggggggggggg%s',response_data_produit)
+                response_data_produit_test = post_response_produit.json()
+                _logger.info('ggggggggggggggggggggggggggggggggggggggggggggggggggg%s',response_data_produit_test)
                 datas =  {
                    'ProductId': 119732, 
                    'ProductRemoteId': None, 
                    'ProductReference': '0001bague', 
                    'IsDeleted': None
                 }
-                _logger.info('=======================jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj======== Avant : %s',response_data_produit)     
-                response_data_produit['ProductRelatedProducts'] = [datas]
+                _logger.info('=======================jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj======== Avant : %s',response_data_produit_test)     
+                response_data_produit_test['ProductRelatedProducts'] = [datas]
                 response = requests.put(url_produit, json= response_data_produit, headers=headers)
                 _logger.info("===================kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk============= Résultat final : %s",response)
 
