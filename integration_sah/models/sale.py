@@ -26,17 +26,22 @@ class SaleSAH(models.Model):
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
 
     def get_orders_with_done_delivery(self):
-        orders = self.search([('id_order_sh', '!=', False), ('state', '=', 'sale')])
-        _logger.info("Orders found: %s", orders)
+        # orders = self.search([('id_order_sh', '!=', False), ('state', '=', 'sale')])
+        # _logger.info("Orders found: %s", orders)
         
-        orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
-        _logger.info("Orders to update (done delivery): %s", orders_to_update)
-        id_commande = "233486"
+        # orders_to_update = orders.filtered(lambda order: all(picking.state == 'done' for picking in order.picking_ids))
+        # _logger.info("Orders to update (done delivery): %s", orders_to_update)
+        id_commande = "233525"
         url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"          
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
-        _logger.info('====================================%s',response.json())
-        
+        if response.status_code == 200:
+            com = response.json()
+            com['Status'] = 'Validated'
+            _logger.info('====================================%s',response.json())
+            resp = requests.put(com, json=response_data_produit, headers=headers)
+            if resp.status_code == 200:
+                _logger.info(f"Commande {id_commande} mise à jour avec succès.")
         # for order in orders_to_update:
         #     id_commande = order.id_order_sh
         #     client_id = self.env['res.partner'].search([('id_client_sah', '=', order.partner_id.id_client_sah)], limit=1)
