@@ -6,9 +6,9 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
-            <xpath expr="//form/notebook/page/group/group/field[@name='company_id']" position="after">
-             <field name="url_tracking" />             
-            </xpath>
+                <xpath expr="//form/sheet/notebook/page/group/group/field[@name='company_id']" position="after">
+                    <field name="url_tracking" />             
+                </xpath>
             </field>
         </record>
 
