@@ -12,7 +12,6 @@ class StockPicking(models.Model):
     def button_validate(self):
         rec = super(StockPicking, self).button_validate()
         if self.sale_id:
-            _logger.info("SUCCCCCCCCCCCCCCCCCCCCCES")
             job_kwargs = {
                 'description': 'Mise à jour etat de la commande en expédié dans SAH',
             }
@@ -35,4 +34,3 @@ class StockPicking(models.Model):
                         "Status": 3,
                     }
                     response1 = requests.put(url_status_order, json=datas, headers=headers)
-                    _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ %s",response1)
