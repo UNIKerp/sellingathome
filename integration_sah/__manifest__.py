@@ -18,6 +18,7 @@
         'views/gestion_vdi.xml',
         'views/methode_paiement.xml',
         'views/model_paiement.xml',
+        'views/stock_picking.xml',
         'data/methode_paiement_sah.xml',
     ],
     'images':['static/description/icon.png',],

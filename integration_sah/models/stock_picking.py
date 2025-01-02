@@ -9,6 +9,9 @@ _logger = logging.getLogger(__name__)
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
+    url_tracking = fields.Char(string="URL Tracking", help="URL de suivi")
+
+
     def button_validate(self):
         rec = super(StockPicking, self).button_validate()
         if self.sale_id:
