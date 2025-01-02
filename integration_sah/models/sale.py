@@ -38,7 +38,7 @@ class SaleSAH(models.Model):
                     "OrderId": id_commande,
                     "Status": 3,
                 }
-                response1 = requests.put(url_commande, json=url_status_order, headers=headers)
+                response1 = requests.put(url_status_order, json=datas, headers=headers)
                 _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ %s",response1)
             
 
