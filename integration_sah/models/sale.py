@@ -29,21 +29,18 @@ class SaleSAH(models.Model):
         id_commande = 233525
         url_commande = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"
         headers = self.env['authentication.sah'].establish_connection()
-        response = requests.get(url_commande, headers=headers)
-        _logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ %s",response)
-        # headers = self.env['authentication.sah'].establish_connection()
         
-        # datas = {
-        #     "OrderId": 233525,
-        #     "Status": 2,
-        #     }
+        datas = {
+            "OrderId": 233525,
+            "Status": 3,
+            }
 
-        # response1 = requests.put(url_commande, json=datas, headers=headers)
-        
-        # if response1.status_code == 200:
-        #     _logger.info("Commande mise à jour : %s", response1.json())
-        # else:
-        #     _logger.error("Erreur : %s", response1.text)
+        response1 = requests.put(url_commande, json=datas, headers=headers)
+        _logger.info("########################## %s",response1)
+        if response1.status_code == 200:
+            _logger.info("Commande mise à jour : %s", response1.json())
+        else:
+            _logger.error("Erreur : %s", response1.text)
 
 
     
