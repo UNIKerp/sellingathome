@@ -37,4 +37,4 @@ class StockPicking(models.Model):
                         "Status": 3,
                         "TrackingUrl": self.url_tracking
                     }
-                    response1 = requests.put(url_status_order, json=datas, headers=headers)
+                    requests.put(url_status_order, json=datas, headers=headers)
