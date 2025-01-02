@@ -62,14 +62,14 @@ class NomenclatureSelligHome(models.Model):
                             "AttachedProducts": [
                                 {
                                     # "GroupId": 1,
-                                    "ProductId": 120904,
+                                    "ProductId": 179741,
                                     "Quantity": 2,
                                     "DisplayOrder": 3,
                                     "Deleted": True
                                     },
                                     {
                                     # "GroupId": 1,
-                                    "ProductId": 120096,
+                                    "ProductId": 119599,
                                     "Quantity": 1,
                                     "DisplayOrder": 2,
                                     "Deleted": True
