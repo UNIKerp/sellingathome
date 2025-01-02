@@ -60,16 +60,7 @@ class NomenclatureSelligHome(models.Model):
                                         "EcoTax": 8.1
                                     }
                             ],
-                            "AttachedProducts": [
-                                 {
-                                # "GroupId": 1,
-                                "ProductId": 120990,
-                                "Quantity": 5,
-                                "DisplayOrder": 2,
-                                # "Deleted": True
-                            }
-
-                            ]
+                            "AttachedProducts": liste_composant
                            
                     }
                     _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",datas)
