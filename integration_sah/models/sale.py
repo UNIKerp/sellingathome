@@ -26,7 +26,7 @@ class SaleSAH(models.Model):
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
 
     def get_orders_with_done_delivery(self):
-        id_commande = '233525'
+        id_commande = 233525
         url_commande = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
