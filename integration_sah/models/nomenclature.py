@@ -44,7 +44,7 @@ class NomenclatureSelligHome(models.Model):
                                 # "Deleted": True,
                             }
                             liste_composant.append(attachproducts)
-
+                    _logger.info("]]]]]]]]]]]]]]]]]]]]]]]] %s",liste_composant)
                     datas = {
 
                             "Prices": [
