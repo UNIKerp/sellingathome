@@ -32,8 +32,14 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             datas = response.json()
-            _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%s",datas["Status"])
-
+            if datas["Status"] == "NotYetShipped":
+                url_status_order = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"  
+                datas = {
+                    "OrderId": id_commande,
+                    "Status": 3,
+                }
+                response1 = requests.put(url_commande, json=url_status_order, headers=headers)
+                _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ %s",response1)
             
 
 
