@@ -35,18 +35,17 @@ class NomenclatureSelligHome(models.Model):
                 if res.bom_line_ids:
                     liste_composant = []
                     for line in res.bom_line_ids:
-                        if line.product_id:
-                            if  line.product_id.product_tmpl_id and  line.product_id.product_tmpl_id.produit_sah_id:
-                                datas =  {
-                                    "GroupId": res.product_tmpl_id.produit_sah_id,
-                                    "ProductId": line.product_id.product_tmpl_id.produit_sah_id,
-                                    'ProductRemoteId': None,
-                                    'ProductCombinationId': 0,
-                                    'Quantity': line.product_qty,
-                                    'DisplayOrder': 1,
-                                    'Deleted': True
-                                }
-                                liste_composant.append(datas)
+                        if line.product_id and line.product_id.product_tmpl_id.produit_sah_id:
+                            datas = {
+                                "GroupId": res.product_tmpl_id.produit_sah_id,
+                                "ProductId": line.product_id.product_tmpl_id.produit_sah_id,
+                                "ProductRemoteId": None,  
+                                "ProductCombinationId": 0,  
+                                "Quantity": line.product_qty,
+                                "DisplayOrder": 1,
+                                "Deleted": True  
+                            }
+                            liste_composant.append(datas)
                     _logger.info('=============================== Avant : %s',response_data_produit)     
                     response_data_produit['AttachedProducts'] = liste_composant
                     _logger.info('===============================j Apres : %s',response_data_produit)
