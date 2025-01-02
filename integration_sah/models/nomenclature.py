@@ -35,14 +35,15 @@ class NomenclatureSelligHome(models.Model):
                     liste_composant = []
                     i = 1
                     for line in res.bom_line_ids:
-                        if line.product_id and line.product_id.product_tmpl_id.produit_sah_id:
+                        if line.product_id and line.product_id.produit_sah_id:
                             i = i+1
                             attachproducts = {
-                                "ProductId": line.product_id.product_tmpl_id.produit_sah_id,  
+                                "ProductId": line.product_id.produit_sah_id,  
                                 "Quantity": line.product_qty,
                                 "DisplayOrder": 5,
                                 # "Deleted": True,
                             }
+                             _logger.info("##################################### %s",attachproducts)
                             liste_composant.append(attachproducts)
                     _logger.info("]]]]]]]]]]]]]]]]]]]]]]]] %s",liste_composant)
                     datas = {
