@@ -26,22 +26,21 @@ class SaleSAH(models.Model):
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
 
     def get_orders_with_done_delivery(self):
-        id_commande = '233486'
-        url_commande = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"
-        _logger.info("url_commande url_commande",url_commande)
+        id_commande = '233525'
+        url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
         headers = self.env['authentication.sah'].establish_connection()
-        
-        payload = {
-            "OrderId": 233486,
-            "Status": 3,
-        }
-
-        response = requests.put(url_commande, json=payload, headers=headers)
-        
+        response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
-            _logger.info("Commande mise à jour : %s", response.json())
-        else:
-            _logger.error("Erreur : %s", response.text)
+            datas = response.json()
+            datas["Status"] = 3
+        
+
+            response1 = requests.put(url_commande, json=datas, headers=headers)
+            
+            if response1.status_code == 200:
+                _logger.info("Commande mise à jour : %s", response1.json())
+            else:
+                _logger.error("Erreur : %s", response1.text)
 
 
     
