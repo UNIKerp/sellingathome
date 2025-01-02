@@ -241,7 +241,7 @@ class ProduitSelligHome(models.Model):
             discount_end_date = None
       
         product_data = {
-            "ProductType": 5,
+            "ProductType": 10,
             "Reference": product_id.default_code,
             "Prices": [
                 {
