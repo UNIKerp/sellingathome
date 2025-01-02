@@ -59,7 +59,22 @@ class NomenclatureSelligHome(models.Model):
                                         "EcoTax": 8.1
                                     }
                             ],
-                            "AttachedProducts": liste_composant,
+                            "AttachedProducts": [
+                                {
+                                    # "GroupId": 1,
+                                    "ProductId": 120904,
+                                    "Quantity": 2,
+                                    "DisplayOrder": 3,
+                                    "Deleted": True
+                                    },
+                                    {
+                                    # "GroupId": 1,
+                                    "ProductId": 120096,
+                                    "Quantity": 1,
+                                    "DisplayOrder": 2,
+                                    "Deleted": True
+                                    }
+                            ],
                     }
                     response = requests.put(url_produit, json=datas, headers=headers)
                     _logger.info("================================d Résultat final : %s",response.json())
