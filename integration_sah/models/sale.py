@@ -27,20 +27,20 @@ class SaleSAH(models.Model):
 
     def get_orders_with_done_delivery(self):
         id_commande = 233821
-        url_commande = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"
+        url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
         headers = self.env['authentication.sah'].establish_connection()
-        
-        datas = {
-            "OrderId": 233821,
-            "Status": 3,
-            }
+        response = requests.get(url_commande, headers=headers)
+        if response.status_code == 200:
+            datas = response.json()
 
-        response1 = requests.put(url_commande, json=datas, headers=headers)
-        _logger.info("########################## %s",response1)
-        if response1.status_code == 200:
-            _logger.info("Commande mise à jour : %s", response1.json())
-        else:
-            _logger.error("Erreur : %s", response1.text)
+            datas["Status"] = "Cancelled"
+
+            response1 = requests.put(url_commande, json=datas, headers=headers)
+            _logger.info("########################## %s",response1)
+            if response1.status_code == 200:
+                _logger.info("Commande mise à jour : %s", response1.json())
+            else:
+                _logger.error("Erreur : %s", response1.text)
 
 
     
