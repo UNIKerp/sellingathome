@@ -40,7 +40,7 @@ class NomenclatureSelligHome(models.Model):
                             attachproducts = {
                                 "ProductId": line.product_id.product_tmpl_id.produit_sah_id,  
                                 "Quantity": line.product_qty,
-                                "DisplayOrder": i,
+                                "DisplayOrder": 5,
                                 # "Deleted": True,
                             }
                             liste_composant.append(attachproducts)
