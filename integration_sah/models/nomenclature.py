@@ -31,27 +31,38 @@ class NomenclatureSelligHome(models.Model):
             post_response_produit = requests.get(url_produit, headers=headers)
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
-                _logger.info("Resssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss%s",response_data_produit)
                 if res.bom_line_ids:
                     liste_composant = []
+                    i = 1
                     for line in res.bom_line_ids:
                         if line.product_id and line.product_id.product_tmpl_id.produit_sah_id:
-                            datas = {
-                                "GroupId": res.product_tmpl_id.produit_sah_id,
-                                "ProductId": line.product_id.product_tmpl_id.produit_sah_id,
-                                "ProductRemoteId": None,  
-                                "ProductCombinationId": 0,  
+                            i = i+1
+                            attachproducts = {
+                                "ProductId": line.product_id.product_tmpl_id.produit_sah_id,  
                                 "Quantity": line.product_qty,
-                                "DisplayOrder": 1,
-                                "Deleted": True  
+                                "DisplayOrder": i,
+                                "Deleted": True,
                             }
-                            liste_composant.append(datas)
-                    _logger.info('=============================== Avant : %s',response_data_produit)     
-                    response_data_produit['AttachedProducts'] = liste_composant
-                    _logger.info('===============================j Apres : %s',response_data_produit)
-                    response = requests.put(url_produit, json= response_data_produit, headers=headers)
-                    _logger.info('===============================ppppppppppppppppppppppppppppppppp Apres : %s',response_data_produit)
-                    _logger.info("================================d Résultat final : %s",response)
+                            liste_composant.append(attachproducts)
+
+                     datas = {
+
+                            "Prices": [
+                                    {
+                                        "Id": line.product_id.product_tmpl_id.produit_sah_id,
+                                        "BrandTaxRate": 2.1,
+                                        "BrandTaxName": line.product_id.product_tmpl_id.name,
+                                        "TwoLetterISOCode": "FR",
+                                        "PriceExclTax": line.product_id.product_tmpl_id.list_price,
+                                        "PriceInclTax": line.product_id.product_tmpl_id.list_price * (1 + line.product_id.product_tmpl_id.taxes_id.amount / 100),
+                                        "ProductCost": line.product_id.product_tmpl_id.standard_price,
+                                        "EcoTax": 8.1
+                                    }
+                            ],
+                            "AttachedProducts": liste_composant,
+                    }
+                    response = requests.put(url_produit, json=datas, headers=headers)
+                    _logger.info("================================d Résultat final : %s",response.json())
 
                 
 
