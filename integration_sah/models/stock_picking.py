@@ -35,6 +35,6 @@ class StockPicking(models.Model):
                     datas = {
                         "OrderId": id_commande,
                         "Status": 3,
-                        # "TrackingUrl": ""
+                        "TrackingUrl": self.url_tracking
                     }
                     response1 = requests.put(url_status_order, json=datas, headers=headers)
