@@ -61,6 +61,7 @@ class NomenclatureSelligHome(models.Model):
                             ],
                             "AttachedProducts": liste_composant
                     }
+                    _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",datas)
                     response = requests.put(url_produit, json=datas, headers=headers)
                     response1 = requests.get(url_produit, headers=headers)
                     _logger.info("================================d Résultat final : %s",response1.json())
