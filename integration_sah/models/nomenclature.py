@@ -43,7 +43,7 @@ class NomenclatureSelligHome(models.Model):
                                 "DisplayOrder": 5,
                                 # "Deleted": True,
                             }
-                             _logger.info("##################################### %s",attachproducts)
+                            _logger.info("##################################### %s",attachproducts)
                             liste_composant.append(attachproducts)
                     _logger.info("]]]]]]]]]]]]]]]]]]]]]]]] %s",liste_composant)
                     datas = {
