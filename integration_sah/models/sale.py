@@ -25,26 +25,7 @@ class SaleSAH(models.Model):
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
 
-    def get_orders_with_done_delivery(self):
-        id_commande = 233917
-        url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
-        headers = self.env['authentication.sah'].establish_connection()
-        response = requests.get(url_commande, headers=headers)
-        if response.status_code == 200:
-            datas = response.json()
-            if datas["Status"] == "NotYetShipped":
-                url_status_order = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"  
-                datas = {
-                    "OrderId": id_commande,
-                    "Status": 3,
-                }
-                response1 = requests.put(url_status_order, json=datas, headers=headers)
-                _logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ %s",response1)
-            
-
-
     
-
     def get_commande(self):
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'           
         headers = self.env['authentication.sah'].establish_connection()

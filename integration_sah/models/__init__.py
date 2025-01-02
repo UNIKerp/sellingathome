@@ -10,4 +10,5 @@ from . import model_paiement
 from . import methode_paiement
 from . import nomenclature
 from . import job_inherit
+from . import stock_picking
 
