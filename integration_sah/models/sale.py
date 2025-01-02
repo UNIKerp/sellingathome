@@ -32,7 +32,7 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             datas = response.json()
-            datas["Status"] = 3
+            datas["Status"] = 2
         
 
             response1 = requests.put(url_commande, json=datas, headers=headers)
