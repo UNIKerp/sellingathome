@@ -45,7 +45,7 @@ class NomenclatureSelligHome(models.Model):
                             }
                             liste_composant.append(attachproducts)
 
-                     datas = {
+                    datas = {
 
                             "Prices": [
                                     {
