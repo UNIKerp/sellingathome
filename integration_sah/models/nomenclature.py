@@ -32,20 +32,19 @@ class NomenclatureSelligHome(models.Model):
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
                 if res.bom_line_ids:
-                    liste_composant = []
-                    i = 1
-                    for line in res.bom_line_ids:
-                        if line.product_id and line.product_id.produit_sah_id:
-                            i = i+1
-                            attachproducts = {
-                                "ProductId": line.product_id.produit_sah_id,  
-                                "Quantity": line.product_qty,
-                                "DisplayOrder": 5,
-                                # "Deleted": True,
-                            }
-                            _logger.info("##################################### %s",attachproducts)
-                            liste_composant.append(attachproducts)
-                    _logger.info("]]]]]]]]]]]]]]]]]]]]]]]] %s",liste_composant)
+                    # liste_composant = []
+                    # i = 1
+                    # for line in res.bom_line_ids:
+                    #     if line.product_id and line.product_id.produit_sah_id:
+                    #         i = i+1
+                    #         attachproducts = {
+                    #             "ProductId": line.product_id.produit_sah_id,  
+                    #             "Quantity": line.product_qty,
+                    #             "DisplayOrder": 5,
+                    #         }
+                    #         _logger.info("##################################### %s",attachproducts)
+                    #         liste_composant.append(attachproducts)
+                    # _logger.info("]]]]]]]]]]]]]]]]]]]]]]]] %s",liste_composant)
                     datas = {
 
                             "Prices": [
@@ -63,11 +62,11 @@ class NomenclatureSelligHome(models.Model):
                             "AttachedProducts": [
                                  {
                                 # "GroupId": 1,
-                                "ProductId": 120913,
-                                "Quantity": 5,
-                                "DisplayOrder": 2,
+                                "ProductId": line.product_id.produit_sah_id or 0,
+                                "Quantity": line.product_qty,
+                                "DisplayOrder": 3,
                                 # "Deleted": True
-                            }
+                            } for line in res.bom_line_ids
 
                             ]
                            
