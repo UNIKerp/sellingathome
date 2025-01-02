@@ -49,13 +49,13 @@ class NomenclatureSelligHome(models.Model):
 
                             "Prices": [
                                     {
-                                        "Id": line.product_id.product_tmpl_id.produit_sah_id,
+                                        "Id": res.product_tmpl_id.produit_sah_id,
                                         "BrandTaxRate": 2.1,
-                                        "BrandTaxName": line.product_id.product_tmpl_id.name,
+                                        "BrandTaxName": res.product_tmpl_id.name,
                                         "TwoLetterISOCode": "FR",
-                                        "PriceExclTax": line.product_id.product_tmpl_id.list_price,
-                                        "PriceInclTax": line.product_id.product_tmpl_id.list_price * (1 + line.product_id.product_tmpl_id.taxes_id.amount / 100),
-                                        "ProductCost": line.product_id.product_tmpl_id.standard_price,
+                                        "PriceExclTax": res.product_tmpl_id.list_price,
+                                        "PriceInclTax": res.product_tmpl_id.list_price * (1 + res.product_tmpl_id.taxes_id.amount / 100),
+                                        "ProductCost": res.product_tmpl_id.standard_price,
                                         "EcoTax": 8.1
                                     }
                             ],
