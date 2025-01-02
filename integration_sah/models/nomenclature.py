@@ -64,7 +64,7 @@ class NomenclatureSelligHome(models.Model):
                                 # "GroupId": 1,
                                 "ProductId": line.product_id.produit_sah_id or 0,
                                 "Quantity": line.product_qty,
-                                "DisplayOrder": 3,
+                                "DisplayOrder": 6,
                                 # "Deleted": True
                             } for line in res.bom_line_ids
 
