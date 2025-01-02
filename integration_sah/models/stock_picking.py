@@ -11,7 +11,8 @@ class StockPicking(models.Model):
 
     def write(self,vals):
         rec = super(StockPicking, self).write(vals)
-        if 'state' in vals and vals['state'] == 'done' and self.sale_id:
+        if self.sale_id:
+            _logger.info("SUCCCCCCCCCCCCCCCCCCCCCES")
             job_kwargs = {
                 'description': 'Mise à jour etat de la commande en expédié dans SAH',
             }
