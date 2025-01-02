@@ -119,7 +119,7 @@ class ProduitSelligHome(models.Model):
                     
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
-                "ProductType": 5,
+                "ProductType": product.type_produit_sah,
                 "Reference": product.default_code,
                 "Prices": [
                     {
@@ -242,7 +242,7 @@ class ProduitSelligHome(models.Model):
             discount_end_date = None
       
         product_data = {
-            "ProductType": 5,
+            "ProductType": product_id.type_produit_sah,
             "Reference": product_id.default_code,
             "Prices": [
                 {
