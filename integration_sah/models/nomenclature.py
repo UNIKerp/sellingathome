@@ -41,7 +41,7 @@ class NomenclatureSelligHome(models.Model):
                                 "ProductId": line.product_id.product_tmpl_id.produit_sah_id,  
                                 "Quantity": line.product_qty,
                                 "DisplayOrder": i,
-                                "Deleted": True,
+                                # "Deleted": True,
                             }
                             liste_composant.append(attachproducts)
 
@@ -59,22 +59,7 @@ class NomenclatureSelligHome(models.Model):
                                         "EcoTax": 8.1
                                     }
                             ],
-                            "AttachedProducts": [
-                                {
-                                    # "GroupId": 1,
-                                    "ProductId": 179741,
-                                    "Quantity": 2,
-                                    "DisplayOrder": 3,
-                                    "Deleted": True
-                                    },
-                                    {
-                                    # "GroupId": 1,
-                                    "ProductId": 119599,
-                                    "Quantity": 1,
-                                    "DisplayOrder": 2,
-                                    "Deleted": True
-                                    }
-                            ],
+                            "AttachedProducts": liste_composant
                     }
                     response = requests.put(url_produit, json=datas, headers=headers)
                     _logger.info("================================d Résultat final : %s",response.json())
