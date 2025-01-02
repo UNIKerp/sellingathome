@@ -9,8 +9,8 @@ _logger = logging.getLogger(__name__)
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    def write(self,vals):
-        rec = super(StockPicking, self).write(vals)
+    def button_validate(self):
+        rec = super(StockPicking, self).button_validate()
         if self.sale_id:
             _logger.info("SUCCCCCCCCCCCCCCCCCCCCCES")
             job_kwargs = {
