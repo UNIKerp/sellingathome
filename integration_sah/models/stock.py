@@ -1,31 +1,15 @@
 # -*- coding: utf-8 -*-
-import base64
-import hashlib
-import hmac
-import io
 import logging
-import lxml
-import random
-import re
 import requests
-import threading
-import werkzeug.urls
-from ast import literal_eval
-from dateutil.relativedelta import relativedelta
-from markupsafe import Markup
-from werkzeug.urls import url_join
-from PIL import Image, UnidentifiedImageError
 
 from odoo import api, fields, models, tools, _
-from odoo.addons.base_import.models.base_import import ImportValidationError
-from odoo.exceptions import UserError, ValidationError
-from odoo.osv import expression
-from odoo.tools.float_utils import float_round
 
 _logger = logging.getLogger(__name__)
 
 class StockPickingSAH(models.Model):
     _inherit = "stock.picking" 
+
+    url_tracking = fields.Char(string="URL Tracking", help="URL de suivi")
 
     @api.model
     def create(self, vals):
@@ -35,7 +19,7 @@ class StockPickingSAH(models.Model):
             if sale_order and sale_order.vdi:
                     group_vdi = self.env['gestion.vdi'].search([('contact_vdi_ids', 'in', [sale_order.vdi.id])], limit=1)
                     if group_vdi:
-                        res.partner_id = group_vdi.adresse_livraison
+                        res.partner_id = group_vdi.adresse_livraison.id
         return res
 
 
@@ -46,8 +30,29 @@ class StockPickingSAH(models.Model):
                 'description': 'Mise à jour du stock produit',
             }
             self.with_delay(**job_kwargs2).maj_des_stocks(self.move_ids_without_package)
+            if self.sale_id:
+                job_kwargs = {
+                    'description': 'Mise à jour etat de la commande en expédié dans SAH',
+                }
+                self.with_delay(**job_kwargs).update_state_order(self.sale_id)
         return res
-    
+    def update_state_order(self,sale_id):
+        if sale_id.id_order_sh:
+            id_commande = sale_id.id_order_sh
+            url_commande = f"https://demoapi.sellingathome.com/v1/Orders/{id_commande}"
+            headers = self.env['authentication.sah'].establish_connection()
+            response = requests.get(url_commande, headers=headers)
+            if response.status_code == 200:
+                datas = response.json()
+                if datas["Status"] == "NotYetShipped":
+                    url_status_order = f"https://demoapi.sellingathome.com/v1/OrderStatuses/{id_commande}"  
+                    datas = {
+                        "OrderId": id_commande,
+                        "Status": 3,
+                        "TrackingUrl": self.url_tracking
+                    }
+                    requests.put(url_status_order, json=datas, headers=headers)
+
     def maj_des_stocks(self,move_ids_without_package):
         if  move_ids_without_package:
             for line in move_ids_without_package:
