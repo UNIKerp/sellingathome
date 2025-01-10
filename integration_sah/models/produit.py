@@ -312,13 +312,11 @@ class ProduitSelligHome(models.Model):
         if not product_photos:
             product_data.pop("ProductPhotos", None)
 
-        _logger.info('====================================== %s', product_photos)
         post_response = requests.post(url, json=product_data, headers=headers)
         if post_response.status_code == 200:
             response_data = post_response.json()
-            _logger.info("========== Création avec sucés du produit ; %s ==========",response_data)
             product_id.produit_sah_id = int(response_data.get('Id'))
-            _logger.info('========== ID SAH DU PRODUIT  %s ==========',product_id.produit_sah_id)
+            _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
         else:
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
 
@@ -407,8 +405,6 @@ class ProduitSelligHome(models.Model):
                     'Deleted': True
                 })
 
-       
-        _logger.info('===================================photos_produit %s',photos_produit)
         return photos_produit
 
 
@@ -429,17 +425,7 @@ class ProduitSelligHome(models.Model):
                 else:
                     playload['ProductPhotos'].append(photos_produit[i])
 
-            # # Remplacer les liens excédentaires par du vide
-            # for i in range(len(photos_produit), len(playload['ProductPhotos'])):
-            #     playload['ProductPhotos'][i]['Link'] = '' 
-            #     logger.info("============================================Remplacer les liens excédentaires par du vide %s", playload['ProductPhotos'][i])
-
-            _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",playload['ProductPhotos'])
             return playload['ProductPhotos']
-            
-
-
-
         
 
     def _export_stock_produit(self):
@@ -461,7 +447,7 @@ class ProduitSelligHome(models.Model):
             product_id = self.env['product.template'].search([('id','=',active_id)])
             if product_id.produit_sah_id:
                 job_kwargs = {
-                        'description': 'Export  produit',
+                        'description': ' Mise à jour du produit de odoo vers SAH',
                 }
                 self.with_delay(**job_kwargs).update_produit_dans_sah(product_id, headers)
             else:
