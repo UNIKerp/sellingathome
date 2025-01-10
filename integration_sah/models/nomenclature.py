@@ -15,13 +15,19 @@ class NomenclatureSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(NomenclatureSelligHome, self).create(vals)
         if rec:
-            self.creation_nomenclature_produits(rec,headers)
+            job_kwargs = {
+            'description': 'Ajout des Nommenclatures du produit de Odoo vers SAH',
+            }
+            self.with_delay(**job_kwargs).creation_nomenclature_produits(rec,headers)
         return rec
     
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(NomenclatureSelligHome, self).write(vals)
-        self.creation_nomenclature_produits(self,headers)
+        job_kwargs = {
+            'description': 'Mise a jour des Nommenclatures du produit de Odoo vers SAH',
+        }
+        self.with_delay(**job_kwargs).creation_nomenclature_produits(self,headers)
         return rec
     
     def creation_nomenclature_produits(self,res,headers):
@@ -32,19 +38,6 @@ class NomenclatureSelligHome(models.Model):
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
                 if res.bom_line_ids:
-                    # liste_composant = []
-                    # i = 1
-                    # for line in res.bom_line_ids:
-                    #     if line.product_id and line.product_id.produit_sah_id:
-                    #         i = i+1
-                    #         attachproducts = {
-                    #             "ProductId": line.product_id.produit_sah_id,  
-                    #             "Quantity": line.product_qty,
-                    #             "DisplayOrder": 5,
-                    #         }
-                    #         _logger.info("##################################### %s",attachproducts)
-                    #         liste_composant.append(attachproducts)
-                    # _logger.info("]]]]]]]]]]]]]]]]]]]]]]]] %s",liste_composant)
                     datas = {
 
                             "Prices": [
@@ -61,20 +54,16 @@ class NomenclatureSelligHome(models.Model):
                             ],
                             "AttachedProducts": [
                                  {
-                                # "GroupId": 1,
                                 "ProductId": line.product_id.produit_sah_id or 0,
                                 "Quantity": int(line.product_qty),
                                 "DisplayOrder": 6,
-                                # "Deleted": True
                             } for line in res.bom_line_ids
 
                             ]
                            
                     }
-                    _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",datas)
                     response = requests.put(url_produit, json=datas, headers=headers)
                     response1 = requests.get(url_produit, headers=headers)
-                    _logger.info("================================d Résultat final : %s",response1.json())
 
                 
 
