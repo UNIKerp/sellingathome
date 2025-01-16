@@ -53,15 +53,18 @@ class NomenclatureSelligHome(models.Model):
                                     }
                             ],
                             "AttachedProducts": [
-                                 {
-                                "ProductId": line.product_id.produit_sah_id or 0,
-                                "Quantity": int(line.product_qty),
-                                "DisplayOrder": 6,
-                            } for line in res.bom_line_ids
+                                {
+                                    "ProductId": line.product_id.produit_sah_id or 0,
+                                    "Quantity": int(line.product_qty),
+                                    "DisplayOrder": 6,
+                                } for line in res.bom_line_ids
 
                             ]
                            
                     }
+                    _logger.info('****************************************  %s',datas)
+                    response_data_produit.update(datas)
+                    _logger.info('=========================================  %s',response_data_produit)
                     response = requests.put(url_produit, json=datas, headers=headers)
                     response1 = requests.get(url_produit, headers=headers)
 

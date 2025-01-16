@@ -54,7 +54,7 @@ class Tarifs(models.Model):
 
             values = {
                 "ProductId": product_id.produit_sah_id,
-                "TwoLetterISOCode": "FR",
+                "TwoLetterISOCode": res.country_id.code if res.country_id else "FR",
                 "PriceExclTax": product_id.list_price,
                 "PriceInclTax": price_incl_tax,
                 "ProductCost": product_id.standard_price,
@@ -89,7 +89,7 @@ class Tarifs(models.Model):
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
             values = {
                 "ProductId": product_id.produit_sah_id,
-                "TwoLetterISOCode": "FR",
+                "TwoLetterISOCode":  self.country_id.code if self.country_id else "FR",
                 "PriceExclTax": product_id.list_price,
                 "PriceInclTax": price_incl_tax,
                 "ProductCost": product_id.standard_price,
