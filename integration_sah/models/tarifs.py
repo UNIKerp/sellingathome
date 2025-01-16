@@ -16,7 +16,7 @@ class ProduitPriceList(models.Model):
         res = super(ProduitPriceList, self).create(vals)
         headers = self.env['authentication.sah'].establish_connection()
         url = f'https://demoapi.sellingathome.com/v1/Prices'
-        for elt in res.item_ids 
+        for elt in res.item_ids:
             values = {
                 "ProductId": elt.product_tmpl_id.produit_sah_id,
                 "TwoLetterISOCode": "FR",
