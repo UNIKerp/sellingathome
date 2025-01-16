@@ -19,19 +19,24 @@ class ProduitPriceList(models.Model):
         for elt in res.item_ids:
             values = {
                 "ProductId": elt.product_tmpl_id.produit_sah_id,
+                "BrandTaxRate": 2.1,
+                "BrandTaxName": elt.product_tmpl_id.name,
                 "TwoLetterISOCode": "FR",
                 "PriceExclTax": elt.product_tmpl_id.list_price,
-                "PriceInclTax":  elt.product_tmpl_id.list_price * (1 + (elt.product_tmpl_id.taxes_id.amount / 100)) if elt.product_tmpl_id.taxes_id else elt.product_tmpl_id.list_price,
+                "PriceInclTax": elt.product_tmpl_id.list_price * (1 + (elt.product_tmpl_id.taxes_id.amount / 100)) if elt.product_tmpl_id.taxes_id else elt.product_tmpl_id.list_price,
                 "ProductCost": elt.product_tmpl_id.standard_price,
+                "EcoTax": 6.1,
+                # "IsDefault": true,
                 "RolePrices": [
                     {
-                        "CustomerRoleId": 1,
-                        "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
-                        "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
-                        "StartDate": elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
-                        "EndDate":  elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
+                    "CustomerRoleId": 1,
+                    "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
+                    "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
+                    # "NewPriceInclTax": 1.1,
+                    "StartDate": elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
+                    "EndDate":  elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
+                    # "CombinationId": 1
                     }
-                
                 ]
             } 
 
