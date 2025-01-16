@@ -17,6 +17,7 @@ class Tarifs(models.Model):
     _inherit = "product.pricelist.item"
 
     price_sah_id = fields.Char(string="ID Prix SAH")
+    country_id = fields.Many2one('res.country', string="Pays")
 
     # redéfintion de la fonction _default_pricelist_id
     def _default_pricelist_id(self):
