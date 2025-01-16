@@ -41,23 +41,23 @@ class ProduitPriceList(models.Model):
             # }
             values = {
                 "ProductId": 120904,
-                "BrandTaxRate": 2.1,
+                # "BrandTaxRate": 2.1,
                 "BrandTaxName": "sample string 3",
                 "TwoLetterISOCode": "FR",
-                "PriceExclTax": 1.1,
-                "PriceInclTax": 1.1,
-                "ProductCost": 5.1,
-                "EcoTax": 6.1,
+                "PriceExclTax": 5,
+                "PriceInclTax": 6,
+                "ProductCost": 4,
+                # "EcoTax": 6.1,
                 "IsDefault": True,
                 "RolePrices": [
                     {
                     "CustomerRoleId": 1,
                     "Quantity": 2,
-                    "NewPriceExclTax": 1.1,
-                    "NewPriceInclTax": 1.1,
+                    "NewPriceExclTax": 3,
+                    "NewPriceInclTax": 4,
                     "StartDate": "2025-01-16T17:51:42.6502726+01:00",
                     "EndDate": "2025-01-16T17:51:42.6502726+01:00",
-                    "CombinationId": 1
+                    # "CombinationId": 1
                     }
                 ]
             }
