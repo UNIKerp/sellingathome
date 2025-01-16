@@ -17,27 +17,49 @@ class ProduitPriceList(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         url = f'https://demoapi.sellingathome.com/v1/Prices'
         for elt in res.item_ids:
+            # values = {
+            #     "ProductId": elt.product_tmpl_id.produit_sah_id,
+            #     "BrandTaxRate": 2.1,
+            #     "BrandTaxName": elt.product_tmpl_id.name,
+            #     "TwoLetterISOCode": "FR",
+            #     "PriceExclTax": elt.product_tmpl_id.list_price,
+            #     "PriceInclTax": elt.product_tmpl_id.list_price * (1 + (elt.product_tmpl_id.taxes_id.amount / 100)) if elt.product_tmpl_id.taxes_id else elt.product_tmpl_id.list_price,
+            #     "ProductCost": elt.product_tmpl_id.standard_price,
+            #     "EcoTax": 6.1,
+            #     "IsDefault": true,
+            #     "RolePrices": [
+            #         {
+            #         "CustomerRoleId": 1,
+            #         "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
+            #         "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
+            #         # "NewPriceInclTax": 1.1,
+            #         "StartDate": elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
+            #         "EndDate":  elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
+            #         # "CombinationId": 1
+            #         }
+            #     ]
+            # }
             values = {
-                "ProductId": elt.product_tmpl_id.produit_sah_id,
-                "BrandTaxRate": 2.1,
-                "BrandTaxName": elt.product_tmpl_id.name,
-                "TwoLetterISOCode": "FR",
-                "PriceExclTax": elt.product_tmpl_id.list_price,
-                "PriceInclTax": elt.product_tmpl_id.list_price * (1 + (elt.product_tmpl_id.taxes_id.amount / 100)) if elt.product_tmpl_id.taxes_id else elt.product_tmpl_id.list_price,
-                "ProductCost": elt.product_tmpl_id.standard_price,
-                "EcoTax": 6.1,
-                # "IsDefault": true,
-                "RolePrices": [
-                    {
-                    "CustomerRoleId": 1,
-                    "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
-                    "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
-                    # "NewPriceInclTax": 1.1,
-                    "StartDate": elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
-                    "EndDate":  elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
-                    # "CombinationId": 1
-                    }
-                ]
+            "ProductId": 120904,
+            "BrandTaxRate": 2.1,
+            "BrandTaxName": "sample string 3",
+            "TwoLetterISOCode": "sample string 4",
+            "PriceExclTax": 1.1,
+            "PriceInclTax": 1.1,
+            "ProductCost": 5.1,
+            "EcoTax": 6.1,
+            "IsDefault": True,
+            "RolePrices": [
+                {
+                "CustomerRoleId": 1,
+                "Quantity": 2,
+                "NewPriceExclTax": 1.1,
+                "NewPriceInclTax": 1.1,
+                "StartDate": "2025-01-16T17:51:42.6502726+01:00",
+                "EndDate": "2025-01-16T17:51:42.6502726+01:00",
+                "CombinationId": 1
+                }
+            ]
             }
             _logger.info("*************************************** %s",values)
             response = requests.post(url, json=values, headers=headers)
