@@ -43,7 +43,7 @@ class ProduitPriceList(models.Model):
                 "ProductId": 120904,
                 "BrandTaxRate": 2.1,
                 "BrandTaxName": "sample string 3",
-                "TwoLetterISOCode": "sample string 4",
+                "TwoLetterISOCode": "FR",
                 "PriceExclTax": 1.1,
                 "PriceInclTax": 1.1,
                 "ProductCost": 5.1,
