@@ -10,7 +10,7 @@
             </field>
         </field>
     </record>
-    <record id="sah_integration_price_list_view_form" model="ir.ui.view">
+    <!-- <record id="sah_integration_price_list_view_form" model="ir.ui.view">
         <field name="name">sah.integration.price.list.view.form</field>
         <field name="model">product.pricelist.item</field>
         <field name="inherit_id" ref="product.product_pricelist_view"/>
@@ -19,6 +19,6 @@
                 <field name="country_id"/>
             </field>
         </field>
-    </record>
+    </record> -->
 
 </odoo>
