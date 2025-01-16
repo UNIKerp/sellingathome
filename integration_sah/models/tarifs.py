@@ -38,8 +38,8 @@ class ProduitPriceList(models.Model):
                     # "CombinationId": 1
                     }
                 ]
-            } 
-
+            }
+            _logger.info("*************************************** %s",values)
             response = requests.post(url, json=values, headers=headers)
             _logger.info("===================================== %s",response)
 
