@@ -95,46 +95,45 @@ class Tarifs(models.Model):
         required=True,
         default=_default_pricelist_id)
 
-    # @api.model
-    # def create(self, vals):
-    #     res = super(Tarifs, self).create(vals)
-    #     headers = self.env['authentication.sah'].establish_connection()
+    @api.model
+    def create(self, vals):
+        res = super(Tarifs, self).create(vals)
+        headers = self.env['authentication.sah'].establish_connection()
+        if res.product_tmpl_id and res.pricelist_id:
+            price_list_id = str(res.pricelist_id.price_list_sah_id)
+            url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
+            product_id = res.product_tmpl_id
+            start_date = res.date_start.isoformat(timespec='microseconds') + "+02:00" if res.date_start else False
+            end_date = res.date_end.isoformat(timespec='microseconds') + "+02:00" if res.date_end else False
 
-    #     if res.product_tmpl_id and res.pricelist_id:
-    #         price_list_id = str(res.pricelist_id.price_list_sah_id)
-    #         url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
-    #         product_id = res.product_tmpl_id
-    #         start_date = res.date_start.isoformat(timespec='microseconds') + "+02:00" if res.date_start else False
-    #         end_date = res.date_end.isoformat(timespec='microseconds') + "+02:00" if res.date_end else False
+            # Calcul du prix TTC en ajoutant la taxe
+            price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
 
-    #         # Calcul du prix TTC en ajoutant la taxe
-    #         price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
-
-    #         values = {
-    #             "ProductId": product_id.produit_sah_id,
-    #             "TwoLetterISOCode": res.country_id.code if res.country_id else "FR",
-    #             "PriceExclTax": product_id.list_price,
-    #             "PriceInclTax": price_incl_tax,
-    #             "ProductCost": product_id.standard_price,
-    #             "RolePrices": [
-    #                 {
-    #                     "CustomerRoleId": 1,
-    #                     "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
-    #                     "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
-    #                     "StartDate": start_date if start_date else None,
-    #                     "EndDate": end_date if end_date else None,
-    #                 }
-    #                 for elt in res.pricelist_id.item_ids
+            values = {
+                "ProductId": product_id.produit_sah_id,
+                "TwoLetterISOCode": res.country_id.code if res.country_id else "FR",
+                "PriceExclTax": product_id.list_price,
+                "PriceInclTax": price_incl_tax,
+                "ProductCost": product_id.standard_price,
+                "RolePrices": [
+                    {
+                        "CustomerRoleId": 1,
+                        "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
+                        "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
+                        "StartDate": start_date if start_date else None,
+                        "EndDate": end_date if end_date else None,
+                    }
+                    for elt in res.pricelist_id.item_ids
                     
-    #             ]
-    #         }
-    #         response = requests.put(url, json=values, headers=headers)
-    #         if response.status_code == 200:
-    #             _logger.info('=============================== %s', response.json())
-    #         else:
-    #             _logger.info('=============================== Error Response: %s', response.text)
+                ]
+            }
+            response = requests.put(url, json=values, headers=headers)
+            if response.status_code == 200:
+                _logger.info('=============================== %s', response.json())
+            else:
+                _logger.info('=============================== Error Response: %s', response.text)
 
-    #     return res
+        return res
 
 
     def write(self, vals):
@@ -143,7 +142,6 @@ class Tarifs(models.Model):
             headers = self.env['authentication.sah'].establish_connection()
             price_list_id = str(self.pricelist_id.price_list_sah_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
-            _logger.info('==================================== price_list_id %s',price_list_id)
             product_id = self.product_tmpl_id
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
             values = {
@@ -162,9 +160,8 @@ class Tarifs(models.Model):
                     }
                 ]
             }
-            _logger.info('==================================== values %s',values)
-            _logger.info('===================================================%s',self.pricelist_id)
             response = requests.put(url, headers=headers, json=values)
+            _logger.info('==================================== values %s',response)
             if response.status_code == 200:
                 _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
             else:
