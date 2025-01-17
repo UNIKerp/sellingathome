@@ -333,6 +333,7 @@ class ProduitSelligHome(models.Model):
                             'date_end': parser.isoparse(role_price['EndDate']),
                         })],
                     })
+                    _logger.info('========== pricelistpricelistpricelist %s ==========',pricelist)
 
             _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
         else:
