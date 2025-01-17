@@ -57,7 +57,7 @@ class NomenclatureSelligHome(models.Model):
                                 {
                                     "ProductId": line.product_id.produit_sah_id or 0,
                                     "Quantity": int(line.product_qty),
-                                    "DisplayOrder": 6,
+                                    # "DisplayOrder": 1,
                                 } for line in res.bom_line_ids
 
                             ]
