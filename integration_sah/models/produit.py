@@ -319,8 +319,10 @@ class ProduitSelligHome(models.Model):
 
             prices = response_data.get('Prices')
             for price in prices:
+                _logger.info('========== 11111111111111111111111111111111111111 ===========================')
                 pays = self.env['res.country'].search([('code', '=', price['TwoLetterISOCode'])], limit=1)
                 for role_price in price['RolePrices']:
+                    _logger.info('================= 22222222222222222222222222 222========================')
                     pricelist = self.env['product.pricelist'].create({
                         'name': price['BrandTaxName'],
                         'price_list_sah_id': price['Id'],
