@@ -162,7 +162,7 @@ class ProduitSelligHome(models.Model):
                     "Quantity": int(line.product_qty),
                     "DisplayOrder": 2,
                     }
-                    for elt in nomenclatures for line in elt.bom_line_ids
+                    for elt in nommenclatures for line in elt.bom_line_ids
                 ],
                 "Categories": [
                     {
