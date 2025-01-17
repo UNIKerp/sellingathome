@@ -52,6 +52,7 @@ class Tarifs(models.Model):
 
     def write(self, vals):
         res = super(Tarifs, self).write(vals)
+        headers = self.env['authentication.sah'].establish_connection()
         job_kwargs = {
                 'description': 'Mise à jour liste de prix',
         }
