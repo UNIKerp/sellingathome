@@ -162,7 +162,7 @@ class Tarifs(models.Model):
                     }
                 ]
             }
-            _logger.info('==================================== values %s',price_livaluesst_id)
+            _logger.info('==================================== values %s',values)
             _logger.info('===================================================%s',self.pricelist_id)
             response = requests.put(url, headers=headers, json=values)
             if response.status_code == 200:
