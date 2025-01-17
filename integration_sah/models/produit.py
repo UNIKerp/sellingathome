@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 import json
 from PIL import Image
 from io import BytesIO
-
+from dateutil import parser
 
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
@@ -316,6 +316,20 @@ class ProduitSelligHome(models.Model):
         if post_response.status_code == 200:
             response_data = post_response.json()
             product_id.produit_sah_id = int(response_data.get('Id'))
+            pays = self.env['res.country'].search([('code','=',response_data['Prices']['TwoLetterISOCode'])])
+            pricelist = self.env['product.pricelist'].create({
+                'name': response_data['Prices']['BrandTaxName'],
+                'price_list_sah_id': response_data['Prices']['Id'],
+                'country_id': pays.id if pays else False,
+                'item_ids': [(0, 0, {
+                    'product_tmpl_id': product_id.id,
+                    'min_quantity': response_data['Prices']['RolePrices']['Quantity'],
+                    'price': response_data['Prices']['RolePrices']['NewPriceExclTax'],
+                    'date_start': parser.isoparse(response_data['Prices']['RolePrices']['StartDate']),
+                    'date_end': parser.isoparse(response_data['Prices']['RolePrices']['EndDate']),
+                })],
+            })
+
             _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
         else:
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)

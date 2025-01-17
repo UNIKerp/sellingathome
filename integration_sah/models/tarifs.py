@@ -5,6 +5,7 @@ import requests
 import logging
 _logger = logging.getLogger(__name__)
 from datetime import datetime
+from dateutil import parser
 
 class ProduitPriceList(models.Model):
     _inherit = "product.pricelist"
