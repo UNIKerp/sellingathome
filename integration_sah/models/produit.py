@@ -324,8 +324,8 @@ class ProduitSelligHome(models.Model):
                     'country_id': pays.id if pays else False,
                     'item_ids': [(0, 0, {
                         'product_tmpl_id': product_id.id,
-                        'min_quantity':price['RolePrices']['Quantity'],
-                        'price': price['RolePrices']['NewPriceExclTax'],
+                        'min_quantity':float(price['RolePrices']['Quantity']),
+                        'price': float(price['RolePrices']['NewPriceExclTax']),
                         'date_start': parser.isoparse(price['RolePrices']['StartDate']),
                         'date_end': parser.isoparse(price['RolePrices']['EndDate']),
                     })],
