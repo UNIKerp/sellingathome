@@ -118,13 +118,11 @@ class Tarifs(models.Model):
                 "RolePrices": [
                     {
                         "CustomerRoleId": 1,
-                        "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
-                        "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
-                        "StartDate": start_date if start_date else None,
-                        "EndDate": end_date if end_date else None,
+                        "Quantity": int(self.min_quantity) if self.min_quantity else 1,
+                        "NewPriceExclTax": self.fixed_price if self.fixed_price else 0.0,
+                        "StartDate": start_date,
+                        "EndDate": end_date,
                     }
-                    for elt in res.pricelist_id.item_ids
-                    
                 ]
             }
             response = requests.put(url, json=values, headers=headers)
