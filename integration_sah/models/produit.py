@@ -115,7 +115,8 @@ class ProduitSelligHome(models.Model):
                             id_categ = categ['Id']
                 else:
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
-                    
+
+            roles = self.env['product.pricelist.item'].search([('product_tmpl_id','=',product.id)])
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
                 "ProductType": product.type_produit_sah,
@@ -133,12 +134,12 @@ class ProduitSelligHome(models.Model):
                         "RolePrices": [
                             {
                             "CustomerRoleId": 1,
-                            "Quantity": 2,
-                            "NewPriceExclTax": 1.1,
-                            "NewPriceInclTax": 1.1,
-                            "StartDate": "2025-01-17T13:14:24.4398065+01:00",
-                            "EndDate": "2025-01-17T13:14:24.4398065+01:00",
-                            }
+                            "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
+                            "NewPriceExclTax":elt.fixed_price if elt.fixed_price else 0.0
+                            # "NewPriceInclTax": 1.1,
+                            "StartDate":elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
+                            "EndDate": elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
+                            } for elt in roles if roles else []
                         ]
                     }
                 ],
