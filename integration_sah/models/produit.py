@@ -198,7 +198,6 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
-            _logger.info(f"========== update_data {update_data} mis à jour avec succès sur l'API SAH ==========")
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             if put_response_produit.status_code == 200:
                 _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
