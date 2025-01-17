@@ -148,7 +148,7 @@ class Tarifs(models.Model):
             values = {
                 "ProductId": product_id.produit_sah_id,
                 "TwoLetterISOCode":  self.pricelist_id.country_id.code if  self.pricelist_id.country_id else "FR",
-                # "PriceExclTax": product_id.list_price,
+                "PriceExclTax": product_id.list_price,
                 # "PriceInclTax": price_incl_tax,
                 # "ProductCost": product_id.standard_price,
                 "RolePrices": [
