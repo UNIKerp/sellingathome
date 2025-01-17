@@ -46,8 +46,8 @@ class Tarifs(models.Model):
         job_kwargs = {
                 'description': 'Creation liste de prix',
         }
-        product_id = self.env['product.template']
-        self.with_delay(**job_kwargs).product_id.update_produit_dans_sah(res.product_tmpl_id, headers)
+        self.env['product.template'].with_delay(**job_kwargs).update_produit_dans_sah(res.product_tmpl_id, headers)
+        #self.with_delay(**job_kwargs).product_id.update_produit_dans_sah(res.product_tmpl_id, headers)
         return res
 
 
@@ -57,6 +57,6 @@ class Tarifs(models.Model):
         job_kwargs = {
                 'description': 'Mise à jour liste de prix',
         }
-        product_id = self.env['product.template']
-        self.with_delay(**job_kwargs).product_id.update_produit_dans_sah(self.product_tmpl_id, headers)
+        self.env['product.template'].with_delay(**job_kwargs).update_produit_dans_sah(res.product_tmpl_id, headers)
+        # self.with_delay(**job_kwargs).product_id.update_produit_dans_sah(self.product_tmpl_id, headers)
         return res
