@@ -316,20 +316,23 @@ class ProduitSelligHome(models.Model):
         if post_response.status_code == 200:
             response_data = post_response.json()
             product_id.produit_sah_id = int(response_data.get('Id'))
-            for price in  response_data['Prices']:
-                pays = self.env['res.country'].search([('code','=',price['TwoLetterISOCode'])])
-                pricelist = self.env['product.pricelist'].create({
-                    'name': price['BrandTaxName'],
-                    'price_list_sah_id':price['Id'],
-                    'country_id': pays.id if pays else False,
-                    'item_ids': [(0, 0, {
-                        'product_tmpl_id': product_id.id,
-                        'min_quantity':float(price['RolePrices']['Quantity']),
-                        'price': float(price['RolePrices']['NewPriceExclTax']),
-                        'date_start': parser.isoparse(price['RolePrices']['StartDate']),
-                        'date_end': parser.isoparse(price['RolePrices']['EndDate']),
-                    })],
-                })
+
+            prices = response_data.get('Prices')
+            for price in prices:
+                pays = self.env['res.country'].search([('code', '=', price['TwoLetterISOCode'])], limit=1)
+                for role_price in price['RolePrices']:
+                    pricelist = self.env['product.pricelist'].create({
+                        'name': price['BrandTaxName'],
+                        'price_list_sah_id': price['Id'],
+                        'country_id': pays.id if pays else False,
+                        'item_ids': [(0, 0, {
+                            'product_tmpl_id': product_id.id,
+                            'min_quantity': float(role_price['Quantity']),
+                            'price': float(role_price['NewPriceExclTax']),
+                            'date_start': parser.isoparse(role_price['StartDate']),
+                            'date_end': parser.isoparse(role_price['EndDate']),
+                        })],
+                    })
 
             _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
         else:
