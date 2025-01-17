@@ -63,22 +63,8 @@ class NomenclatureSelligHome(models.Model):
                             ]
                            
                     }
-                    result = copy.deepcopy(datas)
-                    if "AttachedProducts" in response_data_produit:
-                        if "AttachedProducts" in result:
-                            existing_products = {item['ProductId'] for item in result['AttachedProducts']}
-                            for product in response_data_produit['AttachedProducts']:
-                                if product['ProductId'] not in existing_products:
-                                    result['AttachedProducts'].append(product)
-                        else:
-                            result['AttachedProducts'] = copy.deepcopy(response_data_produit['AttachedProducts'])
-
-                    # _logger.info('=========================================  %s',response_data_produit)
-                    _logger.info('****************************************  %s',result)
-                   
-                    response = requests.put(url_produit, json=result, headers=headers)
-                    response1 = requests.get(url_produit, headers=headers)
-                    _logger.info('=========================================  %s',response1.json())
+                    response = requests.put(url_produit, json=datas, headers=headers)
+                 
 
                 
 

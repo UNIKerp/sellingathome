@@ -117,7 +117,12 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
             roles = self.env['product.pricelist.item'].search([('product_tmpl_id','=',product.id)])
+            composants = []
             nommenclatures = self.env['mrp.bom'].search([('product_tmpl_id','=',product.id)])
+            if nommenclatures:
+                for elt in nommenclatures:
+                    composants.append(elt.bom_line_ids)
+
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
                 "ProductType": product.type_produit_sah,
@@ -162,7 +167,7 @@ class ProduitSelligHome(models.Model):
                     "Quantity": int(line.product_qty),
                     "DisplayOrder": 2,
                     }
-                    for elt in nommenclatures for line in elt.bom_line_ids
+                    for line in composants
                 ],
                 "Categories": [
                     {
@@ -191,6 +196,7 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
+            _logger.info(f"========== update_data {update_data} mis à jour avec succès sur l'API SAH ==========")
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             if put_response_produit.status_code == 200:
                 _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
