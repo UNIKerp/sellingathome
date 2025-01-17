@@ -321,21 +321,16 @@ class ProduitSelligHome(models.Model):
             for price in prices:
                 _logger.info('========== 11111111111111111111111111111111111111 ===========================')
                 pays = self.env['res.country'].search([('code', '=', price['TwoLetterISOCode'])], limit=1)
-                for role_price in price['RolePrices']:
-                    _logger.info('================= 22222222222222222222222222 222========================')
-                    pricelist = self.env['product.pricelist'].create({
-                        'name': price['BrandTaxName'],
-                        'price_list_sah_id': price['Id'],
-                        'country_id': pays.id if pays else False,
-                        'item_ids': [(0, 0, {
-                            'product_tmpl_id': product_id.id,
-                            'min_quantity': float(role_price['Quantity']),
-                            'price': float(role_price['NewPriceExclTax']),
-                            'date_start': parser.isoparse(role_price['StartDate']),
-                            'date_end': parser.isoparse(role_price['EndDate']),
-                        })],
-                    })
-                    _logger.info('========== pricelistpricelistpricelist %s ==========',pricelist)
+                pricelist = self.env['product.pricelist'].create({
+                    'name': price['BrandTaxName'],
+                    'price_list_sah_id': price['Id'],
+                    'country_id': pays.id if pays else False,
+                    'item_ids': [(0, 0, {
+                        'product_tmpl_id': product_id.id,
+                        'price':  product_id.list_price,
+                    })],
+                })
+                _logger.info('========== pricelistpricelistpricelist %s ==========',pricelist)
 
             _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
         else:
