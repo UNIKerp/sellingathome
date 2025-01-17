@@ -340,6 +340,7 @@ class ProduitSelligHome(models.Model):
                         'price':  product_id.list_price,
                     })],
                 })
+                product_id.default_list_price = pricelist.id
            
         else:
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
