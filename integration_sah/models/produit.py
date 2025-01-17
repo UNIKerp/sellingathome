@@ -129,7 +129,17 @@ class ProduitSelligHome(models.Model):
                         "PriceExclTax": product.list_price,
                         "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
                         "ProductCost": product.standard_price,
-                        "EcoTax": 8.1
+                        "EcoTax": 8.1,
+                        "RolePrices": [
+                            {
+                            "CustomerRoleId": 1,
+                            "Quantity": 2,
+                            "NewPriceExclTax": 1.1,
+                            "NewPriceInclTax": 1.1,
+                            "StartDate": "2025-01-17T13:14:24.4398065+01:00",
+                            "EndDate": "2025-01-17T13:14:24.4398065+01:00",
+                            }
+                        ]
                     }
                 ],
                 "Barcode": product.barcode,
