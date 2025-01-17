@@ -117,6 +117,7 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
             roles = self.env['product.pricelist.item'].search([('product_tmpl_id','=',product.id)])
+            nommenclatures = self.env['mrp.bom'].search([('product_tmpl_id','=',product.id)])
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
                 "ProductType": product.type_produit_sah,
@@ -155,7 +156,14 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-               
+                "AttachedProducts": [
+                    {
+                    "ProductId": line.product_id.produit_sah_id or 0,
+                    "Quantity": int(line.product_qty),
+                    "DisplayOrder": 2,
+                    }
+                    for elt in nomenclatures for line in elt.bom_line_ids
+                ],
                 "Categories": [
                     {
                         "Id": id_categ,
