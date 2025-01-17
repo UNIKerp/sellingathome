@@ -10,6 +10,7 @@ class ProduitPriceList(models.Model):
     _inherit = "product.pricelist"
 
     price_list_sah_id = fields.Char(string='Id Prix SAH',copy=False,)
+    country_id = fields.Many2one('res.country', string="Pays")
 
     @api.model
     def create(self, vals):
@@ -73,7 +74,7 @@ class Tarifs(models.Model):
     _inherit = "product.pricelist.item"
 
     price_sah_id = fields.Char(string="ID Prix SAH")
-    country_id = fields.Many2one('res.country', string="Pays")
+   
 
     # redéfintion de la fonction _default_pricelist_id
     def _default_pricelist_id(self):
