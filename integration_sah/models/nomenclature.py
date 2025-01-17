@@ -77,7 +77,8 @@ class NomenclatureSelligHome(models.Model):
                     _logger.info('****************************************  %s',result)
                    
                     response = requests.put(url_produit, json=result, headers=headers)
-                    # response1 = requests.get(url_produit, headers=headers)
+                    response1 = requests.get(url_produit, headers=headers)
+                    _logger.info('=========================================  %s',response1.json())
 
                 
 
