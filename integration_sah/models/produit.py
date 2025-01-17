@@ -139,7 +139,7 @@ class ProduitSelligHome(models.Model):
                             # "NewPriceInclTax": 1.1,
                             "StartDate":elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
                             "EndDate": elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
-                            } for elt in roles if roles else []
+                            } for elt in roles
                         ]
                     }
                 ],
