@@ -121,7 +121,9 @@ class ProduitSelligHome(models.Model):
             nommenclatures = self.env['mrp.bom'].search([('product_tmpl_id','=',product.id)])
             if nommenclatures:
                 for elt in nommenclatures:
-                    composants.append(elt.bom_line_ids)
+                    if elt.bom_line_ids:
+                        for line in elt.bom_line_ids:
+                            composants.append(line)
             _logger.info(f'============================={composants}=========================')
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
