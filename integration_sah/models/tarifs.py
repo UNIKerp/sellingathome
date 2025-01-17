@@ -13,12 +13,12 @@ class ProduitPriceList(models.Model):
     price_list_sah_id = fields.Char(string='Id Prix SAH',copy=False,)
     country_id = fields.Many2one('res.country', string="Pays")
 
-    @api.model
-    def create(self, vals):
-        res = super(ProduitPriceList, self).create(vals)
-        headers = self.env['authentication.sah'].establish_connection()
-        url = f'https://demoapi.sellingathome.com/v1/Prices'
-        for elt in res.item_ids:
+    # @api.model
+    # def create(self, vals):
+    #     res = super(ProduitPriceList, self).create(vals)
+    #     headers = self.env['authentication.sah'].establish_connection()
+    #     url = f'https://demoapi.sellingathome.com/v1/Prices'
+    #     for elt in res.item_ids:
             # values = {
             #     "ProductId": elt.product_tmpl_id.produit_sah_id,
             #     "BrandTaxRate": 2.1,
@@ -41,33 +41,33 @@ class ProduitPriceList(models.Model):
             #         }
             #     ]
             # }
-            values = {
-                "ProductId": 120904,
-                # "BrandTaxRate": 2.1,
-                "BrandTaxName": "sample string 3",
-                "TwoLetterISOCode": "FR",
-                "PriceExclTax": 5,
-                "PriceInclTax": 6,
-                "ProductCost": 4,
-                # "EcoTax": 6.1,
-                "IsDefault": True,
-                "RolePrices": [
-                    {
-                    "CustomerRoleId": 1,
-                    "Quantity": 2,
-                    "NewPriceExclTax": 3,
-                    "NewPriceInclTax": 4,
-                    "StartDate": "2025-01-16T17:51:42.6502726+01:00",
-                    "EndDate": "2025-01-16T17:51:42.6502726+01:00",
-                    # "CombinationId": 1
-                    }
-                ]
-            }
-            _logger.info("*************************************** %s",values)
-            response = requests.post(url, json=values, headers=headers)
-            _logger.info("===================================== %s",response)
+        #     values = {
+        #         "ProductId": 120904,
+        #         # "BrandTaxRate": 2.1,
+        #         "BrandTaxName": "sample string 3",
+        #         "TwoLetterISOCode": "FR",
+        #         "PriceExclTax": 5,
+        #         "PriceInclTax": 6,
+        #         "ProductCost": 4,
+        #         # "EcoTax": 6.1,
+        #         "IsDefault": True,
+        #         "RolePrices": [
+        #             {
+        #             "CustomerRoleId": 1,
+        #             "Quantity": 2,
+        #             "NewPriceExclTax": 3,
+        #             "NewPriceInclTax": 4,
+        #             "StartDate": "2025-01-16T17:51:42.6502726+01:00",
+        #             "EndDate": "2025-01-16T17:51:42.6502726+01:00",
+        #             # "CombinationId": 1
+        #             }
+        #         ]
+        #     }
+        #     _logger.info("*************************************** %s",values)
+        #     response = requests.post(url, json=values, headers=headers)
+        #     _logger.info("===================================== %s",response)
 
-        return res
+        # return res
 
 
 class Tarifs(models.Model):
@@ -137,35 +137,33 @@ class Tarifs(models.Model):
     #     return res
 
 
-    # def write(self, vals):
-    #     res = super(Tarifs, self).write(vals)
-    #     if vals:
-    #         headers = self.env['authentication.sah'].establish_connection()
-    #         price_list_id = str(self.pricelist_id.price_list_sah_id)
-    #         url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
-    #         product_id = self.product_tmpl_id
-    #         price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
-    #         values = {
-    #             "ProductId": product_id.produit_sah_id,
-    #             "TwoLetterISOCode":  self.country_id.code if self.country_id else "FR",
-    #             "PriceExclTax": product_id.list_price,
-    #             "PriceInclTax": price_incl_tax,
-    #             "ProductCost": product_id.standard_price,
-    #             "RolePrices": [
-    #                 {
-    #                     "CustomerRoleId": 1,
-    #                     "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
-    #                     "NewPriceExclTax": elt.fixed_price if elt.fixed_price else 0.0,
-    #                     "StartDate": elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
-    #                     "EndDate": elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end  else False,
-    #                 }
-    #                 for elt in self.pricelist_id.item_ids
-    #             ]
-    #         }
-    #         _logger.info('===================================================%s',self.pricelist_id)
-    #         response = requests.put(url, headers=headers, json=values)
-    #         if response.status_code == 200:
-    #             _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
-    #         else:
-    #             _logger.error('Erreur lors de la modification dans l\'API : %s', response.text)
-    #     return res
+    def write(self, vals):
+        res = super(Tarifs, self).write(vals)
+        if vals:
+            headers = self.env['authentication.sah'].establish_connection()
+            price_list_id = str(self.pricelist_id.price_list_sah_id)
+            url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
+            product_id = self.product_tmpl_id
+            price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
+            values = {
+                "ProductId": product_id.produit_sah_id,
+                "TwoLetterISOCode":  self.pricelist_id.country_id.code if  self.pricelist_id.country_id else "FR",
+                "PriceExclTax": product_id.list_price,
+                "PriceInclTax": price_incl_tax,
+                "ProductCost": product_id.standard_price,
+                "RolePrices": [
+                    {
+                        "CustomerRoleId": 1,
+                        "Quantity": int(self.min_quantity),
+                        "NewPriceExclTax": self.fixed_price,
+                        "StartDate": self.date_start.isoformat(timespec='microseconds') + "+02:00" if self.date_start else False,
+                        "EndDate": self.date_end.isoformat(timespec='microseconds') + "+02:00" if self.date_end  else False,
+                    }
+                ]
+            }
+            response = requests.put(url, headers=headers, json=values)
+            if response.status_code == 200:
+                _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
+            else:
+                _logger.error('Erreur lors de la modification dans l\'API : %s', response.text)
+        return res

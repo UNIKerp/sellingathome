@@ -316,10 +316,9 @@ class ProduitSelligHome(models.Model):
         if post_response.status_code == 200:
             response_data = post_response.json()
             product_id.produit_sah_id = int(response_data.get('Id'))
-
+            _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
             prices = response_data.get('Prices')
             for price in prices:
-                _logger.info('========== 11111111111111111111111111111111111111 ===========================')
                 pays = self.env['res.country'].search([('code', '=', price['TwoLetterISOCode'])], limit=1)
                 pricelist = self.env['product.pricelist'].create({
                     'name': price['BrandTaxName'],
@@ -330,9 +329,7 @@ class ProduitSelligHome(models.Model):
                         'price':  product_id.list_price,
                     })],
                 })
-                _logger.info('========== pricelistpricelistpricelist %s ==========',pricelist)
-
-            _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
+           
         else:
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
 
