@@ -62,9 +62,9 @@ class NomenclatureSelligHome(models.Model):
                             ]
                            
                     }
-                    _logger.info('****************************************  %s',datas)
-                    response_data_produit.update(datas)
                     _logger.info('=========================================  %s',response_data_produit)
+                    _logger.info('****************************************  %s',datas)
+                   
                     response = requests.put(url_produit, json=datas, headers=headers)
                     response1 = requests.get(url_produit, headers=headers)
 
