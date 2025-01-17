@@ -122,7 +122,7 @@ class ProduitSelligHome(models.Model):
             if nommenclatures:
                 for elt in nommenclatures:
                     composants.append(elt.bom_line_ids)
-
+            _logger.info(f'============================={composants}=========================')
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
                 "ProductType": product.type_produit_sah,
