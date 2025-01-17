@@ -143,14 +143,15 @@ class Tarifs(models.Model):
             headers = self.env['authentication.sah'].establish_connection()
             price_list_id = str(self.pricelist_id.price_list_sah_id)
             url = f'https://demoapi.sellingathome.com/v1/Prices/{price_list_id}'
+            _logger.info('==================================== price_list_id %s',price_list_id)
             product_id = self.product_tmpl_id
             price_incl_tax = product_id.list_price * (1 + (product_id.taxes_id.amount / 100)) if product_id.taxes_id else product_id.list_price
             values = {
                 "ProductId": product_id.produit_sah_id,
-                "TwoLetterISOCode":  self.pricelist_id.country_id.code if  self.pricelist_id.country_id else "FR",
-                "PriceExclTax": 400,
-                # "PriceInclTax": price_incl_tax,
-                # "ProductCost": product_id.standard_price,
+                "TwoLetterISOCode": "FR",
+                "PriceExclTax": product_id.list_price,
+                "PriceInclTax": price_incl_tax,
+                "ProductCost": product_id.standard_price,
                 "RolePrices": [
                     {
                         "CustomerRoleId": 1,
@@ -161,6 +162,8 @@ class Tarifs(models.Model):
                     }
                 ]
             }
+            _logger.info('==================================== values %s',price_livaluesst_id)
+            _logger.info('===================================================%s',self.pricelist_id)
             response = requests.put(url, headers=headers, json=values)
             if response.status_code == 200:
                 _logger.info('Données modifiées avec succès dans l\'API : %s', response.json())
