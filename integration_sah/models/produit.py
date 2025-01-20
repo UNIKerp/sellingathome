@@ -168,10 +168,12 @@ class ProduitSelligHome(models.Model):
                 "AttachedProducts": [
                     {
                     "ProductId": line.product_id.produit_sah_id or 0,
-                    "Quantity": int(line.product_qty),
+                    # "Quantity": int(line.product_qty),
+                    "Quantity": int(line.product_qty) if line.product_qty else 1,
                     "DisplayOrder": 2,
                     }
-                    for line in composants
+                    # for line in composants
+                    for line in composants if line.product_id and line.product_id.produit_sah_id
                 ],
                 "Categories": [
                     {
