@@ -118,14 +118,23 @@ class ProduitSelligHome(models.Model):
 
             roles = self.env['product.pricelist.item'].search([('product_tmpl_id','=',product.id)])
             _logger.info(f'============================= roles{roles}=========================')
-            composants = []
-            nommenclatures = self.env['mrp.bom'].search([('product_tmpl_id','=',product.id)])
-            if nommenclatures:
-                for elt in nommenclatures:
-                    if elt.bom_line_ids:
-                        for line in elt.bom_line_ids:
-                            if line.product_id not in [comp.product_id for comp in composants]:
-                                composants.append(line)
+            
+            nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', product.id)])
+            attached_products = []
+
+            # Parcourir les nomenclatures et leurs lignes
+            if nomenclatures:
+                for bom in nomenclatures:
+                    if bom.bom_line_ids:
+                        for line in bom.bom_line_ids:
+                            # Vérifier que le produit a un ID SAH valide
+                            if line.product_id and line.product_id.produit_sah_id:
+                                attached_products.append({
+                                    "ProductId": line.product_id.produit_sah_id,
+                                    "Quantity": int(line.product_qty) if line.product_qty else 1,  # Quantité par défaut si non renseignée
+                                    "DisplayOrder": 2,  # Ordre par défaut
+                                })
+
             _logger.info(f'============================={composants}=========================')
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
@@ -165,16 +174,7 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                "AttachedProducts": [
-                    {
-                    "ProductId": 120904,
-                    "Quantity": 4,
-                    # "Quantity": int(line.product_qty) if line.product_qty else 1,
-                    "DisplayOrder": 2,
-                    }
-                    # for line in composants
-                    # for line in composants if line.product_id and line.product_id.produit_sah_id
-                ],
+                "AttachedProducts": attached_products,
                 "Categories": [
                     {
                         "Id": id_categ,
@@ -202,8 +202,8 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
-            # if not composants:
-            #     update_data.pop("AttachedProducts", None)
+            if not composants:
+                update_data.pop("AttachedProducts", None)
             _logger.info(f'================================={update_data}*******************************')
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             if put_response_produit.status_code == 200:
