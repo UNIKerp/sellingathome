@@ -120,20 +120,29 @@ class ProduitSelligHome(models.Model):
             _logger.info(f'============================= roles{roles}=========================')
             
             nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', product.id)])
-            attached_products = []
+            attached_products_dict = {}
 
-            # Parcourir les nomenclatures et leurs lignes
             if nomenclatures:
                 for bom in nomenclatures:
                     if bom.bom_line_ids:
                         for line in bom.bom_line_ids:
-                            # Vérifier que le produit a un ID SAH valide
                             if line.product_id and line.product_id.produit_sah_id:
-                                attached_products.append({
-                                    "ProductId": line.product_id.produit_sah_id,
-                                    "Quantity": int(line.product_qty) if line.product_qty else 1,  # Quantité par défaut si non renseignée
-                                    "DisplayOrder": 2,  # Ordre par défaut
-                                })
+                                product_id = line.product_id.produit_sah_id
+                                quantity = int(line.product_qty) if line.product_qty else 1
+                                
+                                # Si le produit existe déjà, on incrémente la quantité
+                                if product_id in attached_products_dict:
+                                    attached_products_dict[product_id]['Quantity'] += quantity
+                                else:
+                                    # Sinon, on l'ajoute au dictionnaire
+                                    attached_products_dict[product_id] = {
+                                        "ProductId": product_id,
+                                        "Quantity": quantity,
+                                        "DisplayOrder": 2,
+                                    }
+
+            # Convertir le dictionnaire en liste pour l'API
+            attached_products = list(attached_products_dict.values())
 
             _logger.info(f'============================={attached_products}=========================')
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
@@ -202,7 +211,7 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
-            
+
             _logger.info(f'================================={update_data}*******************************')
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             if put_response_produit.status_code == 200:
