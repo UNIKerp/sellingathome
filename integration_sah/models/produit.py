@@ -201,7 +201,7 @@ class ProduitSelligHome(models.Model):
             }
             if not composants:
                 update_data.pop("AttachedProducts", None)
-           
+            _logger.info(f'================================={update_data}*******************************')
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             if put_response_produit.status_code == 200:
                 _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
