@@ -135,7 +135,7 @@ class ProduitSelligHome(models.Model):
                                     "DisplayOrder": 2,  # Ordre par défaut
                                 })
 
-            _logger.info(f'============================={composants}=========================')
+            _logger.info(f'============================={attached_products}=========================')
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
                 "ProductType": product.type_produit_sah,
