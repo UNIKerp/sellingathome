@@ -163,14 +163,14 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                "AttachedProducts": [
-                    {
-                    "ProductId": line.product_id.produit_sah_id or 0,
-                    "Quantity": int(line.product_qty),
-                    "DisplayOrder": 2,
-                    }
-                    for line in composants
-                ],
+                # "AttachedProducts": [
+                #     {
+                #     "ProductId": line.product_id.produit_sah_id or 0,
+                #     "Quantity": int(line.product_qty),
+                #     "DisplayOrder": 2,
+                #     }
+                #     for line in composants
+                # ],
                 "Categories": [
                     {
                         "Id": id_categ,
@@ -198,8 +198,8 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
-            if not composants:
-                update_data.pop("AttachedProducts", None)
+            # if not composants:
+            #     update_data.pop("AttachedProducts", None)
            
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
             if put_response_produit.status_code == 200:
