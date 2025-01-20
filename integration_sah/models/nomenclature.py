@@ -19,7 +19,7 @@ class NomenclatureSelligHome(models.Model):
             job_kwargs = {
             'description': 'Ajout des Nommenclatures du produit de Odoo vers SAH',
             }
-            self.with_delay(**job_kwargs).creation_nomenclature_produits(rec,headers)
+            self.env['product.template'].with_delay(**job_kwargs).update_produit_dans_sah(rec, headers)
         return rec
     
     def write(self, vals):
@@ -28,7 +28,7 @@ class NomenclatureSelligHome(models.Model):
         job_kwargs = {
             'description': 'Mise a jour des Nommenclatures du produit de Odoo vers SAH',
         }
-        self.with_delay(**job_kwargs).creation_nomenclature_produits(self,headers)
+        self.env['product.template'].with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
         return rec
     
     def creation_nomenclature_produits(self,res,headers):
