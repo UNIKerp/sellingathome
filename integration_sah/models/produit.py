@@ -117,6 +117,7 @@ class ProduitSelligHome(models.Model):
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
             roles = self.env['product.pricelist.item'].search([('product_tmpl_id','=',product.id)])
+            _logger.info(f'============================= roles{roles}=========================')
             composants = []
             nommenclatures = self.env['mrp.bom'].search([('product_tmpl_id','=',product.id)])
             if nommenclatures:
