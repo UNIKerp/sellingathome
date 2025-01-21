@@ -26,7 +26,7 @@ class ProduitSelligHome(models.Model):
     discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
     discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
     discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
-    type_produit_sah = fields.Selection(selection=[('5','Produit simple'),('10','Produit groupé'),('20','Kit variable')], string="Type produit SAH", default='5')
+    type_produit_sah = fields.Selection(selection=[('5','Produit simple'),('10','Produit groupé'),('20','Kit variable')], string="Type produit SAH")
     # url_image = fields.Char("URL image", help="Url de l'image")
 
     _sql_constraints = [
