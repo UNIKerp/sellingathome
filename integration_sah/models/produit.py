@@ -119,27 +119,27 @@ class ProduitSelligHome(models.Model):
             roles = self.env['product.pricelist.item'].search([('product_tmpl_id','=',product.id)])
             _logger.info(f'============================= roles{roles}=========================')
             
-            # nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', product.id)])
-            # attached_products_dict = {}
+            nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', product.id)])
+            attached_products_dict = {}
 
-            # if nomenclatures:
-            #     for bom in nomenclatures:
-            #         if bom.bom_line_ids:
-            #             for line in bom.bom_line_ids:
-            #                 if line.product_id and line.product_id.produit_sah_id:
-            #                     product_id = line.product_id.produit_sah_id
-            #                     quantity = int(line.product_qty) if line.product_qty else 1
+            if nomenclatures:
+                for bom in nomenclatures:
+                    if bom.bom_line_ids:
+                        for line in bom.bom_line_ids:
+                            if line.product_id and line.product_id.produit_sah_id:
+                                product_id = line.product_id.produit_sah_id
+                                quantity = int(line.product_qty) if line.product_qty else 1
                                 
-            #                     if product_id in attached_products_dict:
-            #                         attached_products_dict[product_id]['Quantity'] += quantity
-            #                     else:
-            #                         attached_products_dict[product_id] = {
-            #                             "ProductId": product_id,
-            #                             "Quantity": quantity,
-            #                             "DisplayOrder": 2,
-            #                         }
+                                if product_id in attached_products_dict:
+                                    attached_products_dict[product_id]['Quantity'] += quantity
+                                else:
+                                    attached_products_dict[product_id] = {
+                                        "ProductId": product_id,
+                                        "Quantity": quantity,
+                                        "DisplayOrder": 4,
+                                    }
 
-            # attached_products = list(attached_products_dict.values())
+            attached_products = list(attached_products_dict.values())
 
             # _logger.info(f'============================={attached_products}=========================')
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
@@ -180,17 +180,7 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                # "AttachedProducts": [
-                #     {
-                #         "ProductId": component.product_id.produit_sah_id,
-                #         "Quantity": int(component.product_qty) if component.product_qty else 1,
-                #         "DisplayOrder": index + 1
-                #     } 
-                #     for index, bom in enumerate(product.bom_ids)
-                #     for component in bom.bom_line_ids
-                #     if component.product_id.produit_sah_id
-
-                # ],
+                "AttachedProducts": attached_products,
                 "Categories": [
                     {
                         "Id": id_categ,
