@@ -172,7 +172,7 @@ class ProduitSelligHome(models.Model):
                 "Weight": product.weight,
                 "IsPublished": True,
                 "InventoryMethod": 1 if product.is_storable == True else 0,
-                "ProductPhotos": photos_maj,
+                # "ProductPhotos": photos_maj,
                 'ProductLangs': [
                     {
                         'Name': product.name, 
