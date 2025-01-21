@@ -69,6 +69,7 @@ class ProduitSelligHome(models.Model):
     """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
         if product.produit_sah_id:
+            product.type_produit_sah == '10'
             #Photos
             photos_maj = self.maj_images_du_produit(product)
             #
