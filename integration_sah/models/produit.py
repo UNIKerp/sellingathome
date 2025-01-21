@@ -390,18 +390,36 @@ class ProduitSelligHome(models.Model):
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
-        if vals and self.produit_sah_id:
-            job_kwargs = {
-                'description': 'Mise à jour du produit dans SAH',
-            }
-            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
 
-            ### Modification stock
-            job_kwargs2 = {
-                'description': 'Mise à jour du stock produit',
-            }
-            self.with_delay(**job_kwargs2).maj_des_stocks(self)
+        for product in self:
+            if vals and product.produit_sah_id:
+                # Créer un job différé pour mettre à jour le produit dans SAH
+                job_kwargs = {
+                    'description': 'Mise à jour du produit dans SAH',
+                }
+                product.with_delay(**job_kwargs).update_produit_dans_sah(product, headers)
+
+                # Créer un deuxième job différé pour mettre à jour le stock
+                job_kwargs2 = {
+                    'description': 'Mise à jour du stock produit',
+                }
+                product.with_delay(**job_kwargs2).maj_des_stocks(product)
+        
         return rec
+
+
+        # if vals and self.produit_sah_id:
+        #     job_kwargs = {
+        #         'description': 'Mise à jour du produit dans SAH',
+        #     }
+        #     self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+
+        #     ### Modification stock
+        #     job_kwargs2 = {
+        #         'description': 'Mise à jour du stock produit',
+        #     }
+        #     self.with_delay(**job_kwargs2).maj_des_stocks(self)
+        # return rec
 
 
 
