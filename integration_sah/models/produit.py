@@ -185,7 +185,7 @@ class ProduitSelligHome(models.Model):
                     {
                         "ProductId": 121016,
                         "Quantity": 1,
-                        "DisplayOrder": 1,
+                        "DisplayOrder": 3,
                     }
                 ],
                 "Categories": [
