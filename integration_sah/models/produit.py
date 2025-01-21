@@ -181,13 +181,13 @@ class ProduitSelligHome(models.Model):
                     }
                 ],
                 # "AttachedProducts": attached_products,
-                "AttachedProducts":  [
-                    {
-                        "ProductId": 121016,
-                        "Quantity": 1,
-                        "DisplayOrder": 3,
-                    }
-                ],
+                # "AttachedProducts":  [
+                #     {
+                #         "ProductId": 121016,
+                #         "Quantity": 1,
+                #         "DisplayOrder": 3,
+                #     }
+                # ],
                 "Categories": [
                     {
                         "Id": id_categ,
