@@ -180,7 +180,13 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                "AttachedProducts": attached_products,
+                # "AttachedProducts": attached_products,
+                "AttachedProducts":  [
+                        {
+                        "ProductId": 119708,
+                        "Quantity": 1,
+                        "DisplayOrder": 1,
+                        }],
                 "Categories": [
                     {
                         "Id": id_categ,
