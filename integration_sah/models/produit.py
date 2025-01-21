@@ -182,17 +182,14 @@ class ProduitSelligHome(models.Model):
                 ],
                 "AttachedProducts": [
                     {
-                        "GroupId": bom.id,  # Utilisez l'ID du BoM ou une valeur par défaut
                         "ProductId": component.product_id.produit_sah_id,
-                        "ProductRemoteId": str(component.product_id.default_code or ""),
-                        "ProductCombinationId": 0,  # Valeur par défaut ou liée à des combinaisons spécifiques
                         "Quantity": int(component.product_qty) if component.product_qty else 1,
-                        "DisplayOrder": index + 1,
-                        "Deleted": False  # Si le produit attaché est toujours actif
-                    }
+                        "DisplayOrder": index + 1
+                    } 
                     for index, bom in enumerate(product.bom_ids)
                     for component in bom.bom_line_ids
-                    if component.product_id.produit_sah_id
+                    if component.product_id.produit_sah_id and component.product_id.produit_sah_id > 0
+
                 ],
                 "Categories": [
                     {
