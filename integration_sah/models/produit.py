@@ -145,7 +145,7 @@ class ProduitSelligHome(models.Model):
             attached_products = list(attached_products_dict.values())
 
             _logger.info(f'============================={attached_products}=========================')
-            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.f}"
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product}"
             update_data = {
                 "ProductType": product.type_produit_sah,
                 "Reference": product.default_code,
