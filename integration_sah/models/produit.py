@@ -182,10 +182,13 @@ class ProduitSelligHome(models.Model):
                 ],
                 "AttachedProducts": [
                     {
-                        "ProductId": line.produit_sah_id or 0,
-                        "Quantity": int(line.product_qty) if line.product_qty else 1,
-                        "DisplayOrder": index + 1  
-                    } for index, line in enumerate(product.bom_ids) if line.produit_sah_id
+                        "ProductId": component.product_id.produit_sah_id or 0,  # ID du produit dans l'API SAH
+                        "Quantity": int(component.product_qty) if component.product_qty else 1,  # Quantité du composant
+                        "DisplayOrder": index + 1  # Ordre d'affichage
+                    } 
+                    for index, bom in enumerate(product.bom_ids)  # Parcours des nomenclatures
+                    for component in bom.bom_line_ids  # Parcours des composants dans chaque nomenclature
+                    if component.product_id.produit_sah_id  # Vérification que l'ID existe
 
                 ],
                 "Categories": [
