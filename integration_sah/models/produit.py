@@ -141,7 +141,7 @@ class ProduitSelligHome(models.Model):
 
             attached_products = list(attached_products_dict.values())
 
-            # _logger.info(f'============================={attached_products}=========================')
+            _logger.info(f'============================={attached_products}=========================')
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             update_data = {
                 "ProductType": 10,
@@ -180,7 +180,7 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                # "AttachedProducts": attached_products,
+                "AttachedProducts": attached_products,
                 "AttachedProducts":  [
                         {
                         "ProductId": 119708,
@@ -379,15 +379,15 @@ class ProduitSelligHome(models.Model):
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
 
     """ Redéfiniton de la fonction création du produit """
-    # @api.model
-    # def create(self, vals):
-    #     res = super(ProduitSelligHome, self).create(vals)
-    #     if res:
-    #         job_kwargs = {
-    #             'description': 'Création produit Odoo vers SAH',
-    #         }
-    #         self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
-    #     return res
+    @api.model
+    def create(self, vals):
+        res = super(ProduitSelligHome, self).create(vals)
+        if res:
+            job_kwargs = {
+                'description': 'Création produit Odoo vers SAH',
+            }
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
+        return res
 
     """ Modification d'un produit """
     def write(self, vals):
