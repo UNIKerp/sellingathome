@@ -182,10 +182,10 @@ class ProduitSelligHome(models.Model):
                 ],
                 "AttachedProducts": [
                     {
-                        "ProductId": line.product_id.produit_sah_id or 0,
+                        "ProductId": line.produit_sah_id or 0,
                         "Quantity": int(line.product_qty) if line.product_qty else 1,
                         "DisplayOrder": index + 1  
-                    } for index, line in enumerate(product.bom_ids) if line.product_id.produit_sah_id
+                    } for index, line in enumerate(product.bom_ids) if line.produit_sah_id
 
                 ],
                 "Categories": [
