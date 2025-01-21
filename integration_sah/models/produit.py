@@ -26,7 +26,7 @@ class ProduitSelligHome(models.Model):
     discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
     discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
     discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
-    type_produit_sah = fields.Selection(selection=[('5','Produit simple'),('10','Produit groupé'),('20','Kit variable')], string="Type produit SAH")
+    type_produit_sah = fields.Selection(selection=[('5','Produit simple'),('10','Produit groupé'),('20','Kit variable')], string="Type produit SAH",default='5')
     # url_image = fields.Char("URL image", help="Url de l'image")
 
     _sql_constraints = [
@@ -285,8 +285,7 @@ class ProduitSelligHome(models.Model):
             discount_end_date = None
       
         product_data = {
-            # "ProductType": product_id.type_produit_sah,
-            "ProductType": 5,
+            "ProductType": product_id.type_produit_sah,
             "Reference": product_id.default_code,
             "Prices": [
                 {
@@ -380,15 +379,15 @@ class ProduitSelligHome(models.Model):
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
 
     """ Redéfiniton de la fonction création du produit """
-    @api.model
-    def create(self, vals):
-        res = super(ProduitSelligHome, self).create(vals)
-        if res:
-            job_kwargs = {
-                'description': 'Création produit Odoo vers SAH',
-            }
-            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
-        return res
+    # @api.model
+    # def create(self, vals):
+    #     res = super(ProduitSelligHome, self).create(vals)
+    #     if res:
+    #         job_kwargs = {
+    #             'description': 'Création produit Odoo vers SAH',
+    #         }
+    #         self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
+    #     return res
 
     """ Modification d'un produit """
     def write(self, vals):
