@@ -32,7 +32,7 @@ class NomenclatureSelligHome(models.Model):
         return rec
     
     def creation_nomenclature_produits(self,res,headers):
-        if res.product_tmpl_id.produit_sah_id and res.product_tmpl_id.type_produit_sah=='10':
+        if res.product_tmpl_id.produit_sah_id :
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
             post_response_produit = requests.get(url_produit, headers=headers)

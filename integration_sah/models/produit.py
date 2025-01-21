@@ -180,17 +180,17 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                "AttachedProducts": [
-                    {
-                        "ProductId": component.product_id.produit_sah_id,
-                        "Quantity": int(component.product_qty) if component.product_qty else 1,
-                        "DisplayOrder": index + 1
-                    } 
-                    for index, bom in enumerate(product.bom_ids)
-                    for component in bom.bom_line_ids
-                    if component.product_id.produit_sah_id and component.product_id.produit_sah_id > 0
+                # "AttachedProducts": [
+                #     {
+                #         "ProductId": component.product_id.produit_sah_id,
+                #         "Quantity": int(component.product_qty) if component.product_qty else 1,
+                #         "DisplayOrder": index + 1
+                #     } 
+                #     for index, bom in enumerate(product.bom_ids)
+                #     for component in bom.bom_line_ids
+                #     if component.product_id.produit_sah_id
 
-                ],
+                # ],
                 "Categories": [
                     {
                         "Id": id_categ,
