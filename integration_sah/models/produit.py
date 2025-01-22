@@ -282,6 +282,11 @@ class ProduitSelligHome(models.Model):
                         "ProductId": 121020,
                         "Quantity": 1,
                         "DisplayOrder": 2,
+                    },
+                    {
+                        "ProductId": 121021,
+                        "Quantity": 1,
+                        "DisplayOrder": 2,
                     }
                 ],
                 }
