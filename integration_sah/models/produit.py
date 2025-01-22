@@ -286,10 +286,10 @@ class ProduitSelligHome(models.Model):
             
             put_response_produit_test = requests.put(url_produit_test, json=datas_test, headers=headers)
             if put_response_produit_test.status_code == 200:
-                _logger.info("mis à jour avec succès  ==========")
+                _logger.info("============================== mis à jour avec succès  ==============================")
                 _logger.info(put_response_produit_test.json())
             else:
-                _logger.error(f"========== Erreur lors de la mise à jour de l'article  {put_response_produit_test.status_code} ==========")
+                _logger.error(f"==================== Erreur lors de la mise à jour de l'article  {put_response_produit_test.status_code} ====================")
             # fin code test 
 
 
