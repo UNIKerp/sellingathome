@@ -55,7 +55,7 @@ class ProduitSelligHome(models.Model):
                         'default_code': reference,
                         'list_price': price,
                         'description_sale': description,
-                        'barcode': barcode,
+                        'barcode': barcode or False,
                         'weight': weight,
                         'produit_sah_id': sah_id,
                         'is_storable' : True if type_sah == 1 else False
@@ -235,49 +235,49 @@ class ProduitSelligHome(models.Model):
 
 
 
-            # Debut code test
-            produit_sah_id_test = 121019
-            url_produit_test = f"https://demoapi.sellingathome.com/v1/Products/{produit_sah_id_test}"
+            # # Debut code test
+            # produit_sah_id_test = 121019
+            # url_produit_test = f"https://demoapi.sellingathome.com/v1/Products/{produit_sah_id_test}"
            
-            datas_test = {
-                "Prices": [
-                    {
-                        "Id": produit_sah_id_test,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": 'Test',
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": 12,
-                        "PriceInclTax": 15,
-                        "ProductCost": 100,
-                        "EcoTax": 8.1,
-                        "RolePrices": [
-                            {
-                            "CustomerRoleId": 1,
-                            "Quantity": 3,
-                            "NewPriceExclTax":3.0,
-                            # "NewPriceInclTax": 1.1,
-                            "StartDate":"2025-01-21T16:30:05.5834973+01:00",
-                            "EndDate": "2025-01-21T16:30:05.5991208+01:00",
-                            } 
-                        ]
-                    }
-                ],
-                "AttachedProducts":  [
-                    {
-                        "ProductId": 121020,
-                        "Quantity": 1,
-                        "DisplayOrder": 2,
-                    }
-                ],
-                }
+            # datas_test = {
+            #     "Prices": [
+            #         {
+            #             "Id": produit_sah_id_test,
+            #             "BrandTaxRate": 2.1,
+            #             "BrandTaxName": 'Test',
+            #             "TwoLetterISOCode": "FR",
+            #             "PriceExclTax": 12,
+            #             "PriceInclTax": 15,
+            #             "ProductCost": 100,
+            #             "EcoTax": 8.1,
+            #             "RolePrices": [
+            #                 {
+            #                 "CustomerRoleId": 1,
+            #                 "Quantity": 3,
+            #                 "NewPriceExclTax":3.0,
+            #                 # "NewPriceInclTax": 1.1,
+            #                 "StartDate":"2025-01-21T16:30:05.5834973+01:00",
+            #                 "EndDate": "2025-01-21T16:30:05.5991208+01:00",
+            #                 } 
+            #             ]
+            #         }
+            #     ],
+            #     "AttachedProducts":  [
+            #         {
+            #             "ProductId": 121020,
+            #             "Quantity": 1,
+            #             "DisplayOrder": 2,
+            #         }
+            #     ],
+            #     }
             
-            put_response_produit_test = requests.put(url_produit_test, json=datas_test, headers=headers)
-            if put_response_produit_test.status_code == 200:
-                _logger.info("mis à jour avec succès  ==========")
-                _logger.info(put_response_produit_test.json())
-            else:
-                _logger.error(f"========== Erreur lors de la mise à jour de l'article  {put_response_produit_test.status_code} ==========")
-            # fin code test 
+            # put_response_produit_test = requests.put(url_produit_test, json=datas_test, headers=headers)
+            # if put_response_produit_test.status_code == 200:
+            #     _logger.info("mis à jour avec succès  ==========")
+            #     _logger.info(put_response_produit_test.json())
+            # else:
+            #     _logger.error(f"========== Erreur lors de la mise à jour de l'article  {put_response_produit_test.status_code} ==========")
+            # # fin code test 
 
 
 
