@@ -78,14 +78,19 @@ class ProduitSelligHome(models.Model):
                 name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
                 description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
                 price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
-                barcode = produit_api.get('Barcode', None)  # Default to None if barcode is missing or False
+                barcode = produit_api.get('Barcode', None)  # Récupérer le code-barres ou None
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
                 
-                # Check if the product already exists in Odoo
+                # Vérifier si le produit existe déjà dans Odoo
                 existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
                 
                 if not existing_product:
+                    # Vérifier si le code-barres est valide et unique
+                    if barcode and self.env['product.template'].search([('barcode', '=', barcode)]):
+                        _logger.warning(f"Code-barres déjà utilisé : {barcode} pour le produit {name}")
+                        barcode = None  # Ignorer le code-barres s'il est déjà utilisé
+                    
                     product_data = {
                         'name': name,
                         'default_code': reference,
@@ -96,15 +101,16 @@ class ProduitSelligHome(models.Model):
                         'is_storable': True if type_sah == 1 else False,
                     }
                     
-                    # Only add the barcode if it is valid
+                    # Ajouter le code-barres uniquement s'il est unique
                     if barcode:
                         product_data['barcode'] = barcode
                     
-                    # Create the product
+                    # Créer le produit
                     self.env['product.template'].create(product_data)
                     _logger.info(f"Le produit {name} est créé avec succès")
         else:
             _logger.error(f"Connexion à l'API échouée : {post_response_produit.status_code}")
+
 
     
 
