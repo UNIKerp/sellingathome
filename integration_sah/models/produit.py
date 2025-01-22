@@ -251,7 +251,9 @@ class ProduitSelligHome(models.Model):
 
             # Debut code test
             _logger.info(f'================ Debut code test ===========')
-            produit_sah_id_test = 121019
+            produit_sah_id_test = product.produit_sah_id
+            _logger.info(f'================ produit_sah_id_test = 121019 =========== {produit_sah_id_test} =========== {product.produit_sah_id}')
+            
             url_produit_test = f"https://demoapi.sellingathome.com/v1/Products/{produit_sah_id_test}"
            
             datas_test = {
@@ -280,11 +282,6 @@ class ProduitSelligHome(models.Model):
                 "AttachedProducts":  [
                     {
                         "ProductId": 121020,
-                        "Quantity": 1,
-                        "DisplayOrder": 2,
-                    },
-                    {
-                        "ProductId": 121021,
                         "Quantity": 1,
                         "DisplayOrder": 2,
                     }
