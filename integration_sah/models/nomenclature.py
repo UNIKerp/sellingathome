@@ -57,15 +57,28 @@ class NomenclatureSelligHome(models.Model):
                             ],
                             "AttachedProducts": [
                                 {
+                                    "GroupId": 1,
                                     "ProductId": line.product_id.produit_sah_id or 0,
+                                    "ProductRemoteId": str(line.product_id.id),
+                                    "ProductCombinationId": line.product_id.produit_sah_id or 0
                                     "Quantity": int(line.product_qty),
-                                    "DisplayOrder": 2,
-                                } for line in res.bom_line_ids
+                                    "DisplayOrder": idx + 1,
+                                    "Deleted": False,
+                                } for idx, line in enumerate(res.bom_line_ids)
 
                             ]
                            
                     }
                     response = requests.put(url_produit, json=datas, headers=headers)
+
+                    if response.status_code == 200:
+                        _logger.info("Product nomenclature updated successfully.")
+                    else:
+                        _logger.error(
+                            f"Failed to update product nomenclature. Status code: {response.status_code}, Response: {response.text}"
+                        )
+                else:
+                    _logger.warning("No BOM lines found to attach products.")
                  
 
                 
