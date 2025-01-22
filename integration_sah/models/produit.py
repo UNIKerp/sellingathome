@@ -380,15 +380,15 @@ class ProduitSelligHome(models.Model):
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
 
     """ Redéfiniton de la fonction création du produit """
-    @api.model
-    def create(self, vals):
-        res = super(ProduitSelligHome, self).create(vals)
-        if res:
-            job_kwargs = {
-                'description': 'Création produit Odoo vers SAH',
-            }
-            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
-        return res
+    # @api.model
+    # def create(self, vals):
+    #     res = super(ProduitSelligHome, self).create(vals)
+    #     if res:
+    #         job_kwargs = {
+    #             'description': 'Création produit Odoo vers SAH',
+    #         }
+    #         self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
+    #     return res
 
     """ Modification d'un produit """
     def write(self, vals):
