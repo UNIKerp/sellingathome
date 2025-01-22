@@ -33,37 +33,6 @@ class ProduitSelligHome(models.Model):
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
 
     """ Création des produits de SAH dans Odoo """
-    # def create_article_sah_odoo(self):
-    #     headers = self.env['authentication.sah'].establish_connection()
-    #     url_produit = "https://demoapi.sellingathome.com/v1/Products"
-    #     post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
-    #     if post_response_produit.status_code == 200:
-    #         response_data_produit = post_response_produit.json()
-    #         for produit_api in response_data_produit:
-    #             sah_id = produit_api['Id']
-    #             reference = produit_api['Reference']
-    #             name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
-    #             description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
-    #             price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
-    #             barcode = produit_api.get('Barcode', None)
-    #             weight = produit_api.get('Weight', 0.0)
-    #             type_sah = produit_api.get('InventoryMethod')
-    #             existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
-    #             if not existing_product:
-    #                 self.env['product.template'].create({
-    #                     'name': name,
-    #                     'default_code': reference,
-    #                     'list_price': price,
-    #                     'description_sale': description,
-    #                     'barcode': barcode if barcode else None,
-    #                     'weight': weight,
-    #                     'produit_sah_id': sah_id,
-    #                     'is_storable' : True if type_sah == 1 else False
-    #                 })
-    #                 _logger.info(f"Le produit {name} est  crée avec succés")
-    #     else:
-    #         _logger.error(f"Connexion à l'api : {post_response_produit.status_code}")
-
     def create_article_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
@@ -78,18 +47,16 @@ class ProduitSelligHome(models.Model):
                 name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
                 description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
                 price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
-                barcode = produit_api.get('Barcode', None)  # Récupérer le code-barres ou None
+                barcode = produit_api.get('Barcode', None)
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
                 
-                # Vérifier si le produit existe déjà dans Odoo
                 existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
                 
                 if not existing_product:
-                    # Vérifier si le code-barres est valide et unique
                     if barcode and self.env['product.template'].search([('barcode', '=', barcode)]):
                         _logger.warning(f"Code-barres déjà utilisé : {barcode} pour le produit {name}")
-                        barcode = None  # Ignorer le code-barres s'il est déjà utilisé
+                        barcode = None
                     
                     product_data = {
                         'name': name,
@@ -101,11 +68,9 @@ class ProduitSelligHome(models.Model):
                         'is_storable': True if type_sah == 1 else False,
                     }
                     
-                    # Ajouter le code-barres uniquement s'il est unique
                     if barcode:
                         product_data['barcode'] = barcode
                     
-                    # Créer le produit
                     self.env['product.template'].create(product_data)
                     _logger.info(f"Le produit {name} est créé avec succès")
         else:
@@ -283,49 +248,49 @@ class ProduitSelligHome(models.Model):
 
 
 
-            # # Debut code test
-            # produit_sah_id_test = 121019
-            # url_produit_test = f"https://demoapi.sellingathome.com/v1/Products/{produit_sah_id_test}"
+            # Debut code test
+            produit_sah_id_test = 121019
+            url_produit_test = f"https://demoapi.sellingathome.com/v1/Products/{produit_sah_id_test}"
            
-            # datas_test = {
-            #     "Prices": [
-            #         {
-            #             "Id": produit_sah_id_test,
-            #             "BrandTaxRate": 2.1,
-            #             "BrandTaxName": 'Test',
-            #             "TwoLetterISOCode": "FR",
-            #             "PriceExclTax": 12,
-            #             "PriceInclTax": 15,
-            #             "ProductCost": 100,
-            #             "EcoTax": 8.1,
-            #             "RolePrices": [
-            #                 {
-            #                 "CustomerRoleId": 1,
-            #                 "Quantity": 3,
-            #                 "NewPriceExclTax":3.0,
-            #                 # "NewPriceInclTax": 1.1,
-            #                 "StartDate":"2025-01-21T16:30:05.5834973+01:00",
-            #                 "EndDate": "2025-01-21T16:30:05.5991208+01:00",
-            #                 } 
-            #             ]
-            #         }
-            #     ],
-            #     "AttachedProducts":  [
-            #         {
-            #             "ProductId": 121020,
-            #             "Quantity": 1,
-            #             "DisplayOrder": 2,
-            #         }
-            #     ],
-            #     }
+            datas_test = {
+                "Prices": [
+                    {
+                        "Id": produit_sah_id_test,
+                        "BrandTaxRate": 2.1,
+                        "BrandTaxName": 'Test',
+                        "TwoLetterISOCode": "FR",
+                        "PriceExclTax": 12,
+                        "PriceInclTax": 15,
+                        "ProductCost": 100,
+                        "EcoTax": 8.1,
+                        "RolePrices": [
+                            {
+                            "CustomerRoleId": 1,
+                            "Quantity": 3,
+                            "NewPriceExclTax":3.0,
+                            # "NewPriceInclTax": 1.1,
+                            "StartDate":"2025-01-21T16:30:05.5834973+01:00",
+                            "EndDate": "2025-01-21T16:30:05.5991208+01:00",
+                            } 
+                        ]
+                    }
+                ],
+                "AttachedProducts":  [
+                    {
+                        "ProductId": 121020,
+                        "Quantity": 1,
+                        "DisplayOrder": 2,
+                    }
+                ],
+                }
             
-            # put_response_produit_test = requests.put(url_produit_test, json=datas_test, headers=headers)
-            # if put_response_produit_test.status_code == 200:
-            #     _logger.info("mis à jour avec succès  ==========")
-            #     _logger.info(put_response_produit_test.json())
-            # else:
-            #     _logger.error(f"========== Erreur lors de la mise à jour de l'article  {put_response_produit_test.status_code} ==========")
-            # # fin code test 
+            put_response_produit_test = requests.put(url_produit_test, json=datas_test, headers=headers)
+            if put_response_produit_test.status_code == 200:
+                _logger.info("mis à jour avec succès  ==========")
+                _logger.info(put_response_produit_test.json())
+            else:
+                _logger.error(f"========== Erreur lors de la mise à jour de l'article  {put_response_produit_test.status_code} ==========")
+            # fin code test 
 
 
 
@@ -486,15 +451,15 @@ class ProduitSelligHome(models.Model):
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
 
     """ Redéfiniton de la fonction création du produit """
-    # @api.model
-    # def create(self, vals):
-    #     res = super(ProduitSelligHome, self).create(vals)
-    #     if res:
-    #         job_kwargs = {
-    #             'description': 'Création produit Odoo vers SAH',
-    #         }
-    #         self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
-    #     return res
+    @api.model
+    def create(self, vals):
+        res = super(ProduitSelligHome, self).create(vals)
+        if res:
+            job_kwargs = {
+                'description': 'Création produit Odoo vers SAH',
+            }
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
+        return res
 
     """ Modification d'un produit """
     def write(self, vals):
