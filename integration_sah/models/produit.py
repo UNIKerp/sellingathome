@@ -33,36 +33,78 @@ class ProduitSelligHome(models.Model):
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
 
     """ Création des produits de SAH dans Odoo """
+    # def create_article_sah_odoo(self):
+    #     headers = self.env['authentication.sah'].establish_connection()
+    #     url_produit = "https://demoapi.sellingathome.com/v1/Products"
+    #     post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
+    #     if post_response_produit.status_code == 200:
+    #         response_data_produit = post_response_produit.json()
+    #         for produit_api in response_data_produit:
+    #             sah_id = produit_api['Id']
+    #             reference = produit_api['Reference']
+    #             name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
+    #             description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
+    #             price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
+    #             barcode = produit_api.get('Barcode', None)
+    #             weight = produit_api.get('Weight', 0.0)
+    #             type_sah = produit_api.get('InventoryMethod')
+    #             existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
+    #             if not existing_product:
+    #                 self.env['product.template'].create({
+    #                     'name': name,
+    #                     'default_code': reference,
+    #                     'list_price': price,
+    #                     'description_sale': description,
+    #                     'barcode': barcode if barcode else None,
+    #                     'weight': weight,
+    #                     'produit_sah_id': sah_id,
+    #                     'is_storable' : True if type_sah == 1 else False
+    #                 })
+    #                 _logger.info(f"Le produit {name} est  crée avec succés")
+    #     else:
+    #         _logger.error(f"Connexion à l'api : {post_response_produit.status_code}")
+
     def create_article_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
         post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
+        
         if post_response_produit.status_code == 200:
             response_data_produit = post_response_produit.json()
+            
             for produit_api in response_data_produit:
                 sah_id = produit_api['Id']
                 reference = produit_api['Reference']
                 name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
                 description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
                 price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
-                barcode = produit_api.get('Barcode', None)
+                barcode = produit_api.get('Barcode', None)  # Default to None if barcode is missing or False
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
+                
+                # Check if the product already exists in Odoo
                 existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
+                
                 if not existing_product:
-                    self.env['product.template'].create({
+                    product_data = {
                         'name': name,
                         'default_code': reference,
                         'list_price': price,
                         'description_sale': description,
-                        'barcode': barcode if barcode else None,
                         'weight': weight,
                         'produit_sah_id': sah_id,
-                        'is_storable' : True if type_sah == 1 else False
-                    })
-                    _logger.info(f"Le produit {name} est  crée avec succés")
+                        'is_storable': True if type_sah == 1 else False,
+                    }
+                    
+                    # Only add the barcode if it is valid
+                    if barcode:
+                        product_data['barcode'] = barcode
+                    
+                    # Create the product
+                    self.env['product.template'].create(product_data)
+                    _logger.info(f"Le produit {name} est créé avec succès")
         else:
-            _logger.error(f"Connexion à l'api : {post_response_produit.status_code}")
+            _logger.error(f"Connexion à l'API échouée : {post_response_produit.status_code}")
 
     
 
