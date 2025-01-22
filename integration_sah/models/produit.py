@@ -259,25 +259,25 @@ class ProduitSelligHome(models.Model):
             nomenclatures_test = self.env['mrp.bom'].search([('product_tmpl_id', '=', product.id)])
             attached_products_dict_test = {}
 
-            if nomenclatures_test:
-                for bom in nomenclatures_test:
-                    if bom.bom_line_ids:
-                        for line in bom.bom_line_ids:
-                            if line.product_id and line.product_id.produit_sah_id:
-                                product_id = line.product_id.produit_sah_id
-                                quantity = int(line.product_qty) if line.product_qty else 1
+            # if nomenclatures_test:
+            #     for bom in nomenclatures_test:
+            #         if bom.bom_line_ids:
+            #             for line in bom.bom_line_ids:
+            #                 if line.product_id and line.product_id.produit_sah_id:
+            #                     product_id = line.product_id.produit_sah_id
+            #                     quantity = int(line.product_qty) if line.product_qty else 1
                                 
-                                if product_id in attached_products_dict_test:
-                                    attached_products_dict_test[product_id]['Quantity'] += quantity
-                                else:
-                                    attached_products_dict_test[product_id] = {
-                                        "ProductId": product_id,
-                                        "Quantity": quantity,
-                                        "DisplayOrder": 4,
-                                    }
+            #                     if product_id in attached_products_dict_test:
+            #                         attached_products_dict_test[product_id]['Quantity'] += quantity
+            #                     else:
+            #                         attached_products_dict_test[product_id] = {
+            #                             "ProductId": product_id,
+            #                             "Quantity": quantity,
+            #                             "DisplayOrder": 4,
+            #                         }
 
-            attached_products_test = list(attached_products_dict_test.values())
-            _logger.info(f'================&&&&&&&&&&&&&&&  {attached_products_test} =========== &&&&&&&&&&&&&&&&&&&&&')
+            # attached_products_test = list(attached_products_dict_test.values())
+            # _logger.info(f'================&&&&&&&&&&&&&&&  {attached_products_test} =========== &&&&&&&&&&&&&&&&&&&&&')
         
             datas_test = {
                 "Prices": [
