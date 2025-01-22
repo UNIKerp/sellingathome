@@ -57,7 +57,7 @@ class NomenclatureSelligHome(models.Model):
                             ],
                             "AttachedProducts": [
                                 {
-                                    "GroupId": 1,
+                                    "GroupId": res.product_tmpl_id.produit_sah_id,
                                     "ProductId": line.product_id.produit_sah_id or 0,
                                     "ProductRemoteId": str(line.product_id.id),
                                     "ProductCombinationId": line.product_id.produit_sah_id or 0,
