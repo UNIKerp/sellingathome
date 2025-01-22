@@ -195,7 +195,7 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-                # "AttachedProducts": attached_products,
+                # "AttachedProducts": attached_products, 
                 # "AttachedProducts":  [
                 #     {
                 #         "ProductId": 121016,
@@ -239,92 +239,6 @@ class ProduitSelligHome(models.Model):
             else:
                 _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name}  {product.type_produit_sah}  sur l'API SAH : {put_response_produit.status_code} ==========")
 
-            
-
-
-
-
-
-
-
-
-
-            # Debut code test
-            _logger.info(f'================ Debut code test ===========')
-            produit_sah_id_test = product.produit_sah_id
-            # 
-            _logger.info(f'================ produit_sah_id_test = 121019 =========== {produit_sah_id_test} =========== {product.produit_sah_id}')
-            
-            url_produit_test = f"https://demoapi.sellingathome.com/v1/Products/{produit_sah_id_test}"
-            nomenclatures_test = self.env['mrp.bom'].search([('product_tmpl_id', '=', product.id)])
-            attached_products_dict_test = {}
-
-            # if nomenclatures_test:
-            #     for bom in nomenclatures_test:
-            #         if bom.bom_line_ids:
-            #             for line in bom.bom_line_ids:
-            #                 if line.product_id and line.product_id.produit_sah_id:
-            #                     product_id = line.product_id.produit_sah_id
-            #                     quantity = int(line.product_qty) if line.product_qty else 1
-                                
-            #                     if product_id in attached_products_dict_test:
-            #                         attached_products_dict_test[product_id]['Quantity'] += quantity
-            #                     else:
-            #                         attached_products_dict_test[product_id] = {
-            #                             "ProductId": product_id,
-            #                             "Quantity": quantity,
-            #                             "DisplayOrder": 4,
-            #                         }
-
-            # attached_products_test = list(attached_products_dict_test.values())
-            # _logger.info(f'================&&&&&&&&&&&&&&&  {attached_products_test} =========== &&&&&&&&&&&&&&&&&&&&&')
-        
-            datas_test = {
-                "Prices": [
-                    {
-                        "Id": produit_sah_id_test,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": 'Test',
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": 12,
-                        "PriceInclTax": 15,
-                        "ProductCost": 100,
-                        "EcoTax": 8.1,
-                        "RolePrices": [
-                            {
-                            "CustomerRoleId": 1,
-                            "Quantity": 3,
-                            "NewPriceExclTax":3.0,
-                            # "NewPriceInclTax": 1.1,
-                            "StartDate":"2025-01-21T16:30:05.5834973+01:00",
-                            "EndDate": "2025-01-21T16:30:05.5991208+01:00",
-                            } 
-                        ]
-                    }
-                ],
-                "AttachedProducts":  [
-                    {
-                        "ProductId": 119741,
-                        "Quantity": 1,
-                        "DisplayOrder": 2,
-                    }
-                ],
-                }
-            
-            put_response_produit_test = requests.put(url_produit_test, json=datas_test, headers=headers)
-            if put_response_produit_test.status_code == 200:
-                _logger.info("============================== mis à jour avec succès  ==============================")
-                _logger.info(put_response_produit_test.json())
-            else:
-                _logger.error(f"==================== Erreur lors de la mise à jour de l'article  {put_response_produit_test.status_code} ====================")
-
-            _logger.info(f'================ Fin code test ===========')
-            # fin code test 
-
-
-
-
-    
     #
     """ Creation d'un produit de Odoo => SAH """
     def creation_produit_odoo_sah(self,product_id):
