@@ -58,8 +58,6 @@ class NomenclatureSelligHome(models.Model):
                             "AttachedProducts": [
                                 {
                                     "ProductId": line.product_id.produit_sah_id or 0,
-                                    "ProductRemoteId": str(line.product_id.id),
-                                    "ProductCombinationId": line.product_id.produit_sah_id or 0,
                                     "Quantity": int(line.product_qty),
                                     "DisplayOrder": idx + 1,
                                     "Deleted": False,
