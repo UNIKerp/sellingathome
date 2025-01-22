@@ -66,14 +66,6 @@ class NomenclatureSelligHome(models.Model):
                     }
                     response = requests.put(url_produit, json=datas, headers=headers)
 
-                    if response.status_code == 200:
-                        _logger.info("Product nomenclature updated successfully.")
-                    else:
-                        _logger.error(
-                            f"Failed to update product nomenclature. Status code: {response.status_code}, Response: {response.text}"
-                        )
-                else:
-                    _logger.warning("No BOM lines found to attach products.")
                  
 
                 
