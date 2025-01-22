@@ -81,6 +81,7 @@ class ProduitSelligHome(models.Model):
 
     """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
+        _logger.info(f'=============================****************************=========================')
         if product.produit_sah_id:
             #Photos
             photos_maj = self.maj_images_du_produit(product)
@@ -249,6 +250,7 @@ class ProduitSelligHome(models.Model):
 
 
             # Debut code test
+            _logger.info(f'================ Debut code test ===========')
             produit_sah_id_test = 121019
             url_produit_test = f"https://demoapi.sellingathome.com/v1/Products/{produit_sah_id_test}"
            
@@ -290,6 +292,8 @@ class ProduitSelligHome(models.Model):
                 _logger.info(put_response_produit_test.json())
             else:
                 _logger.error(f"==================== Erreur lors de la mise à jour de l'article  {put_response_produit_test.status_code} ====================")
+
+            _logger.info(f'================ Fin code test ===========')
             # fin code test 
 
 
