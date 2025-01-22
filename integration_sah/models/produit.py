@@ -304,7 +304,7 @@ class ProduitSelligHome(models.Model):
                 ],
                 "AttachedProducts":  [
                     {
-                        "ProductId": 121020,
+                        "ProductId": 121023,
                         "Quantity": 1,
                         "DisplayOrder": 2,
                     }
