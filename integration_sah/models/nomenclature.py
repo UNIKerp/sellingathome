@@ -110,12 +110,12 @@ class RolePricesSelligHome(models.Model):
                         {
                             "Id": rec.product_tmpl_id.produit_sah_id,
                             "BrandTaxRate": 2.1,
-                            "BrandTaxName": rec.name,
+                            "BrandTaxName": rec.product_tmpl_id.name,
                             "TwoLetterISOCode": "FR",
-                            "PriceExclTax": rec.fixed_price or 0.0,
-                            "PriceInclTax": rec.fixed_price * (1 + rec.applied_on_taxes / 100) if rec.fixed_price else 0.0,
-                            "ProductCost": rec.base or 0.0,
-                            "EcoTax": 8.1,
+                            "PriceExclTax": rec.product_tmpl_id.list_price,
+                            "PriceInclTax": rec.product_tmpl_id.list_price * (1 + rec.product_tmpl_id.taxes_id.amount / 100),
+                            "ProductCost": rec.product_tmpl_id.standard_price,
+                            "EcoTax": 8.1
                             "RolePrices": [
                                 {
                                     "CustomerRoleId": 1,
