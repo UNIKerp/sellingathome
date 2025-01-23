@@ -153,7 +153,7 @@ class ProduitSelligHome(models.Model):
                             "CustomerRoleId": 1,
                             "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
                             "NewPriceExclTax":elt.fixed_price if elt.fixed_price else 0.0,
-                            "NewPriceInclTax": 1.1,
+                            # "NewPriceInclTax": 1.1,
                             "StartDate":elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
                             "EndDate": elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
                             } for elt in roles
