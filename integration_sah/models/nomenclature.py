@@ -106,30 +106,27 @@ class RolePricesSelligHome(models.Model):
                 response_data_produit = post_response_produit.json()
                
                 datas = {
-
-                        "Prices": [
-                            {
-                                "Id": res.product_tmpl_id.produit_sah_id,
-                                "BrandTaxRate": 2.1,
-                                "BrandTaxName": res.name,
-                                "TwoLetterISOCode": "FR",
-                                "PriceExclTax": res.list_price,
-                                "PriceInclTax": res.list_price * (1 + res.taxes_id.amount / 100),
-                                "ProductCost": res.standard_price,
-                                "EcoTax": 8.1,
-                                "RolePrices": [
-                                    {
+                    "Prices": [
+                        {
+                            "Id": rec.product_tmpl_id.produit_sah_id,
+                            "BrandTaxRate": 2.1,
+                            "BrandTaxName": rec.name,
+                            "TwoLetterISOCode": "FR",
+                            "PriceExclTax": rec.fixed_price or 0.0,
+                            "PriceInclTax": rec.fixed_price * (1 + rec.applied_on_taxes / 100) if rec.fixed_price else 0.0,
+                            "ProductCost": rec.base or 0.0,
+                            "EcoTax": 8.1,
+                            "RolePrices": [
+                                {
                                     "CustomerRoleId": 1,
-                                    "Quantity": int(res.min_quantity) if res.min_quantity else 1,
-                                    "NewPriceExclTax":res.fixed_price if res.fixed_price else 0.0,
-                                    # "NewPriceInclTax": 1.1,
-                                    "StartDate":res.date_start.isoformat(timespec='microseconds') + "+02:00" if res.date_start else False,
-                                    "EndDate": res.date_end.isoformat(timespec='microseconds') + "+02:00" if res.date_end else False,
-                                    } 
-                                ]
-                            }
-                        ]
-                        
+                                    "Quantity": int(rec.min_quantity) if rec.min_quantity else 1,
+                                    "NewPriceExclTax": rec.fixed_price if rec.fixed_price else 0.0,
+                                    "StartDate": rec.date_start.isoformat(timespec='microseconds') + "+02:00" if rec.date_start else None,
+                                    "EndDate": rec.date_end.isoformat(timespec='microseconds') + "+02:00" if rec.date_end else None,
+                                }
+                            ]
+                        }
+                    ]
                 }
                 response = requests.put(url_produit, json=datas, headers=headers)
 
