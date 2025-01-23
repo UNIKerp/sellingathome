@@ -115,7 +115,7 @@ class RolePricesSelligHome(models.Model):
                             "PriceExclTax": rec.product_tmpl_id.list_price,
                             "PriceInclTax": rec.product_tmpl_id.list_price * (1 + rec.product_tmpl_id.taxes_id.amount / 100),
                             "ProductCost": rec.product_tmpl_id.standard_price,
-                            "EcoTax": 8.1
+                            "EcoTax": 8.1,
                             "RolePrices": [
                                 {
                                     "CustomerRoleId": 1,
