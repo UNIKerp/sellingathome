@@ -109,12 +109,12 @@ class RolePricesSelligHome(models.Model):
 
                         "Prices": [
                             {
-                                "Id": res.produit_sah_id,
+                                "Id": res.product_tmpl_id.produit_sah_id,
                                 "BrandTaxRate": 2.1,
                                 "BrandTaxName": res.name,
                                 "TwoLetterISOCode": "FR",
                                 "PriceExclTax": res.list_price,
-                                "PriceInclTax": res.list_price * (1 + product.taxes_id.amount / 100),
+                                "PriceInclTax": res.list_price * (1 + res.taxes_id.amount / 100),
                                 "ProductCost": res.standard_price,
                                 "EcoTax": 8.1,
                                 "RolePrices": [
