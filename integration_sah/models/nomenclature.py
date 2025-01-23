@@ -3,10 +3,16 @@ import requests
 import json
 from datetime import date
 from datetime import datetime
+import os
+import base64
+from odoo.tools import config
 import pytz
 import logging
-import copy
 _logger = logging.getLogger(__name__)
+import json
+from PIL import Image
+from io import BytesIO
+from dateutil import parser
 
 class NomenclatureSelligHome(models.Model):
     _inherit = "mrp.bom"
@@ -65,6 +71,67 @@ class NomenclatureSelligHome(models.Model):
                            
                     }
                     response = requests.put(url_produit, json=datas, headers=headers)
+
+
+class RolePricesSelligHome(models.Model):
+    _inherit = "product.pricelist.item"
+
+
+    @api.model
+    def create(self, vals):
+        headers = self.env['authentication.sah'].establish_connection()
+        rec = super(RolePricesSelligHome, self).create(vals)
+        if rec:
+            job_kwargs = {
+            'description': 'Ajout des Nommenclatures du produit de Odoo vers SAH',
+            }
+            self.with_delay(**job_kwargs).creation_role_produits(rec, headers)
+        return rec
+    
+    def write(self, vals):
+        headers = self.env['authentication.sah'].establish_connection()
+        rec = super(RolePricesSelligHome, self).write(vals)
+        job_kwargs = {
+            'description': 'Mise a jour des Nommenclatures du produit de Odoo vers SAH',
+        }
+        self.with_delay(**job_kwargs).creation_role_produits(self, headers)
+        return rec
+    
+    def creation_role_produits(self,res,headers):
+        if res.product_tmpl_id.produit_sah_id :
+            headers = self.env['authentication.sah'].establish_connection()
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
+            post_response_produit = requests.get(url_produit, headers=headers)
+            if post_response_produit.status_code == 200:
+                response_data_produit = post_response_produit.json()
+               
+                datas = {
+
+                        "Prices": [
+                            {
+                                "Id": res.produit_sah_id,
+                                "BrandTaxRate": 2.1,
+                                "BrandTaxName": res.name,
+                                "TwoLetterISOCode": "FR",
+                                "PriceExclTax": res.list_price,
+                                "PriceInclTax": res.list_price * (1 + product.taxes_id.amount / 100),
+                                "ProductCost": res.standard_price,
+                                "EcoTax": 8.1,
+                                "RolePrices": [
+                                    {
+                                    "CustomerRoleId": 1,
+                                    "Quantity": int(res.min_quantity) if res.min_quantity else 1,
+                                    "NewPriceExclTax":res.fixed_price if res.fixed_price else 0.0,
+                                    # "NewPriceInclTax": 1.1,
+                                    "StartDate":res.date_start.isoformat(timespec='microseconds') + "+02:00" if res.date_start else False,
+                                    "EndDate": res.date_end.isoformat(timespec='microseconds') + "+02:00" if res.date_end else False,
+                                    } 
+                                ]
+                            }
+                        ]
+                        
+                }
+                response = requests.put(url_produit, json=datas, headers=headers)
 
                  
 
