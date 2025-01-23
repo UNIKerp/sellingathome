@@ -97,7 +97,7 @@ class RolePricesSelligHome(models.Model):
         self.with_delay(**job_kwargs).creation_role_produits(self, headers)
         return rec
     
-    def creation_role_produits(self,rec,headers):
+    """def creation_role_produits(self,rec,headers):
         if rec.product_tmpl_id.produit_sah_id :
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{rec.product_tmpl_id.produit_sah_id}"
@@ -128,7 +128,58 @@ class RolePricesSelligHome(models.Model):
                         }
                     ]
                 }
+                response = requests.put(url_produit, json=datas, headers=headers)"""
+
+    def creation_role_produits(self, rec, headers):
+        if rec.product_tmpl_id.produit_sah_id:
+            headers = self.env['authentication.sah'].establish_connection()
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{rec.product_tmpl_id.produit_sah_id}"
+            
+            # Récupérer les données existantes du produit
+            response = requests.get(url_produit, headers=headers)
+            if response.status_code == 200:
+                existing_data = response.json()
+                existing_role_prices = existing_data.get("Prices", [{}])[0].get("RolePrices", [])
+                
+                # Préparer les nouveaux rôles à ajouter
+                new_role = {
+                    "CustomerRoleId": 1,
+                    "Quantity": int(rec.min_quantity) if rec.min_quantity else 1,
+                    "NewPriceExclTax": rec.fixed_price if rec.fixed_price else 0.0,
+                    "NewPriceInclTax": rec.fixed_price * (1 + rec.product_tmpl_id.taxes_id.amount / 100) if rec.fixed_price else 0.0,
+                    "StartDate": rec.date_start.isoformat(timespec='microseconds') + "+02:00" if rec.date_start else None,
+                    "EndDate": rec.date_end.isoformat(timespec='microseconds') + "+02:00" if rec.date_end else None,
+                }
+                
+                # Ajouter le nouveau rôle sans supprimer les anciens
+                updated_role_prices = existing_role_prices + [new_role]
+
+                # Construire les nouvelles données pour la mise à jour
+                datas = {
+                    "Prices": [
+                        {
+                            "Id": rec.product_tmpl_id.produit_sah_id,
+                            "BrandTaxRate": 2.1,
+                            "BrandTaxName": rec.product_tmpl_id.name,
+                            "TwoLetterISOCode": "FR",
+                            "PriceExclTax": rec.product_tmpl_id.list_price,
+                            "PriceInclTax": rec.product_tmpl_id.list_price * (1 + rec.product_tmpl_id.taxes_id.amount / 100),
+                            "ProductCost": rec.product_tmpl_id.standard_price,
+                            "EcoTax": 8.1,
+                            "RolePrices": updated_role_prices,
+                        }
+                    ]
+                }
+
+                # Envoyer la requête PUT pour mettre à jour les données
                 response = requests.put(url_produit, json=datas, headers=headers)
+                if response.status_code == 200:
+                    _logger.info("Produit mis à jour avec succès sur SAH.")
+                else:
+                    _logger.error(f"Erreur lors de la mise à jour du produit sur SAH : {response.status_code}, {response.text}")
+            else:
+                _logger.error(f"Erreur lors de la récupération du produit sur SAH : {response.status_code}, {response.text}")
+
 
                  
 
