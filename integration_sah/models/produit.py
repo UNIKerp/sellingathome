@@ -148,16 +148,16 @@ class ProduitSelligHome(models.Model):
                         "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
                         "ProductCost": product.standard_price,
                         "EcoTax": 8.1,
-                        "RolePrices": [
-                            {
-                            "CustomerRoleId": 1,
-                            "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
-                            "NewPriceExclTax":elt.fixed_price if elt.fixed_price else 0.0,
-                            # "NewPriceInclTax": 1.1,
-                            "StartDate":elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
-                            "EndDate": elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
-                            } for elt in roles
-                        ]
+                        # "RolePrices": [
+                        #     {
+                        #     "CustomerRoleId": 1,
+                        #     "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
+                        #     "NewPriceExclTax":elt.fixed_price if elt.fixed_price else 0.0,
+                        #     # "NewPriceInclTax": 1.1,
+                        #     "StartDate":elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
+                        #     "EndDate": elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
+                        #     } for elt in roles
+                        # ]
                     }
                 ],
                 "Barcode": product.barcode,
@@ -206,7 +206,7 @@ class ProduitSelligHome(models.Model):
             if put_response_produit.status_code == 200:
                 _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
             else:
-                _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name}  {product.type_produit_sah}  sur l'API SAH : {put_response_produit.status_code} ==========")
+                _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
 
     #
     """ Creation d'un produit de Odoo => SAH """
