@@ -45,20 +45,9 @@ class NomenclatureSelligHome(models.Model):
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
 
-                # nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', res.product_tmpl_id.id)])
-                # attached_products = []
-                # for bom in nomenclatures:
-                #     for idx, line in enumerate(bom.bom_line_ids):
-                #         attached_products.append({
-                #             "ProductId": line.product_id.produit_sah_id or 0,
-                #             "Quantity": int(line.product_qty),
-                #             "DisplayOrder": idx + 1,
-                #             "Deleted": False,
-                #         })
 
                 nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', res.product_tmpl_id.id)])
 
-                # Préparer un dictionnaire pour cumuler les quantités par produit
                 aggregated_products = {}
 
                 for bom in nomenclatures:
@@ -66,18 +55,15 @@ class NomenclatureSelligHome(models.Model):
                         product_id = line.product_id.produit_sah_id or 0
                         if product_id:
                             if product_id in aggregated_products:
-                                # Ajouter la quantité à la quantité existante
                                 aggregated_products[product_id]['Quantity'] += int(line.product_qty)
                             else:
-                                # Ajouter une nouvelle entrée pour ce produit
                                 aggregated_products[product_id] = {
                                     "ProductId": product_id,
                                     "Quantity": int(line.product_qty),
-                                    "DisplayOrder": len(aggregated_products) + 1,  # Ordre basé sur le nombre d'entrées
+                                    "DisplayOrder": len(aggregated_products) + 1,
                                     "Deleted": False,
                                 }
 
-                # Transformer le dictionnaire en une liste pour l'API
                 attached_products = list(aggregated_products.values())
                 
                 datas = {
@@ -95,15 +81,6 @@ class NomenclatureSelligHome(models.Model):
                                 }
                         ],
                         "AttachedProducts": attached_products
-                        # "AttachedProducts": [
-                        #     {
-                        #         "ProductId": line.product_id.produit_sah_id or 0,
-                        #         "Quantity": int(line.product_qty),
-                        #         "DisplayOrder": idx + 1,
-                        #         "Deleted": False,
-                        #     } for idx, line in enumerate(res.bom_line_ids)
-
-                        # ]
                         
                 }
                 response = requests.put(url_produit, json=datas, headers=headers)
