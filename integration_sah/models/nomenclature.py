@@ -44,33 +44,48 @@ class NomenclatureSelligHome(models.Model):
             post_response_produit = requests.get(url_produit, headers=headers)
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
-                if res.bom_line_ids:
-                    datas = {
 
-                            "Prices": [
-                                    {
-                                        "Id": res.product_tmpl_id.produit_sah_id,
-                                        "BrandTaxRate": 2.1,
-                                        "BrandTaxName": res.product_tmpl_id.name,
-                                        "TwoLetterISOCode": "FR",
-                                        "PriceExclTax": res.product_tmpl_id.list_price,
-                                        "PriceInclTax": res.product_tmpl_id.list_price * (1 + res.product_tmpl_id.taxes_id.amount / 100),
-                                        "ProductCost": res.product_tmpl_id.standard_price,
-                                        "EcoTax": 8.1
-                                    }
-                            ],
-                            "AttachedProducts": [
+                # Récupérer toutes les nomenclatures liées au produit
+                nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', res.product_tmpl_id.id)])
+
+                # Préparer la liste des produits attachés
+                attached_products = []
+                for bom in nomenclatures:
+                    for idx, line in enumerate(bom.bom_line_ids):
+                        attached_products.append({
+                            "ProductId": line.product_id.produit_sah_id or 0,
+                            "Quantity": int(line.product_qty),
+                            "DisplayOrder": idx + 1,
+                            "Deleted": False,
+                        })
+                
+                datas = {
+
+                        "Prices": [
                                 {
-                                    "ProductId": line.product_id.produit_sah_id or 0,
-                                    "Quantity": int(line.product_qty),
-                                    "DisplayOrder": idx + 1,
-                                    "Deleted": False,
-                                } for idx, line in enumerate(res.bom_line_ids)
+                                    "Id": res.product_tmpl_id.produit_sah_id,
+                                    "BrandTaxRate": 2.1,
+                                    "BrandTaxName": res.product_tmpl_id.name,
+                                    "TwoLetterISOCode": "FR",
+                                    "PriceExclTax": res.product_tmpl_id.list_price,
+                                    "PriceInclTax": res.product_tmpl_id.list_price * (1 + res.product_tmpl_id.taxes_id.amount / 100),
+                                    "ProductCost": res.product_tmpl_id.standard_price,
+                                    "EcoTax": 8.1
+                                }
+                        ],
+                        "AttachedProducts": attached_products
+                        # "AttachedProducts": [
+                        #     {
+                        #         "ProductId": line.product_id.produit_sah_id or 0,
+                        #         "Quantity": int(line.product_qty),
+                        #         "DisplayOrder": idx + 1,
+                        #         "Deleted": False,
+                        #     } for idx, line in enumerate(res.bom_line_ids)
 
-                            ]
-                           
-                    }
-                    response = requests.put(url_produit, json=datas, headers=headers)
+                        # ]
+                        
+                }
+                response = requests.put(url_produit, json=datas, headers=headers)
 
 
 
