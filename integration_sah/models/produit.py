@@ -130,9 +130,7 @@ class ProduitSelligHome(models.Model):
                 else:
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
-            roles = self.env['product.pricelist.item'].search([('product_tmpl_id','=',product.id)])
-            _logger.info(f'============================= roles{roles}=========================')
-            
+           
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
             
             update_data = {
@@ -148,16 +146,6 @@ class ProduitSelligHome(models.Model):
                         "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
                         "ProductCost": product.standard_price,
                         "EcoTax": 8.1,
-                        "RolePrices": [
-                            {
-                            "CustomerRoleId": 1,
-                            "Quantity": int(elt.min_quantity) if elt.min_quantity else 1,
-                            "NewPriceExclTax":elt.fixed_price if elt.fixed_price else 0.0,
-                            # "NewPriceInclTax": 1.1,
-                            "StartDate":elt.date_start.isoformat(timespec='microseconds') + "+02:00" if elt.date_start else False,
-                            "EndDate": elt.date_end.isoformat(timespec='microseconds') + "+02:00" if elt.date_end else False,
-                            } for elt in roles
-                        ]
                     }
                 ],
                 "Barcode": product.barcode,
@@ -200,7 +188,6 @@ class ProduitSelligHome(models.Model):
                 ]
             }
 
-            _logger.info(f'================================={update_data}*******************************')
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
 
             if put_response_produit.status_code == 200:
