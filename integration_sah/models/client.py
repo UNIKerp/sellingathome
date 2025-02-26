@@ -166,6 +166,7 @@ class ClientSAH(models.Model):
                     delivery_address = self.env['res.partner'].create({
                         'name': 'Adresse de livraison' +  clients_sah['Firstname']+'  '+clients_sah['Lastname'],
                         'street': clients_sah['StreetAddress'],
+                        'street2':clients_sah['StreetAddress2']+','+clients_sah['StreetAddress3'] if clients_sah['StreetAddress3']!="" else clients_sah['StreetAddress2'],
                         'city': clients_sah['City'],
                         'zip': clients_sah['Postcode'],
                         'country_id': pays,
@@ -365,14 +366,15 @@ class ClientSAH(models.Model):
                         'isActive':data['IsActive'],
                 })
                 delivery_address = self.env['res.partner'].create({
-                        'name': 'Adresse de livraison' +  data['FirstName']+' '+data['LastName'],
-                        'street': data['StreetAddress'],
-                        'city': data['City'],
-                        'zip': data['Postcode'],
-                        'country_id': pays.id if pays else None,
-                        'type': 'delivery',  
-                        'parent_id': parent.id,
-                    })
+                    'name': 'Adresse de livraison' +  data['FirstName']+' '+data['LastName'],
+                    'street': data['StreetAddress'],
+                    'street2':data['StreetAddress2'],
+                    'city': data['City'],
+                    'zip': data['Postcode'],
+                    'country_id': pays.id if pays else None,
+                    'type': 'delivery',  
+                    'parent_id': parent.id,
+                })
 
         else:
             _logger.info("==================================Erreur: %s ==========================",  response.text)
