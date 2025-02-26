@@ -13,7 +13,7 @@ class MethodePaiement(models.Model):
     name = fields.Char(string='Nom',required=True, copy=False)
     code = fields.Char(string='Code',required=True, copy=False)
     value = fields.Integer( copy=False)
-    is_confirme = fields.Boolean(string='Est confirmé',help="Le paiement est confirmé")
+    is_confirme = fields.Boolean(string='Confirmer Commande',help="Le paiement est confirmé")
     
     _sql_constraints = [
         ('code_uniq', 'unique (code)', "Ce code exists deja!")]

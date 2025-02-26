@@ -36,6 +36,7 @@ class StockPickingSAH(models.Model):
                 }
                 self.with_delay(**job_kwargs).update_state_order(self.sale_id)
         return res
+        
     def update_state_order(self,sale_id):
         if sale_id.id_order_sh:
             id_commande = sale_id.id_order_sh

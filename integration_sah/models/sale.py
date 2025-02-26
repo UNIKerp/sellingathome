@@ -86,7 +86,8 @@ class SaleSAH(models.Model):
                                 'price_unit': elt['UnitPriceExcltax'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
-
+                        if order.methode_paiement_id.is_confirme == True:
+                            order.action_confirm()
                 elif commandes_odoo:
                     commandes_odoo.write({ 
                         "name":commande['OrderRefCode'], 
@@ -156,6 +157,8 @@ class SaleSAH(models.Model):
                                 'price_unit': elt['UnitPriceExcltax'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
+                    if commandes_odoo.methode_paiement_id.is_confirme == True and commandes_odoo.state in ['draft','sent']:
+                        order.action_confirm()
         else:
             _logger.info(f"Erreur {response.status_code}: {response.text}")
        

@@ -37,7 +37,7 @@
         <field name="res_model">gestion.vdi</field>
         <field name="view_mode">list,form</field>
     </record>
-    <menuitem name="Gestion VDI" id="unikerp_ib_vogt_gestion_vdi" parent="contacts.res_partner_menu_config"  action="action_unikerp_ib_vogt_gestion_vdi" sequence='2'/>
+    <!-- <menuitem name="Gestion VDI" id="unikerp_ib_vogt_gestion_vdi" parent="contacts.res_partner_menu_config"  action="action_unikerp_ib_vogt_gestion_vdi" sequence='2'/> -->
     
   </data>
 </odoo>
