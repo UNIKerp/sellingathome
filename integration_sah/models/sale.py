@@ -75,39 +75,39 @@ class SaleSAH(models.Model):
                     domain = ''
                     if phone :
                         if not domain:
-                            domain = ('phone','=',phone)
+                            domain = "('phone','=',phone)"
                         else :
-                            domain = domain +','+ ('phone','=',phone)
+                            domain = domain +','+ "('phone','=',phone)"
                     if mobile :
                         if not domain:
-                            domain = ('mobile','=',mobile)
+                            domain = "('mobile','=',mobile)"
                         else :
-                            domain = domain +','+ ('mobile','=',mobile)
+                            domain = domain +','+ "('mobile','=',mobile)"
                     if street :
                         if not domain:
-                            domain = ('street','=',street)
+                            domain = "('street','=',street)"
                         else :
-                            domain = domain +','+ ('street','=',street)
+                            domain = domain +','+ "('street','=',street)"
                     if street2 :
                         if not domain:
-                            domain = ('street2','=',street2)
+                            domain = "('street2','=',street2)"
                         else :
-                            domain = domain +','+ ('street2','=',street2)
+                            domain = domain +','+ "('street2','=',street2)"
                     if zip :
                         if not domain:
-                            domain = ('zip','=',zip)
+                            domain = "('zip','=',zip)"
                         else :
-                            domain = domain +','+ ('zip','=',zip)
+                            domain = domain +','+ "('zip','=',zip)"
                     if city :
                         if not domain:
-                            domain = ('city','=',city)
+                            domain = "('city','=',city)"
                         else :
-                            domain = domain +','+ ('city','=',city)
+                            domain = domain +','+ "('city','=',city)"
                     if pays:
                         if not domain:
-                            domain = ('country_id','=',pays)
+                            domain = "('country_id','=',pays)"
                         else :
-                            domain = domain +','+ ('country_id','=',pays)
+                            domain = domain +','+ "('country_id','=',pays)"
                             
                     search_domain = [domain]
                     adresse_id = self.env['res.partner'].search(search_domain)
