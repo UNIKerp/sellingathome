@@ -153,7 +153,7 @@ class NomenclatureSelligHome(models.Model):
                                     "EcoTax": 8.1
                                 }
                         ],
-                        "ProductComponentProducts": attached_products
+                        "AttachedProducts": attached_products
                         
                 }
                 response = requests.put(url_produit, json=datas, headers=headers)
