@@ -110,6 +110,7 @@ class SaleSAH(models.Model):
                             domain = domain +','+ "('country_id','=',pays)"
                     _logger.info("2222222222%s",domain)    
                     search_domain = [domain]
+                    _logger.info("333333333333%s",search_domain) 
                     adresse_id = self.env['res.partner'].search(search_domain)
                     if adresse_id :
                         adresse_livraison_id = adresse_id
