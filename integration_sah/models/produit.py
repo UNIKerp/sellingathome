@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 import json
 from PIL import Image
 from io import BytesIO
-
+from dateutil import parser
 
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
@@ -26,7 +26,7 @@ class ProduitSelligHome(models.Model):
     discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
     discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
     discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
-    type_produit_sah = fields.Selection(selection=[('5','Produit simple'),('10','Produit groupé'),('20','Kit variable')], string="Type produit SAH", default='5')
+    type_produit_sah = fields.Selection(selection=[('5','Produit simple'),('10','Produit groupé'),('20','Kit variable')], string="Type produit SAH",default='5')
     # url_image = fields.Char("URL image", help="Url de l'image")
 
     _sql_constraints = [
@@ -37,37 +37,51 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
         post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
+        
         if post_response_produit.status_code == 200:
             response_data_produit = post_response_produit.json()
+            
             for produit_api in response_data_produit:
                 sah_id = produit_api['Id']
                 reference = produit_api['Reference']
                 name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
                 description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
                 price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
-                barcode = produit_api.get('Barcode', False)
+                barcode = produit_api.get('Barcode', '')
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
+                
                 existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
+                
                 if not existing_product:
-                    self.env['product.template'].create({
+                    if barcode and self.env['product.template'].search([('barcode', '=', barcode)]):
+                        _logger.warning(f"Code-barres déjà utilisé : {barcode} pour le produit {name}")
+                        barcode = None
+                    
+                    product_data = {
                         'name': name,
                         'default_code': reference,
                         'list_price': price,
                         'description_sale': description,
-                        'barcode': barcode,
                         'weight': weight,
                         'produit_sah_id': sah_id,
-                        'is_storable' : True if type_sah == 1 else False
-                    })
-                    _logger.info(f"Le produit {name} est  crée avec succés")
+                        'is_storable': True if type_sah == 1 else False,
+                    }
+                    
+                    if barcode:
+                        product_data['barcode'] = barcode
+                    
+                    self.env['product.template'].create(product_data)
+                    _logger.info(f"Le produit {name} est créé avec succès")
         else:
-            _logger.error(f"Connexion à l'api : {post_response_produit.status_code}")
+            _logger.error(f"Connexion à l'API échouée : {post_response_produit.status_code}")
+
 
     
 
     """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
+        _logger.info(f'=============================****************************=========================')
         if product.produit_sah_id:
             #Photos
             photos_maj = self.maj_images_du_produit(product)
@@ -115,8 +129,10 @@ class ProduitSelligHome(models.Model):
                             id_categ = categ['Id']
                 else:
                     _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
-                    
+
+           
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
+            
             update_data = {
                 "ProductType": product.type_produit_sah,
                 "Reference": product.default_code,
@@ -129,10 +145,10 @@ class ProduitSelligHome(models.Model):
                         "PriceExclTax": product.list_price,
                         "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
                         "ProductCost": product.standard_price,
-                        "EcoTax": 8.1
+                        "EcoTax": 8.1,
                     }
                 ],
-                "Barcode": product.barcode,
+                "Barcode": product.barcode if product.barcode else '',
                 "Weight": product.weight,
                 "IsPublished": True,
                 "InventoryMethod": 1 if product.is_storable == True else 0,
@@ -144,7 +160,6 @@ class ProduitSelligHome(models.Model):
                         'ISOValue': 'fr'
                     }
                 ],
-               
                 "Categories": [
                     {
                         "Id": id_categ,
@@ -172,14 +187,14 @@ class ProduitSelligHome(models.Model):
                     for line in product.attribute_line_ids if line.value_ids
                 ]
             }
+
             put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
+
             if put_response_produit.status_code == 200:
                 _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
             else:
                 _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
 
-
-    
     #
     """ Creation d'un produit de Odoo => SAH """
     def creation_produit_odoo_sah(self,product_id):
@@ -254,7 +269,7 @@ class ProduitSelligHome(models.Model):
                     "EcoTax": 8.1
                 }
             ],
-            "Barcode": product_id.barcode,
+            "Barcode": product_id.barcode if product_id.barcode else '',
             "Weight": product_id.weight,
             "Length": product_id.long_sah,
             "Height": product_id.haut_sah,
@@ -317,6 +332,20 @@ class ProduitSelligHome(models.Model):
             response_data = post_response.json()
             product_id.produit_sah_id = int(response_data.get('Id'))
             _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
+            prices = response_data.get('Prices')
+            for price in prices:
+                pays = self.env['res.country'].search([('code', '=', price['TwoLetterISOCode'])], limit=1)
+                pricelist = self.env['product.pricelist'].create({
+                    'name': price['BrandTaxName'],
+                    'price_list_sah_id': price['Id'],
+                    'country_id': pays.id if pays else False,
+                    'item_ids': [(0, 0, {
+                        'product_tmpl_id': product_id.id,
+                        'price':  product_id.list_price,
+                    })],
+                })
+                product_id.default_list_price = pricelist.id
+           
         else:
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
 
