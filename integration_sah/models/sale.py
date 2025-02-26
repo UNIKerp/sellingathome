@@ -23,6 +23,7 @@ class SaleSAH(models.Model):
     methode_paiement_id = fields.Many2one('methode.paiement.sah',string="Moyen de paiement",help='la Methode de paiement')
     paiement_ids = fields.One2many('paiement.sah','order_id',string="Paiement SAH",help='le paiement dans SAH')
     mode_livraison_sah_id = fields.Many2one('mode.livraison.sah',string="Mode de transport")
+    
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
 
