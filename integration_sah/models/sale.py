@@ -72,44 +72,25 @@ class SaleSAH(models.Model):
                     zip = adresse_livraison_sah['Postcode']
                     city = adresse_livraison_sah['City']
                     pays = self.env['res.country'].search([('code','=',adresse_livraison_sah['CountryIso'])]).id if adresse_livraison_sah['CountryIso'] else None 
-                    domain = ''
-                    if phone :
-                        if not domain:
-                            domain = "('phone','=',phone)"
-                        else :
-                            domain = domain +','+ "('phone','=',phone)"
-                    if mobile :
-                        if not domain:
-                            domain = "('mobile','=',mobile)"
-                        else :
-                            domain = domain +','+ "('mobile','=',mobile)"
-                    if street :
-                        if not domain:
-                            domain = "('street','=',street)"
-                        else :
-                            domain = domain +','+ "('street','=',street)"
-                    if street2 :
-                        if not domain:
-                            domain = "('street2','=',street2)"
-                        else :
-                            domain = domain +','+ "('street2','=',street2)"
-                    if zip :
-                        if not domain:
-                            domain = "('zip','=',zip)"
-                        else :
-                            domain = domain +','+ "('zip','=',zip)"
-                    if city :
-                        if not domain:
-                            domain = "('city','=',city)"
-                        else :
-                            domain = domain +','+ "('city','=',city)"
+                    # Création d'un domaine de recherche sous forme de liste
+                    domain = []
+                    if phone:
+                        domain.append(('phone', '=', phone))
+                    if mobile:
+                        domain.append(('mobile', '=', mobile))
+                    if street:
+                        domain.append(('street', '=', street))
+                    if street2:
+                        domain.append(('street2', '=', street2))
+                    if zip_code:
+                        domain.append(('zip', '=', zip_code))
+                    if city:
+                        domain.append(('city', '=', city))
                     if pays:
-                        if not domain:
-                            domain = "('country_id','=',pays)"
-                        else :
-                            domain = domain +','+ "('country_id','=',pays)"
-                    _logger.info("2222222222%s",domain)  
-                    adresse_id = self.env['res.partner'].search([domain])
+                        domain.append(('country_id', '=', pays))
+
+                    # Recherche de l'adresse avec le domaine construit
+                    adresse_id = self.env['res.partner'].search(domain)
                     if adresse_id :
                         adresse_livraison_id = adresse_id
                     
