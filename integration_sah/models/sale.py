@@ -45,7 +45,12 @@ class SaleSAH(models.Model):
                 methode_paiement_id = None
                 mode_livraison_sah_id = None 
                
-                phone , mobile,street2,street,zip,city,pays = ''
+                phone = ''
+                mobile = ''
+                street2 = ''
+                streetzip = ''
+                city = ''
+                pays = ''
 
                 if mode_livraison_sah:
                     mode_id = self.env['mode.livraison.sah'].search([('value','=',mode_livraison_sah)])
