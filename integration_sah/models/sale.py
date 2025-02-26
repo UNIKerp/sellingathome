@@ -65,13 +65,17 @@ class SaleSAH(models.Model):
                 adresse_livraison_id = ''
                 adresse_livraison_sah = commande['DeliveryAddress']
                 if adresse_livraison_sah :
-                    phone = adresse_livraison_sah['Phone'],
-                    mobile = adresse_livraison_sah['MobilePhone'] 
-                    street = adresse_livraison_sah['StreetAddress']
-                    street2 = adresse_livraison_sah['StreetAddress2'] +','+ adresse_livraison_sah['StreetAddress3'] if adresse_livraison_sah['StreetAddress3'] and adresse_livraison_sah['StreetAddress2'] else adresse_livraison_sah['StreetAddress2']
-                    zip = adresse_livraison_sah['Postcode']
-                    city = adresse_livraison_sah['City']
-                    pays = self.env['res.country'].search([('code','=',adresse_livraison_sah['CountryIso'])]).id if adresse_livraison_sah['CountryIso'] else None 
+                    phone = adresse_livraison_sah.get('Phone')
+                    mobile = adresse_livraison_sah.get('MobilePhone')
+                    street = adresse_livraison_sah.get('StreetAddress')
+                    street2 = (
+                        f"{adresse_livraison_sah.get('StreetAddress2', '')}, {adresse_livraison_sah.get('StreetAddress3', '')}".strip(', ')
+                        if adresse_livraison_sah.get('StreetAddress2') and adresse_livraison_sah.get('StreetAddress3')
+                        else adresse_livraison_sah.get('StreetAddress2')
+                    )
+                    zip_code = adresse_livraison_sah.get('Postcode')
+                    city = adresse_livraison_sah.get('City')
+                    pays = self.env['res.country'].search([('code', '=', adresse_livraison_sah.get('CountryIso'))]).id if adresse_livraison_sah.get('CountryIso') else None
                     # Création d'un domaine de recherche sous forme de liste
                     domain = []
                     if phone:
