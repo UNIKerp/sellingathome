@@ -99,9 +99,9 @@ class NomenclatureSelligHome(models.Model):
                 }
 
                 # Ajout des éléments en fonction du type de produit
-                if res.product_tmpl_id.type == 'normal':
+                if res.type == 'normal':
                     datas["AttachedProducts"] = attached_products
-                elif res.product_tmpl_id.type == 'phantom':
+                elif res.type == 'phantom':
                     datas["ProductComponentProducts"] = produit_variantes
                     _logger.info("################################################### %s",datas["ProductComponentProducts"])
 
