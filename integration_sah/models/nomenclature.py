@@ -65,12 +65,16 @@ class NomenclatureSelligHome(models.Model):
                                     "Deleted": False,
                                 }
 
+                            if product_id in kit_variante:
+                                kit_variante[product_id]['Quantity'] += int(line.product_qty)
+                            else:
                                 kit_variante[product_id] = {
                                     "ProductId": product_id,
                                     "Quantity": int(line.product_qty),
                                     "DisplayOrder": len(kit_variante) + 1,
                                     "Deleted": False,
                                 }
+
 
                 attached_products = list(aggregated_products.values())
                 produit_variantes = list(kit_variante.values())
