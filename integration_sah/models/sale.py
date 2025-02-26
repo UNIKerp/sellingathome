@@ -48,7 +48,8 @@ class SaleSAH(models.Model):
                 phone = ''
                 mobile = ''
                 street2 = ''
-                streetzip = ''
+                street = ''
+                zip = ''
                 city = ''
                 pays = ''
 
