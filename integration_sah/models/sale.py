@@ -68,7 +68,7 @@ class SaleSAH(models.Model):
                     phone = adresse_livraison_sah['Phone'],
                     mobile = adresse_livraison_sah['MobilePhone'] 
                     street = adresse_livraison_sah['StreetAddress']
-                    street2 =adresse_livraison_sah['StreetAddress2']+','+adresse_livraison_sah['StreetAddress3'] if adresse_livraison_sah['StreetAddress3']!="" else adresse_livraison_sah['StreetAddress2'],
+                    street2 =adresse_livraison_sah['StreetAddress2']+','+adresse_livraison_sah['StreetAddress3'] if adresse_livraison_sah['StreetAddress3']!="" else adresse_livraison_sah['StreetAddress2']
                     zip = adresse_livraison_sah['Postcode']
                     city = adresse_livraison_sah['City']
                     pays = self.env['res.country'].search([('code','=',adresse_livraison_sah['CountryIso'])]).id if adresse_livraison_sah['CountryIso'] else None 
