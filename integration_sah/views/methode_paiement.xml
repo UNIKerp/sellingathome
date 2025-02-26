@@ -25,7 +25,7 @@
 		<field	name="name">methode.paiement.sah.form</field>
 		<field	name="model">methode.paiement.sah</field>
 		<field	name="arch"	type="xml">
-			<list create="false" edit="top">
+			<list create="false" editable="top" >
                 <field name="name"/>
                 <field name="value" readonly="1"/>
                 <field name="is_confirme"/>

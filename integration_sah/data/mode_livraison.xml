@@ -1,0 +1,46 @@
+<odoo>
+    <data>
+        <!-- noupdate="0"  Données Table Responsable -->
+        <record model="mode.livraison.sah" id="0">
+            <field name="name">Vide</field>
+            <field name="value">0</field>
+        </record>
+        <record model="mode.livraison.sah" id="1">
+            <field name="name">Vendeur</field>
+            <field name="value">10</field>
+        </record>
+        <record model="mode.livraison.sah" id="2">
+            <field name="name">Client</field>
+            <field name="value">20</field>
+        </record>
+        <record model="mode.livraison.sah" id="3">
+            <field name="name">Hôte</field>
+            <field name="value">30</field>
+        </record>
+        <record model="mode.livraison.sah" id="4">
+            <field name="name">Emporter</field>
+            <field name="value">40</field>
+        </record>
+        <record model="mode.livraison.sah" id="5">
+            <field name="name">Adresse personnalisée</field>
+            <field name="value">50</field>
+        </record>
+        <record model="mode.livraison.sah" id="6">
+            <field name="name">DPDPredict</field>
+            <field name="value">110</field>
+        </record>
+        <record model="mode.livraison.sah" id="7">
+            <field name="name">Point de relais DPDR</field>
+            <field name="value">120</field>
+        </record>
+        <record model="mode.livraison.sah" id="8">
+            <field name="name">Colissimo</field>
+            <field name="value">130</field>
+        </record>
+        <record model="mode.livraison.sah" id="9">
+            <field name="name">MondialRelay</field>
+            <field name="value">140</field>
+        </record>Colissimo
+       
+    </data>
+</odoo>

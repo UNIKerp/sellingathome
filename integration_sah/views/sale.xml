@@ -13,7 +13,8 @@
                 </xpath>
                 <xpath expr="//form/sheet/group[@name='sale_header']/group[@name='order_details']/field[@name='payment_term_id']" position="after">
                     <field name="vdi" />
-                    <field name="methode_paiement_id" />
+                    <field name="methode_paiement_id" readonly="1" force_save="1"/>
+                    <field name="mode_livraison_sah_id" readonly="1" force_save="1"/>
                 </xpath> 
                 <page name="other_information" position="after">
                     <page string="Infos paiement SAH" name="info_paiement_sah">
