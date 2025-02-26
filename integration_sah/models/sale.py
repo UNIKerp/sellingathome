@@ -227,7 +227,7 @@ class SaleSAH(models.Model):
                                     'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                     })
                         if commandes_odoo.methode_paiement_id.is_confirme == True and commandes_odoo.state in ['draft','sent']:
-                            order.action_confirm()
+                            commandes_odoo.action_confirm()
                 else:
                     _logger.info(" Client introuvable pour la commande ",{commande[Id]})
         
