@@ -21,7 +21,7 @@
         'views/stock_picking.xml',
         'views/tarifs.xml',
         'data/methode_paiement_sah.xml',
-        'data/mode_livraison_sah_id.xml',
+        'data/mode_livraison.xml',
     ],
     'images':['static/description/icon.png',],
 }
