@@ -41,7 +41,13 @@ class SaleSAH(models.Model):
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
                 Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
                 methode_paiement = commande['PaymentMethod']
-                methode_paiement_id=None
+                mode_livraison_sah = commande['DeliveryMode']
+                methode_paiement_id = None
+                mode_livraison_sah_id = None
+                if mode_livraison_sah:
+                    mode_id = self.env['mode.livraison.sah'].search([('value','=',mode_livraison_sah)])
+                    if mode_id:
+                        mode_livraison_sah_id = mode_id
                 if methode_paiement:
                     methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
                     if len(methode_paiement) ==1:
@@ -51,12 +57,13 @@ class SaleSAH(models.Model):
 
                 if not commandes_odoo and client_id:
                     order = commandes_odoo.create({
-                        "id_order_sh":commande['Id'],
-                        "name":commande['OrderRefCode'],
-                        "partner_id":client_id.id,
-                        "currency_id":Currency.id, 
-                        "vdi":client_id.vdi_id.id or False,
-                        "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
+                        "id_order_sh" : commande['Id'],
+                        "name" : commande['OrderRefCode'],
+                        "partner_id" : client_id.id,
+                        "currency_id" : Currency.id, 
+                        "vdi" : client_id.vdi_id.id or False,
+                        "methode_paiement_id" : methode_paiement_id.id if methode_paiement_id else None,
+                        "mode_livraison_sah_id": mode_livraison_sah_id.id if mode_livraison_sah_id  else None
                     })
                     if order:
                         paiement_sah = commande['Payments']
@@ -97,6 +104,7 @@ class SaleSAH(models.Model):
                         "currency_id":Currency.id, 
                         "vdi":client_id.vdi_id.id or False,
                         "methode_paiement_id":methode_paiement_id.id if methode_paiement_id else None,
+                        "mode_livraison_sah_id": mode_livraison_sah_id.id if mode_livraison_sah_id  else None
                     })
                     paiement_sah = commande['Payments']
                     
