@@ -99,11 +99,12 @@ class NomenclatureSelligHome(models.Model):
                     datas["AttachedProducts"] = attached_products
                 elif res.product_tmpl_id.type == 'phantom':
                     datas["ProductComponentProducts"] = produit_variantes
+                    _logger.info("################################################### %s",datas["ProductComponentProducts"])
 
                 # Envoi de la mise à jour vers SellingAtHome
                 response = requests.put(url_produit, json=datas, headers=headers)
+                _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",response.json())
 
-                return response
     
     """def creation_nomenclature_produits(self,res,headers):
         if res.product_tmpl_id.produit_sah_id :
