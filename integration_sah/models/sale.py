@@ -77,7 +77,7 @@ class SaleSAH(models.Model):
                     city = adresse_livraison_sah.get('City')
                     pays = self.env['res.country'].search([('code', '=', adresse_livraison_sah.get('CountryIso'))]).id if adresse_livraison_sah.get('CountryIso') else None
                     # Création d'un domaine de recherche sous forme de liste
-                    domain = []
+                    domain = [('type','=','delivery')]
                     if phone:
                         domain.append(('phone', '=', phone))
                     if mobile:
@@ -94,7 +94,7 @@ class SaleSAH(models.Model):
                         domain.append(('country_id', '=', pays))
 
                     # Recherche de l'adresse avec le domaine construit
-                    adresse_id = self.env['res.partner'].search(domain)
+                    adresse_id = self.env['res.partner'].search(domain,limit=1)
                     if adresse_id :
                         adresse_livraison_id = adresse_id
                     
