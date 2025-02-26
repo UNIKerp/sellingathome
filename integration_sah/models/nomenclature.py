@@ -37,7 +37,7 @@ class NomenclatureSelligHome(models.Model):
         self.with_delay(**job_kwargs).creation_nomenclature_produits(self, headers)
         return rec
 
-    def creation_nomenclature_produits(self, res, headers):
+    """def creation_nomenclature_produits(self, res, headers):
         if res.product_tmpl_id.produit_sah_id:
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
@@ -107,10 +107,10 @@ class NomenclatureSelligHome(models.Model):
 
                 # Envoi de la mise à jour vers SellingAtHome
                 response = requests.put(url_produit, json=datas, headers=headers)
-                _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",response.json())
+                _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",response.json())"""
 
     
-    """def creation_nomenclature_produits(self,res,headers):
+    def creation_nomenclature_produits(self,res,headers):
         if res.product_tmpl_id.produit_sah_id :
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
@@ -156,7 +156,7 @@ class NomenclatureSelligHome(models.Model):
                         "AttachedProducts": attached_products
                         
                 }
-                response = requests.put(url_produit, json=datas, headers=headers)"""
+                response = requests.put(url_produit, json=datas, headers=headers)
 
 
 
