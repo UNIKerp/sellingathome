@@ -113,7 +113,7 @@ class NomenclatureSelligHome(models.Model):
 
                 # 🔹 Envoyer la requête PUT
                 response = requests.put(url_produit, json=datas, headers=headers)
-                print(response.status_code, response.json())  # Vérifier la réponse de l'API
+                _logger.info(response.status_code, response.json())  # Vérifier la réponse de l'API
 
     
     """def creation_nomenclature_produits(self,res,headers):
