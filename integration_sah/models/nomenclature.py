@@ -37,7 +37,7 @@ class NomenclatureSelligHome(models.Model):
         self.with_delay(**job_kwargs).creation_nomenclature_produits(self, headers)
         return rec
 
-    """def creation_nomenclature_produits(self, res, headers):
+    def creation_nomenclature_produits(self, res, headers):
         if res.product_tmpl_id.produit_sah_id:
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
@@ -56,7 +56,7 @@ class NomenclatureSelligHome(models.Model):
                     component_id = bom.id  # Identifiant unique pour le composant
 
                     product_components[component_id] = {
-                        "Id": component_id,
+                        "Id": 1060,
                         "Name": bom.product_tmpl_id.name,
                         "ProductId": res.product_tmpl_id.produit_sah_id,  # ID du produit parent
                         "MaxQuantity": 0,
@@ -113,10 +113,10 @@ class NomenclatureSelligHome(models.Model):
 
                 # 🔹 Envoyer la requête PUT
                 response = requests.put(url_produit, json=datas, headers=headers)
-                _logger.info(response.status_code, response.json())"""
+                _logger.info(response.status_code, response.json())
 
     
-    def creation_nomenclature_produits(self,res,headers):
+    """def creation_nomenclature_produits(self,res,headers):
         if res.product_tmpl_id.produit_sah_id :
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
@@ -162,7 +162,7 @@ class NomenclatureSelligHome(models.Model):
                         "AttachedProducts": attached_products
                         
                 }
-                response = requests.put(url_produit, json=datas, headers=headers)
+                response = requests.put(url_produit, json=datas, headers=headers)"""
 
 
 
