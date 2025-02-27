@@ -48,6 +48,7 @@ class NomenclatureSelligHome(models.Model):
             if post_response_produit.status_code == 200:
                 nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', res.product_tmpl_id.id)])
 
+                aggregated_products = {}
                 product_component_products = []  # Liste des composants produits
 
                 for bom in nomenclatures:
@@ -63,6 +64,18 @@ class NomenclatureSelligHome(models.Model):
                                 "DisplayOrder": 0,  # Fixé à 0
                                 "Deleted": False  # Fixé à False
                             })
+
+                            if product_id in aggregated_products:
+                                aggregated_products[product_id]['Quantity'] += int(line.product_qty)
+                            else:
+                                aggregated_products[product_id] = {
+                                    "ProductId": product_id,
+                                    "Quantity": int(line.product_qty),
+                                    "DisplayOrder": len(aggregated_products) + 1,
+                                    "Deleted": False,
+                                }
+
+                attached_products = list(aggregated_products.values())
 
                 product_components = [
                     {
@@ -93,8 +106,15 @@ class NomenclatureSelligHome(models.Model):
                             "EcoTax": 8.1
                         }
                     ],
-                    "ProductComponents": product_components
+                    # "AttachedProducts": attached_products
+                    # "ProductComponents": product_components
                 }
+
+                # Ajout conditionnel des sections
+                if res.type == 'normal':
+                    datas["AttachedProducts"] = attached_products
+                elif res.type == 'phantom':
+                    datas["ProductComponents"] = product_components
 
                 response = requests.put(url_produit, json=datas, headers=headers)
                 return response.json()
