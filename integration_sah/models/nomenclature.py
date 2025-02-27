@@ -49,7 +49,7 @@ class NomenclatureSelligHome(models.Model):
                 nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', res.product_tmpl_id.id)])
 
                 aggregated_products = {}
-                product_component_products = []  # Liste des composants produits
+                product_component_products = []
 
                 for bom in nomenclatures:
                     for line in bom.bom_line_ids:
@@ -60,9 +60,9 @@ class NomenclatureSelligHome(models.Model):
                                 "ProductRemoteId": None,
                                 "ProductCombinationId": None,
                                 "ProductCombinationBarCode": None,
-                                "Quantity": 1,  # Fixé à 1
-                                "DisplayOrder": 0,  # Fixé à 0
-                                "Deleted": False  # Fixé à False
+                                "Quantity": 1,
+                                "DisplayOrder": 0,
+                                "Deleted": False 
                             })
 
                             if product_id in aggregated_products:
@@ -79,7 +79,7 @@ class NomenclatureSelligHome(models.Model):
 
                 product_components = [
                     {
-                        "Id": 1060,  # ID fixé
+                        "Id": 1060, 
                         "Name": res.product_tmpl_id.name or "Nomenclature",
                         "ProductId": res.product_tmpl_id.produit_sah_id,
                         "MaxQuantity": 0,
@@ -105,12 +105,10 @@ class NomenclatureSelligHome(models.Model):
                             "ProductCost": res.product_tmpl_id.standard_price,
                             "EcoTax": 8.1
                         }
-                    ],
-                    # "AttachedProducts": attached_products
-                    # "ProductComponents": product_components
+                    ]
+                   
                 }
 
-                # Ajout conditionnel des sections
                 if res.type == 'normal':
                     datas["AttachedProducts"] = attached_products
                 elif res.type == 'phantom':
@@ -119,54 +117,6 @@ class NomenclatureSelligHome(models.Model):
                 response = requests.put(url_produit, json=datas, headers=headers)
                 return response.json()
 
-    
-    """def creation_nomenclature_produits(self,res,headers):
-        if res.product_tmpl_id.produit_sah_id :
-            headers = self.env['authentication.sah'].establish_connection()
-            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
-            post_response_produit = requests.get(url_produit, headers=headers)
-            if post_response_produit.status_code == 200:
-                response_data_produit = post_response_produit.json()
-
-
-                nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', res.product_tmpl_id.id)])
-
-                aggregated_products = {}
-
-                for bom in nomenclatures:
-                    for line in bom.bom_line_ids:
-                        product_id = line.product_id.produit_sah_id or 0
-                        if product_id:
-                            if product_id in aggregated_products:
-                                aggregated_products[product_id]['Quantity'] += int(line.product_qty)
-                            else:
-                                aggregated_products[product_id] = {
-                                    "ProductId": product_id,
-                                    "Quantity": int(line.product_qty),
-                                    "DisplayOrder": len(aggregated_products) + 1,
-                                    "Deleted": False,
-                                }
-
-                attached_products = list(aggregated_products.values())
-                
-                datas = {
-
-                        "Prices": [
-                                {
-                                    "Id": res.product_tmpl_id.produit_sah_id,
-                                    "BrandTaxRate": 2.1,
-                                    "BrandTaxName": res.product_tmpl_id.name,
-                                    "TwoLetterISOCode": "FR",
-                                    "PriceExclTax": res.product_tmpl_id.list_price,
-                                    "PriceInclTax": res.product_tmpl_id.list_price * (1 + res.product_tmpl_id.taxes_id.amount / 100),
-                                    "ProductCost": res.product_tmpl_id.standard_price,
-                                    "EcoTax": 8.1
-                                }
-                        ],
-                        "AttachedProducts": attached_products
-                        
-                }
-                response = requests.put(url_produit, json=datas, headers=headers)"""
 
 
 
