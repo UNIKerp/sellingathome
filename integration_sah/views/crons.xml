@@ -14,7 +14,7 @@
 
         <record forcecreate="True" id="synchro_commandes" model="ir.cron">
             <field name="name">Synchronisation des Commandes</field>
-            <field name="model_id" ref="model_res_partner"/>
+            <field name="model_id" ref="model_sale_order"/>
             <field name="state">code</field>
             <field name="code">model._synchronisation_commandes_job()</field>
             <field eval="True" name="active" />
