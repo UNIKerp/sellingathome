@@ -43,7 +43,7 @@ class SaleSAH(models.Model):
                     }
                     self.with_delay(**job_kwargs_commandes).get_commande(commande)     
     
-    def get_commande(self):
+    def get_commande(self,commande):
         if commande:  
             id_order = commande['Id']
             commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
