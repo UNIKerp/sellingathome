@@ -22,7 +22,6 @@ class SaleSAH(models.Model):
     vdi = fields.Many2one('res.partner',string="Ambassadeur",help='le reveudeur vdi dans SAH')
     methode_paiement_id = fields.Many2one('methode.paiement.sah',string="Moyen de paiement",help='la Methode de paiement')
     paiement_ids = fields.One2many('paiement.sah','order_id',string="Paiement SAH",help='le paiement dans SAH')
-    mode_livraison_sah_id = fields.Many2one('mode.livraison.sah',string="Mode de transport")
     
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
@@ -39,12 +38,11 @@ class SaleSAH(models.Model):
                 id_order = commande['Id']
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
-                # vendeur_id = self.env['res.partner'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
+                vendeur_id = self.env['res.partner'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
                 Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
                 methode_paiement = commande['PaymentMethod']
                 mode_livraison_sah = commande['DeliveryMode']
                 methode_paiement_id = None
-                mode_livraison_sah_id = None 
                
                 phone = ''
                 mobile = ''
@@ -54,21 +52,15 @@ class SaleSAH(models.Model):
                 city = ''
                 pays = ''
 
-                if mode_livraison_sah:
-                    mode_id = self.env['mode.livraison.sah'].search([('value','=',mode_livraison_sah)])
-                    if mode_id:
-                        mode_livraison_sah_id = mode_id
+                # if mode_livraison_sah:
+                #     mode_id = self.env['mode.livraison.sah'].search([('value','=',mode_livraison_sah)])
+                #     if mode_id:
+                #         mode_livraison_sah_id = mode_id
                 if methode_paiement:
                     methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
                     if len(methode_paiement) ==1:
                         methode_paiement_id=methode_paiement
-                # if mode_livraison_sah == 20:
-                #     if client_id:
-                #         client =client_id.id
-                # elif  mode_livraison_sah == 10:
-                #     if vendeur_id:
-                #         client = vendeur_id.id
-                # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
+                
                 adresse_livraison_id = ''
                 adresse_livraison_sah = commande['DeliveryAddress']
                 if adresse_livraison_sah :
@@ -99,8 +91,12 @@ class SaleSAH(models.Model):
                         domain.append(('city', '=', city))
                     if pays:
                         domain.append(('country_id', '=', pays))
-                    # if client:
-                    #     domain.append(('parent_id', '=', client))
+                    if mode_livraison_sah == 20:
+                        if client_id:
+                            domain.append(('parent_id', '=', client_id.id))
+                    elif  mode_livraison_sah == 10:
+                        if vendeur_id:
+                            domain.append(('parent_id', '=', vendeur_id.id))
 
                     # Recherche de l'adresse avec le domaine construit
                     adresse_id = self.env['res.partner'].search(domain,limit=1)
@@ -125,9 +121,9 @@ class SaleSAH(models.Model):
                             "name" : commande['OrderRefCode'],
                             "partner_id" : client_id.id,
                             "currency_id" : Currency.id, 
-                            "vdi" : client_id.vdi_id.id or False,
+                            "vdi" : vendeur_id.id if vendeur_id else None,
                             "methode_paiement_id" : methode_paiement_id.id if methode_paiement_id else None,
-                            "mode_livraison_sah_id": mode_livraison_sah_id.id if mode_livraison_sah_id  else None
+                            # "mode_livraison_sah_id": mode_livraison_sah_id.id if mode_livraison_sah_id  else None
                         })
                         if order:
                             if adresse_livraison_id :

@@ -33,7 +33,7 @@
 		</field>
 	</record>
     <record id="action_sah_methode_paiement" model="ir.actions.act_window">
-        <field name="name">Méthodes de paiement </field>
+        <field name="name">Méthodes de paiement SAH</field>
         <field name="res_model">methode.paiement.sah</field>
         <field name="view_mode">list</field>
     </record>
@@ -43,19 +43,21 @@
 		<field	name="model">mode.livraison.sah</field>
 		<field	name="arch"	type="xml">
 			<list create="false" editable="top" >
-                <field name="name"/>
+                <field name="name" readonly="1"/>
                 <field name="value" readonly="1"/>
+				<field name="delivery_carrier_id"/>
+				<field name="desciption" optional="show" />
 			</list>
 		</field>
 	</record>
     <record id="action_sah_mode_livraison" model="ir.actions.act_window">
-        <field name="name">Modes de livraison </field>
+        <field name="name">Modes de livraison SAH</field>
         <field name="res_model">mode.livraison.sah</field>
         <field name="view_mode">list</field>
     </record>
-    <menuitem name="Infos paiement SAH" id="info_sah_paiement" parent="sale.sale_menu_root" sequence="45"/> 
-    <menuitem name="Modes de livraison" id="sah_mode_livraison" parent="info_sah_paiement"  action="action_sah_mode_livraison" sequence="1"/> 
-    <menuitem name="Méthodes de paiement" id="sah_methode_paiement" parent="info_sah_paiement"  action="action_sah_methode_paiement" sequence="2"/> 
+    <menuitem name="Mappages SAH" id="info_sah_paiement" parent="sale.sale_menu_root" sequence="45"/> 
+    <menuitem name="Modes de livraison SAH" id="sah_mode_livraison" parent="info_sah_paiement"  action="action_sah_mode_livraison" sequence="1"/> 
+    <menuitem name="Méthodes de paiement SAH" id="sah_methode_paiement" parent="info_sah_paiement"  action="action_sah_methode_paiement" sequence="2"/> 
     
     </data>
 </odoo>

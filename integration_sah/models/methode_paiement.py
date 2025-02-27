@@ -25,7 +25,8 @@ class ModeLivraison(models.Model):
     name = fields.Char(string='Nom',required=True, copy=False)
     desciption = fields.Char(string='Description')
     value = fields.Integer( string='Valeur' , copy=False , required=True)
-    
+    delivery_carrier_id = fields.Many2one('delivery.carrier',string="Mode de livraison",help='le Modes de livraison correspondant dans odoo')
+
     _sql_constraints = [
         ('value_uniq', 'unique (value)', "Cette Valeur exists deja!")]
  
