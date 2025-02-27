@@ -37,21 +37,35 @@ class NomenclatureSelligHome(models.Model):
         self.with_delay(**job_kwargs).creation_nomenclature_produits(self, headers)
         return rec
 
-    """def creation_nomenclature_produits(self, res, headers):
+    def creation_nomenclature_produits(self, res, headers):
         if res.product_tmpl_id.produit_sah_id:
             headers = self.env['authentication.sah'].establish_connection()
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{res.product_tmpl_id.produit_sah_id}"
             post_response_produit = requests.get(url_produit, headers=headers)
-
+            
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
 
+                # 🔹 Récupérer les nomenclatures du produit
                 nomenclatures = self.env['mrp.bom'].search([('product_tmpl_id', '=', res.product_tmpl_id.id)])
 
                 aggregated_products = {}
-                kit_variante = {}
+                product_components = {}
 
                 for bom in nomenclatures:
+                    component_id = bom.id  # Identifiant unique pour le composant
+
+                    product_components[component_id] = {
+                        "Id": component_id,
+                        "Name": bom.product_tmpl_id.name,
+                        "ProductId": res.product_tmpl_id.produit_sah_id,  # ID du produit parent
+                        "MaxQuantity": 0,
+                        "Deleted": False,
+                        "RemoteReference": None,
+                        "ProductComponentLangs": [{"ISOValue": "fr"}],
+                        "ProductComponentProducts": []
+                    }
+
                     for line in bom.bom_line_ids:
                         product_id = line.product_id.produit_sah_id or 0
                         if product_id:
@@ -62,27 +76,24 @@ class NomenclatureSelligHome(models.Model):
                                     "ProductId": product_id,
                                     "Quantity": int(line.product_qty),
                                     "DisplayOrder": len(aggregated_products) + 1,
-                                    "Deleted": False,
+                                    "Deleted": False
                                 }
 
-                            if product_id in kit_variante:
-                                kit_variante[product_id]['Quantity'] += int(line.product_qty)
-                            else:
-                                kit_variante[product_id] = {
-                                    "ProductId": product_id,
-                                    "Quantity": int(line.product_qty),
-                                    "DisplayOrder": len(kit_variante) + 1,
-                                    "Deleted": False,
-                                }
-
+                            # Ajouter ce produit dans `ProductComponentProducts`
+                            product_components[component_id]["ProductComponentProducts"].append({
+                                "ProductId": product_id,
+                                "ProductRemoteId": None,
+                                "ProductCombinationId": None,
+                                "ProductCombinationBarCode": None,
+                                "Quantity": int(line.product_qty),
+                                "DisplayOrder": len(product_components[component_id]["ProductComponentProducts"]) + 1,
+                                "Deleted": False
+                            })
 
                 attached_products = list(aggregated_products.values())
-                produit_variantes = list(kit_variante.values())
+                product_components_list = list(product_components.values())  # Convertir en liste
 
-                # Récupération du taux de taxe (évite une erreur si `taxes_id` est vide)
-                tax_rate = res.product_tmpl_id.taxes_id.amount if res.product_tmpl_id.taxes_id else 0
-
-                # Structure de base des données envoyées
+                # 🔹 Préparer les données pour la requête API
                 datas = {
                     "Prices": [
                         {
@@ -91,23 +102,18 @@ class NomenclatureSelligHome(models.Model):
                             "BrandTaxName": res.product_tmpl_id.name,
                             "TwoLetterISOCode": "FR",
                             "PriceExclTax": res.product_tmpl_id.list_price,
-                            "PriceInclTax": res.product_tmpl_id.list_price * (1 + tax_rate / 100),
+                            "PriceInclTax": res.product_tmpl_id.list_price * (1 + res.product_tmpl_id.taxes_id.amount / 100),
                             "ProductCost": res.product_tmpl_id.standard_price,
                             "EcoTax": 8.1
                         }
-                    ]
+                    ],
+                    # "AttachedProducts": attached_products,
+                    "ProductComponents": product_components_list
                 }
 
-                # Ajout des éléments en fonction du type de produit
-                if res.type == 'normal':
-                    datas["AttachedProducts"] = attached_products
-                elif res.type == 'phantom':
-                    datas["ProductComponentProducts"] = produit_variantes
-                    _logger.info("################################################### %s",datas["ProductComponentProducts"])
-
-                # Envoi de la mise à jour vers SellingAtHome
+                # 🔹 Envoyer la requête PUT
                 response = requests.put(url_produit, json=datas, headers=headers)
-                _logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s",response.json())"""
+                print(response.status_code, response.json())  # Vérifier la réponse de l'API
 
     
     def creation_nomenclature_produits(self,res,headers):
