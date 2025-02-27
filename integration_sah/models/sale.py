@@ -33,10 +33,10 @@ class SaleSAH(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             commandes_sah = response.json()
-            _logger.info("commandes_sah commandes_sah %s",commandes_sah)
             for commande in commandes_sah:
                 id_order = commande['Id']
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
+                _logger.info('======================================== %s',commandes_odoo)
                 if not commandes_odoo:
                     job_kwargs_commandes = {
                         "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
