@@ -39,6 +39,7 @@ class SaleSAH(models.Model):
                 id_order = commande['Id']
                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                 client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
+                # vendeur_id = self.env['res.partner'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
                 Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
                 methode_paiement = commande['PaymentMethod']
                 mode_livraison_sah = commande['DeliveryMode']
@@ -61,6 +62,12 @@ class SaleSAH(models.Model):
                     methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
                     if len(methode_paiement) ==1:
                         methode_paiement_id=methode_paiement
+                # if mode_livraison_sah == 20:
+                #     if client_id:
+                #         client =client_id.id
+                # elif  mode_livraison_sah == 10:
+                #     if vendeur_id:
+                #         client = vendeur_id.id
                 # vendeur_id = self.env['res.users'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
                 adresse_livraison_id = ''
                 adresse_livraison_sah = commande['DeliveryAddress']
@@ -92,6 +99,8 @@ class SaleSAH(models.Model):
                         domain.append(('city', '=', city))
                     if pays:
                         domain.append(('country_id', '=', pays))
+                    # if client:
+                    #     domain.append(('parent_id', '=', client))
 
                     # Recherche de l'adresse avec le domaine construit
                     adresse_id = self.env['res.partner'].search(domain,limit=1)
