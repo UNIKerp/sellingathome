@@ -41,4 +41,4 @@ class TaxSah(models.Model):
     amount_tax_id = fields.Many2one('account.tax',string="Tax rattacher",help='la tax correspondant dans odoo', copy=False)
 
     _sql_constraints = [
-        ('amount_uniq', 'unique (amount,amount_tax_id)', "Cette taxe a déjà été configurée !")]
+        ('amount_uniq', 'unique (amount)', "Cette taxe a déjà été configurée !")]

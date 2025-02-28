@@ -3,6 +3,7 @@ import logging
 from odoo import models, fields, api
 import requests
 from datetime import datetime
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -53,13 +54,14 @@ class SaleSAH(models.Model):
             methode_paiement = commande['PaymentMethod']
             mode_livraison_sah = commande['DeliveryMode']
             methode_paiement_id = None
+            mode_livraison_sah_id = None
             
             phone = mobile = street2 = street = zip = city = pays = ''
 
-            # if mode_livraison_sah:
-            #     mode_id = self.env['mode.livraison.sah'].search([('value','=',mode_livraison_sah)])
-            #     if mode_id:
-            #         mode_livraison_sah_id = mode_id
+            if mode_livraison_sah:
+                mode_id = self.env['mode.livraison.sah'].search([('value','=',mode_livraison_sah)])
+                if mode_id:
+                    mode_livraison_sah_id = mode_id
             if methode_paiement:
                 methode_paiement = self.env['methode.paiement.sah'].search([('value','=',methode_paiement)])
                 if len(methode_paiement) ==1:
@@ -161,6 +163,8 @@ class SaleSAH(models.Model):
                                 'price_unit': elt['UnitPriceExcltax'], 
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
+                            else :
+                                raise ValidationError(_("Produit introuvable!",elt['ProductId']))
                         if order.methode_paiement_id.is_confirme == True:
                             order.action_confirm()
                         
@@ -172,13 +176,16 @@ class SaleSAH(models.Model):
             
     def _get_or_create_tax(self, tax_rate):
         # Recherche la taxe par son montant
-        tax = self.env['account.tax'].search([('amount', '=', tax_rate)], limit=1)
+        tax = self.env['tax.sah'].search([('amount', '=', tax_rate)], limit=1)
         if not tax:
-            tax = self.env['account.tax'].create({
+            tax = self.env['tax.sah'].create({
                 'name': f'Taxe {tax_rate}%',
                 'amount': tax_rate,
             })
-        
-        return tax.id
+        if not tax.amount_tax_id :
+            
+            raise ValidationError(_("Taxe non configurée!",tax.name))
+        else:
+            return tax.amount_tax_id.id
 
 
