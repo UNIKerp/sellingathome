@@ -184,7 +184,7 @@ class SaleSAH(models.Model):
             })
         if not tax.amount_tax_id :
             
-            raise ValidationError("Taxe non configurée!",tax.name)
+            raise ValidationError("Taxe non configurée!")
         else:
             return tax.amount_tax_id.id
 
