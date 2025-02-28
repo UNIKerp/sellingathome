@@ -153,16 +153,17 @@ class SaleSAH(models.Model):
                         for elt in commande['Products']:
                             p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
                             if p:
-                                self.env['sale.order.line'].create({
-                                "id_order_line_sh":elt["Id"],
-                                "name":p.name,
-                                "order_id":order.id,
-                                'product_id':p.product_variant_id.id,
-                                'product_template_id':p.id,
-                                'product_uom_qty': elt['Quantity'],
-                                'price_unit': elt['UnitPriceExcltax'], 
-                                'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
-                                })
+                                if self._get_or_create_tax(elt['TaxRate']) :
+                                    self.env['sale.order.line'].create({
+                                    "id_order_line_sh":elt["Id"],
+                                    "name":p.name,
+                                    "order_id":order.id,
+                                    'product_id':p.product_variant_id.id,
+                                    'product_template_id':p.id,
+                                    'product_uom_qty': elt['Quantity'],
+                                    'price_unit': elt['UnitPriceExcltax'], 
+                                    'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
+                                    })
                             else :
                                 raise ValidationError("Produit introuvable!")
                         if order.methode_paiement_id.is_confirme == True:
@@ -182,10 +183,8 @@ class SaleSAH(models.Model):
                 'name': f'Taxe {tax_rate}%',
                 'amount': tax_rate,
             })
-        if not tax.amount_tax_id :
+        if tax.amount_tax_id :
             
-            raise ValidationError("Taxe non configurée!")
-        else:
             return tax.amount_tax_id.id
 
 
