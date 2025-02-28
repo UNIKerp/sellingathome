@@ -5,4 +5,6 @@ access_authentication_sah_manager,access authentication sah,model_authentication
 access_gestion_vdi_manager,access gestion vdi,model_gestion_vdi,integration_sah.group_manager,1,1,1,1
 access_model_paiement_manager,access model paiement,model_paiement_sah,integration_sah.group_manager,1,1,1,1
 access_methode_paiement_manager,access methode paiement,model_methode_paiement_sah,integration_sah.group_manager,1,1,1,1
+
 access_mode_livraison_sah,access mode livraison sah,model_mode_livraison_sah,integration_sah.group_manager,1,1,1,1
+access_tax_sah,access tax sah,model_tax_sah,integration_sah.group_manager,1,1,1,1

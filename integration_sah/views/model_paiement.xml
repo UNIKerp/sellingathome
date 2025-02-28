@@ -21,8 +21,6 @@
 						</group>
 					</group>
 				</sheet>
-				<!-- chatter dans la vue formulaire -->
-                <chatter reload_on_post="True"/>
 			</form>
 		</field>
 	</record>
@@ -47,7 +45,6 @@
         <field name="res_model">paiement.sah</field>
         <field name="view_mode">list,form</field>
     </record>
-    <menuitem name="Paiements SAH" id="sah_model_paiement" parent="info_sah_paiement"  action="action_sah_model_paiement" sequence="3"/> 
     
   </data>
 </odoo>

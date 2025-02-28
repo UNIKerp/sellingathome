@@ -55,9 +55,30 @@
         <field name="res_model">mode.livraison.sah</field>
         <field name="view_mode">list</field>
     </record>
+
+	<!-- Taxes SAH -->
+	<record id="view_list_tax_sah"	model="ir.ui.view">
+		<field	name="name">tax.sah.form</field>
+		<field	name="model">tax.sah</field>
+		<field	name="arch"	type="xml">
+			<list create="false" editable="top" >
+                <field name="name" />
+                <field name="amount" readonly="1"/>
+				<field name="amount_tax_id"/>
+			</list>
+		</field>
+	</record>
+    <record id="action_sah_tax" model="ir.actions.act_window">
+        <field name="name">Taxes SAH</field>
+        <field name="res_model">tax.sah</field>
+        <field name="view_mode">list</field>
+    </record>
+
     <menuitem name="Mappages SAH" id="info_sah_paiement" parent="sale.sale_menu_root" sequence="45"/> 
     <menuitem name="Modes de livraison SAH" id="sah_mode_livraison" parent="info_sah_paiement"  action="action_sah_mode_livraison" sequence="1"/> 
     <menuitem name="Méthodes de paiement SAH" id="sah_methode_paiement" parent="info_sah_paiement"  action="action_sah_methode_paiement" sequence="2"/> 
+    <menuitem name="Paiements SAH" id="sah_model_paiement" parent="info_sah_paiement"  action="action_sah_model_paiement" sequence="3"/> 
+    <menuitem name="Taxes SAH" id="sah_tax" parent="info_sah_paiement"  action="action_sah_tax" sequence="4"/> 
     
     </data>
 </odoo>
