@@ -164,7 +164,7 @@ class SaleSAH(models.Model):
                                 'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                 })
                             else :
-                                raise ValidationError(_("Produit introuvable!",elt['ProductId']))
+                                raise ValidationError("Produit introuvable!")
                         if order.methode_paiement_id.is_confirme == True:
                             order.action_confirm()
                         
