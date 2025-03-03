@@ -50,6 +50,19 @@ class ProduitSelligHome(models.Model):
                 barcode = produit_api.get('Barcode', '')
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
+
+                # Ajout des tax
+                list_prices = produit_api['Prices']
+                if list_prices:
+                    for line in list_prices:
+                        if line['BrandTaxRate']:
+                            tax_sah = self.env['tax.sah'].search([('amount','=',line['BrandTaxRate'])])
+                            if not tax_sah:
+                                self.env['tax.sah'].create({
+                                    'name':f'Taxe {line['BrandTaxRate']}%',
+                                    'amount':line['BrandTaxRate']
+                                })
+                #
                 
                 existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
                 
@@ -254,20 +267,21 @@ class ProduitSelligHome(models.Model):
             discount_end_date = discount_end_date.isoformat()
         else:
             discount_end_date = None
-      
+
+
         product_data = {
             "ProductType": product_id.type_produit_sah,
             "Reference": product_id.default_code,
             "Prices": [
                 {
-                    "BrandTaxRate": 2.1,
+                    "BrandTaxRate": self._get_sah_tax(elt),
                     "BrandTaxName": product_id.name,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": product_id.list_price,
                     "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
                     "ProductCost": product_id.standard_price,
                     "EcoTax": 8.1
-                }
+                } if self._get_sah_tax(elt) for elt in product_id.taxes_id 
             ],
             "Barcode": product_id.barcode if product_id.barcode else '',
             "Weight": product_id.weight,
@@ -348,7 +362,13 @@ class ProduitSelligHome(models.Model):
            
         else:
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
-
+    
+    def _get_sah_tax(self, tax_id):
+        # Recherche la taxe par son montant
+        if tax_id :
+            tax = self.env['tax.sah'].search([('amount_tax_id', '=', tax_id.id)], limit=1)
+            if tax :
+                return tax.amount
     """ Redéfiniton de la fonction création du produit """
     @api.model
     def create(self, vals):
