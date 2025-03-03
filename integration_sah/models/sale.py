@@ -161,7 +161,7 @@ class SaleSAH(models.Model):
                                     'product_id':p.product_variant_id.id,
                                     'product_template_id':p.id,
                                     'product_uom_qty': elt['Quantity'],
-                                    'price_unit': elt['UnitPriceExcltax'], 
+                                    'price_unit': elt['UnitPrice'], 
                                     'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                     })
                             else :
@@ -178,7 +178,7 @@ class SaleSAH(models.Model):
                                     line = self.env['sale.order.line'].search([( 'order_id','=', order.id),('product_id','=',mode_livraison_sah_id.delivery_carrier_id.product_id.id)], limit=1)
                                     if line:
                                         line.write({
-                                        'price_unit': commande['DeliveryAmountExclTax'] ,
+                                        'price_unit': commande['DeliveryAmount'] ,
                                         'tax_id': [(6, 0, [self._get_or_create_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax'])])],
                                     })
                         else :
@@ -204,7 +204,7 @@ class SaleSAH(models.Model):
             return tax.amount_tax_id.id
         else:
             raise ValidationError("Taxe introuvable!")
-            
+
     def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
         taux = (deliveryAmountExclTax - deliveryAmount ) * 100
