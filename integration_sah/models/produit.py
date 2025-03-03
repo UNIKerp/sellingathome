@@ -149,18 +149,19 @@ class ProduitSelligHome(models.Model):
             update_data = {
                 "ProductType": product.type_produit_sah,
                 "Reference": product.default_code,
+                
                 "Prices": [
-                    {
-                        "Id": product.produit_sah_id,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": product.name,
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": product.list_price,
-                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
-                        "ProductCost": product.standard_price,
-                        "EcoTax": 8.1,
-                    }
-                ],
+                {
+                    "Id": product.produit_sah_id,
+                    "BrandTaxRate": self._get_sah_tax(elt),
+                    "TwoLetterISOCode": "FR",
+                    "PriceExclTax": product_id.list_price,
+                    "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
+                    "ProductCost": product_id.standard_price,
+                    "EcoTax": 8.1
+                }
+                for elt in product_id.taxes_id if self._get_sah_tax(elt)
+            ],
                 "Barcode": product.barcode if product.barcode else '',
                 "Weight": product.weight,
                 "IsPublished": True,
@@ -272,18 +273,18 @@ class ProduitSelligHome(models.Model):
         product_data = {
             "ProductType": product_id.type_produit_sah,
             "Reference": product_id.default_code,
-            # "Prices": [
-            #     {
-            #         "BrandTaxRate": self._get_sah_tax(elt),
-            #         "BrandTaxName": product_id.name,
-            #         "TwoLetterISOCode": "FR",
-            #         "PriceExclTax": product_id.list_price,
-            #         "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
-            #         "ProductCost": product_id.standard_price,
-            #         "EcoTax": 8.1
-            #     }
-            #     for elt in product_id.taxes_id if self._get_sah_tax(elt)
-            # ],
+            "Prices": [
+                {
+                    "BrandTaxRate": self._get_sah_tax(elt),
+                    "BrandTaxName": product_id.name,
+                    "TwoLetterISOCode": "FR",
+                    "PriceExclTax": product_id.list_price,
+                    "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
+                    "ProductCost": product_id.standard_price,
+                    "EcoTax": 8.1
+                }
+                for elt in product_id.taxes_id if self._get_sah_tax(elt)
+            ],
 
             "Barcode": product_id.barcode if product_id.barcode else '',
             "Weight": product_id.weight,
