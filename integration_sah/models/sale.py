@@ -208,14 +208,16 @@ class SaleSAH(models.Model):
     def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
         taux = (deliveryAmountExclTax - deliveryAmount ) * 100
+        _logger.info('11111  %s', taux)
         tax_id = self.env['tax.sah'].search([('amount', '=', taux)], limit=1)
         if not tax_id:
             tax_id = self.env['tax.sah'].create({
                 'name': f'Taxe {taux}%',
                 'amount': taux,
             })
-        if tax_id.amount_tax_id :
-            return tax_id.amount_tax_id.id
+        else:
+            if tax_id.amount_tax_id :
+                return tax_id.amount_tax_id.id
         # else:
         #     raise ValidationError("Taxe introuvable!")
 
