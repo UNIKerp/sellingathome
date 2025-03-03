@@ -45,7 +45,7 @@ class SaleSAH(models.Model):
                     self.with_delay(**job_kwargs_commandes).get_commande(commande)     
     
     def get_commande(self,commande):
-        if commande:  
+        if commande and commande['Status'] not in ['InProgress','Created']:  
             id_order = commande['Id']
             commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
             client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
@@ -129,7 +129,6 @@ class SaleSAH(models.Model):
                         "currency_id" : Currency.id, 
                         "vdi" : vendeur_id.id if vendeur_id else None,
                         "methode_paiement_id" : methode_paiement_id.id if methode_paiement_id else None,
-                        # "mode_livraison_sah_id": mode_livraison_sah_id.id if mode_livraison_sah_id  else None
                     })
                     if order:
                         if adresse_livraison_id :
@@ -150,6 +149,7 @@ class SaleSAH(models.Model):
                                     'order_id': order.id,
                                 })
                                 order.methode_paiement_id = mtp.id if mtp else order.methode_paiement_id
+                        
                         for elt in commande['Products']:
                             p=self.env['product.template'].search([('produit_sah_id','=',elt['ProductId'])])
                             if p:
@@ -193,12 +193,7 @@ class SaleSAH(models.Model):
     def _get_or_create_tax(self, tax_rate):
         # Recherche la taxe par son montant
         tax = self.env['tax.sah'].search([('amount', '=', tax_rate)], limit=1)
-        if not tax:
-            tax = self.env['tax.sah'].create({
-                'name': f'Taxe {tax_rate}%',
-                'amount': tax_rate,
-            })
-        if tax.amount_tax_id :
+        if tax and tax.amount_tax_id :
             return tax.amount_tax_id.id
         else:
             raise ValidationError("Taxe introuvable!")
@@ -206,14 +201,10 @@ class SaleSAH(models.Model):
     def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
         taux = round((deliveryAmount - deliveryAmountExclTax ) * 100,2)
+        _logger.info("gggg%s", taux)
         tax_id = self.env['tax.sah'].search([('amount', '=', taux)], limit=1)
-        if not tax_id:
-            tax_id = self.env['tax.sah'].create({
-                'name': f'Taxe {taux}%',
-                'amount': taux,
-            })
-        if tax_id.amount_tax_id :
+        if tax_id and tax_id.amount_tax_id :
             return tax_id.amount_tax_id.id
         else:
-            raise ValidationError("Taxe introuvable!")
+            raise ValidationError("Taxe pour les fraits de livraison introuvable!")
 
