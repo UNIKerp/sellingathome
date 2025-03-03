@@ -45,7 +45,7 @@ class SaleSAH(models.Model):
                     self.with_delay(**job_kwargs_commandes).get_commande(commande)     
     
     def get_commande(self,commande):
-        if commande and commande['Status'] not in ['InProgress','Created']:  
+        if commande and commande['Status'] not in ['InProgress','Created','Shipped']:  
             id_order = commande['Id']
             commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
             client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
