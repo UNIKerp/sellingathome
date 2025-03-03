@@ -166,6 +166,14 @@ class SaleSAH(models.Model):
                                     })
                             else :
                                 raise ValidationError("Produit introuvable!")
+                        if commande['DeliveryAmount'] > 0.0 and mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
+                            self.env['choose.delivery.carrier'].create({
+                                "carrier_id": mode_livraison_sah_id.delivery_carrier_id.id,
+                                "order_id":order.id,
+                                "partner_id":order.partner_id.id
+                                })
+                        else :
+                            raise ValidationError("Transporteur introuvable!")
                         if order.methode_paiement_id.is_confirme == True:
                             order.action_confirm()
                         
@@ -184,7 +192,8 @@ class SaleSAH(models.Model):
                 'amount': tax_rate,
             })
         if tax.amount_tax_id :
-            
             return tax.amount_tax_id.id
+        else:
+            raise ValidationError("Taxe introuvable!")
 
 
