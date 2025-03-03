@@ -274,15 +274,16 @@ class ProduitSelligHome(models.Model):
             "Reference": product_id.default_code,
             "Prices": [
                 {
-                    "BrandTaxRate": self._get_sah_tax(elt),
+                    # "BrandTaxRate": self._get_sah_tax(elt),
+                    "BrandTaxRate":20,
                     "BrandTaxName": product_id.name,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": product_id.list_price,
                     "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
                     "ProductCost": product_id.standard_price,
-                    # "EcoTax": 8.1
+                    "EcoTax": 8.1
                 }
-                for elt in product_id.taxes_id if self._get_sah_tax(elt)
+                # for elt in product_id.taxes_id if self._get_sah_tax(elt)
             ],
 
             "Barcode": product_id.barcode if product_id.barcode else '',
