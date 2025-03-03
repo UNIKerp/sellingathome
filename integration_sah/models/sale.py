@@ -166,7 +166,7 @@ class SaleSAH(models.Model):
                                     })
                             else :
                                 raise ValidationError("Produit introuvable!")
-                        if commande['DeliveryAmount'] > 0.0 and mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
+                        if float(commande['DeliveryAmount']) > 0.0 and mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
                             self.env['choose.delivery.carrier'].create({
                                 "carrier_id": mode_livraison_sah_id.delivery_carrier_id.id,
                                 "order_id":order.id,
