@@ -166,14 +166,13 @@ class SaleSAH(models.Model):
                                     })
                             else :
                                 raise ValidationError("Produit introuvable!")
-                        _logger.info("11111111  %s",mode_livraison_sah_id.delivery_carrier_id.name)
-                        _logger.info("22222222  %s",commande['DeliveryAmount'])
                         if commande['DeliveryAmount'] != '0.0' and mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
-                            self.env['choose.delivery.carrier'].create({
+                            df = self.env['choose.delivery.carrier'].create({
                                 "carrier_id": mode_livraison_sah_id.delivery_carrier_id.id,
                                 "order_id":order.id,
                                 "partner_id":order.partner_id.id
                                 })
+                            _logger.info('ww11111 %s',df)
                         else :
                             raise ValidationError("Transporteur introuvable!")
                         if order.methode_paiement_id.is_confirme == True:
