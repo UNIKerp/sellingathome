@@ -272,18 +272,18 @@ class ProduitSelligHome(models.Model):
         product_data = {
             "ProductType": product_id.type_produit_sah,
             "Reference": product_id.default_code,
-            "Prices": [
-                {
-                    # "BrandTaxRate": self._get_sah_tax(elt),
-                    "BrandTaxRate":20,
-                    "TwoLetterISOCode": "FR",
-                    "PriceExclTax": product_id.list_price,
-                    # "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
-                    "ProductCost": product_id.standard_price,
-                    "EcoTax": 8.1
-                }
-                # for elt in product_id.taxes_id if self._get_sah_tax(elt)
-            ],
+            # "Prices": [
+            #     {
+            #         "BrandTaxRate": self._get_sah_tax(elt),
+            #         "BrandTaxName": product_id.name,
+            #         "TwoLetterISOCode": "FR",
+            #         "PriceExclTax": product_id.list_price,
+            #         "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
+            #         "ProductCost": product_id.standard_price,
+            #         "EcoTax": 8.1
+            #     }
+            #     for elt in product_id.taxes_id if self._get_sah_tax(elt)
+            # ],
 
             "Barcode": product_id.barcode if product_id.barcode else '',
             "Weight": product_id.weight,
