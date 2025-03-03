@@ -278,7 +278,7 @@ class ProduitSelligHome(models.Model):
                     "BrandTaxRate":20,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": product_id.list_price,
-                    "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
+                    # "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
                     "ProductCost": product_id.standard_price,
                     "EcoTax": 8.1
                 }
