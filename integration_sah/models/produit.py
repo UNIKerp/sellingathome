@@ -280,7 +280,7 @@ class ProduitSelligHome(models.Model):
                     "PriceExclTax": product_id.list_price,
                     "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
                     "ProductCost": product_id.standard_price,
-                    "EcoTax": 8.1
+                    # "EcoTax": 8.1
                 }
                 for elt in product_id.taxes_id if self._get_sah_tax(elt)
             ],
@@ -368,6 +368,7 @@ class ProduitSelligHome(models.Model):
     def _get_sah_tax(self, tax_id):
         # Recherche la taxe par son montant
         if tax_id :
+            _logger.info('========== tax du produit %s ==========',tax_id)
             tax = self.env['tax.sah'].search([('amount_tax_id', '=', tax_id.id)], limit=1)
             if tax :
                 return tax.amount
