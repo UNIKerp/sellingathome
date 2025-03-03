@@ -174,14 +174,13 @@ class SaleSAH(models.Model):
                                 })
                             if delivery_carrier :
                                 delivery_carrier.button_confirm()
-                                # if mode_livraison_sah_id.delivery_carrier_id.product_id:
-                                #     self.env['sale.order.line'].create({
-                                #         'order_id': order.id,
-                                #         'product_id': mode_livraison_sah_id.delivery_carrier_id.product_id.id,
-                                #         'name': mode_livraison_sah_id.delivery_carrier_id.name,
-                                #         'price_unit': mode_livraison_sah_id.delivery_carrier_id.price,  # Assurez-vous que ce champ contient un prix valide
-                                #         'tax_id': [(6, 0, mode_livraison_sah_id.delivery_carrier_id.product_id.taxes_id.ids)],
-                                #     })
+                                if mode_livraison_sah_id.delivery_carrier_id.product_id:
+                                    line = self.env['sale.order.line'].search([( 'order_id','=', order.id),('product_id','=',mode_livraison_sah_id.delivery_carrier_id.product_id.id)], limit=1)
+                                    if line:
+                                        line.write({
+                                        'price_unit': commande['DeliveryAmountExclTax'] ,
+                                        'tax_id': [(6, 0, [self._get_or_create_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax'])])],
+                                    })
                         else :
                             raise ValidationError("Transporteur introuvable!")
                         if order.methode_paiement_id.is_confirme == True:
@@ -205,5 +204,13 @@ class SaleSAH(models.Model):
             return tax.amount_tax_id.id
         else:
             raise ValidationError("Taxe introuvable!")
-
+            
+    def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
+        # Recherche la taxe par son montant
+        taux = (deliveryAmountExclTax - deliveryAmount ) * 100
+        tax_id = self._get_or_create_tax (taux)
+        if tax_id.amount_tax_id :
+            return tax_id.amount_tax_id.id
+        else:
+            raise ValidationError("Taxe introuvable!")
 
