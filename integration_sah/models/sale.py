@@ -202,8 +202,8 @@ class SaleSAH(models.Model):
             })
         if tax.amount_tax_id :
             return tax.amount_tax_id.id
-        else:
-            raise ValidationError("Taxe introuvable!")
+        # else:
+        #     raise ValidationError("Taxe introuvable!")
 
     def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
@@ -211,6 +211,6 @@ class SaleSAH(models.Model):
         tax_id = self._get_or_create_tax (taux)
         if tax_id.amount_tax_id :
             return tax_id.amount_tax_id.id
-        else:
-            raise ValidationError("Taxe introuvable!")
+        # else:
+        #     raise ValidationError("Taxe introuvable!")
 
