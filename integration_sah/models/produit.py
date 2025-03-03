@@ -276,7 +276,6 @@ class ProduitSelligHome(models.Model):
                 {
                     # "BrandTaxRate": self._get_sah_tax(elt),
                     "BrandTaxRate":20,
-                    "BrandTaxName": product_id.name,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": product_id.list_price,
                     "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
