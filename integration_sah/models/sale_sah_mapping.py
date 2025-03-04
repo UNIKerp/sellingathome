@@ -193,24 +193,27 @@ class MappingSAHOdoo(models.Model):
                                     })
                             else :
                                 raise ValidationError("Produit introuvable!"+" "+str(elt['ProductId']))
-                        if commande['DeliveryAmount'] != '0.0' and mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
+                        
+                        if commande['DeliveryAmount'] == '0.0':
+                            _logger.info("Pas de frait de transport")
                             
-                            delivery_carrier = self.env['choose.delivery.carrier'].create({
-                                "carrier_id": mode_livraison_sah_id.delivery_carrier_id.id,
-                                "order_id":order.id,
-                                "partner_id":order.partner_id.id
-                                })
-                            if delivery_carrier :
-                                delivery_carrier.button_confirm()
-                                if mode_livraison_sah_id.delivery_carrier_id.product_id:
-                                    line = self.env['sale.order.line'].search([( 'order_id','=', order.id),('product_id','=',mode_livraison_sah_id.delivery_carrier_id.product_id.id)], limit=1)
-                                    if line:
-                                        line.write({
-                                        'price_unit': commande['DeliveryAmount'] ,
-                                        'tax_id': [(6, 0, [self._get_or_create_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax'])])],
+                        else:
+                            if mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
+                                
+                                delivery_carrier = self.env['choose.delivery.carrier'].create({
+                                    "carrier_id": mode_livraison_sah_id.delivery_carrier_id.id,
+                                    "order_id":order.id,
+                                    "partner_id":order.partner_id.id
                                     })
-                        else :
-                            raise ValidationError("Transporteur introuvable!")
+                                if delivery_carrier :
+                                    delivery_carrier.button_confirm()
+                                    if mode_livraison_sah_id.delivery_carrier_id.product_id:
+                                        line = self.env['sale.order.line'].search([( 'order_id','=', order.id),('product_id','=',mode_livraison_sah_id.delivery_carrier_id.product_id.id)], limit=1)
+                                        if line:
+                                            line.write({
+                                            'price_unit': commande['DeliveryAmount'] ,
+                                            'tax_id': [(6, 0, [self._get_or_create_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax'])])],
+                                        })
                         if order.methode_paiement_id.is_confirme == True:
                             order.action_confirm()
                         
@@ -247,6 +250,8 @@ class MappingSAHOdoo(models.Model):
 
     def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
+        _logger.info("11111 %s",deliveryAmount)
+        _logger.info("222222 %s",deliveryAmountExclTax)
         taux = round((deliveryAmount - deliveryAmountExclTax ) * 100,1)
         tax_id = self.env['tax.sah'].search([('amount', '=', taux)], limit=1)
         if tax_id and tax_id.amount_tax_id :
