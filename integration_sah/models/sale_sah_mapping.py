@@ -233,20 +233,22 @@ class MappingSAHOdoo(models.Model):
     def _get_mapping_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
         taux = round((deliveryAmount - deliveryAmountExclTax ) * 100,1)
-        tax_id = self.env['tax.sah'].search([('amount', '=', taux)], limit=1)
-        if not tax_id :
-            self.env['tax.sah'].create({
-                                    'name':f'Taxe {taux}%',
-                                    'amount':taux
-                                })
+        if taux > 0:
+            tax_id = self.env['tax.sah'].search([('amount', '=', taux)], limit=1)
+            if not tax_id :
+                self.env['tax.sah'].create({
+                                        'name':f'Taxe {taux}%',
+                                        'amount':taux
+                                    })
 
     def _get_or_create_tax(self, tax_rate):
-#         # Recherche la taxe par son montant
-        tax = self.env['tax.sah'].search([('amount', '=', tax_rate)], limit=1)
-        if tax and tax.amount_tax_id :
-            return tax.amount_tax_id.id
-        else:
-            raise ValidationError("Taxe introuvable!")
+        # Recherche la taxe par son montant
+        if tax_rate and tax_rate > 0:
+            tax = self.env['tax.sah'].search([('amount', '=', tax_rate)], limit=1)
+            if tax and tax.amount_tax_id :
+                return tax.amount_tax_id.id
+            else:
+                raise ValidationError("Taxe introuvable!")
 
     def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
