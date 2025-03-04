@@ -35,7 +35,7 @@ class MappingSAHOdoo(models.Model):
             'type': 'ir.actions.act_window',
             'name': 'Job Logs',
             'res_model':'queue.job',
-            'view_mode': 'list',
+            'view_mode': 'list,form',
             'domain': [('commande_sah_id', '=', self.id)],
             'target': 'current',
         }
