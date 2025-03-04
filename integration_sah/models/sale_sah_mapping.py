@@ -24,7 +24,7 @@ class MappingSAHOdoo(models.Model):
         if response.status_code == 200:
             commandes_sah = response.json()
             for commande in commandes_sah:
-                if commande['Status'] not in ['InProgress','Created','Shipped']
+                if commande['Status'] not in ['InProgress','Created','Shipped'] :
                     id_order = commande['Id']
                     commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
                     if not commandes_odoo:
