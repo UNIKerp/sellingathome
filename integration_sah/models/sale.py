@@ -44,7 +44,7 @@ class SaleSAH(models.Model):
                         }
                         self.with_delay(**job_kwargs_commandes).get_commande(commande)     
                         
-                        _logger.info('============= JOB ================= %s',self.with_delay(**job_kwargs_commandes).get_commande(commande)   )      
+                        _logger.info('============= JOB ================= %s' )      
 
 # #########################################################################################
     def get_commande(self,commande):
