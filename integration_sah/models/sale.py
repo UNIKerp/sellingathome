@@ -42,9 +42,9 @@ class SaleSAH(models.Model):
                         job_kwargs_commandes = {
                             "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
                         }
-                        job_id = self.with_delay(**job_kwargs_commandes).get_commande(commande)     
+                        self.with_delay(**job_kwargs_commandes).get_commande(commande)     
                         
-                        _logger.info('============= JOB ================= %s',job_id)      
+                        _logger.info('============= JOB ================= %s',self.with_delay(**job_kwargs_commandes).get_commande(commande)   )      
 
 # #########################################################################################
     def get_commande(self,commande):
