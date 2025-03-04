@@ -213,7 +213,6 @@ class ProduitSelligHome(models.Model):
             # Ajout spécifique si c'est un kit (combo)
             if product.type == 'combo':
                 _logger.info('========== Traitement du combo ==========')
-
                 product_component_products = []
                 for component in product.combo_ids:
                     for cop in component.combo_item_ids:
@@ -270,7 +269,6 @@ class ProduitSelligHome(models.Model):
     #
     """ Creation d'un produit de Odoo => SAH """
     def creation_produit_odoo_sah(self,product_id):
-        _logger.info('========== CREATEE PRODUCTTTTTTTTTTTTTTTTTTTTTTTTTTTT ==========')
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(product_id.is_published)
         virtual = type == 'service'
@@ -422,69 +420,7 @@ class ProduitSelligHome(models.Model):
                 })
                 product_id.default_list_price = pricelist.id
             
-            ###### kit composant  ######
-            """if product_id.type == 'combo':
-                _logger.info('========== comboooooooooooooooooooooooooooooooooooooooooo ==========')
-                product_component_products = []
-                for component in product_id.combo_ids:
-                    _logger.info('========== componenttttttttttttttttttttttttttttt ========== %s',component)
-                    for cop in component.combo_item_ids:
-                        component_sah_id = cop.product_id.produit_sah_id
-                
-                        if component_sah_id:
-                            product_component_products.append({
-                                "ProductId": component_sah_id,
-                                "ProductRemoteId": None,
-                                "ProductCombinationId": None,
-                                "ProductCombinationBarCode": None,
-                                "Quantity": 1,
-                                "DisplayOrder": 0,
-                                "Deleted": False 
-                            })
-
-                product_components = [
-                    {
-                        "Id": 1060, 
-                        "Name": product_id.name or "kit",
-                        "ProductId": product_id.produit_sah_id,
-                        "MaxQuantity": 0,
-                        "Deleted": False,
-                        "RemoteReference": None,
-                        "ProductComponentLangs": [
-                            {"Label": product_id.name, "ISOValue": "fr"},
-                            {"Label": "", "ISOValue": "en"}
-                        ],
-                        "ProductComponentProducts": product_component_products
-                    }
-                ]
-
-                datas = {
-                    "ProductComponents": product_components,
-
-                    "Prices": [
-                        {
-                            "Id": product_id.produit_sah_id,
-                            "BrandTaxRate": 2.1,
-                            "BrandTaxName": product_id.name,
-                            "TwoLetterISOCode": "FR",
-                            "PriceExclTax": product_id.list_price,
-                            "PriceInclTax": product_id.list_price * (1 + product_id.taxes_id.amount / 100),
-                            "ProductCost": product_id.standard_price,
-                            "EcoTax": 8.1
-                        }
-                    ]
-                }
-
-                url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
-                response = requests.put(url_produit, json=datas, headers=headers)
-
-                if response.status_code == 200:
-                    _logger.info("========== Composants ajoutés au combo SAH avec succès ==========")
-                else:
-                    _logger.error(f"========== Erreur lors de l'ajout des composants du combo SAH: {response.text} ==========")"""
-
-
-           
+                       
         else:
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
     
@@ -498,7 +434,6 @@ class ProduitSelligHome(models.Model):
     """ Redéfiniton de la fonction création du produit """
     @api.model
     def create(self, vals):
-        _logger.info('========== CREATEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE ==========')
         res = super(ProduitSelligHome, self).create(vals)
         if res:
             job_kwargs = {
@@ -510,7 +445,6 @@ class ProduitSelligHome(models.Model):
 
     """ Modification d'un produit """
     def write(self, vals):
-        _logger.info('========== WRITEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE ==========')
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         if vals and self.produit_sah_id:
