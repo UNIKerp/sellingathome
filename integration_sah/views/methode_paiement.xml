@@ -94,6 +94,9 @@
 		<field	name="model">commande.sah</field>
 		<field	name="arch"	type="xml">
 			<form create="false" edit="false">
+				<header>
+					<field name="state" widget="statusbar" />
+				</header>
 				<sheet>
 					<group>
 						<field name="id_order_sah" />
