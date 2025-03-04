@@ -23,9 +23,8 @@ class QueueJob(models.Model):
             _logger.info("222222222 %s",odoo_model)
             value = False
             if odoo_model and hasattr(odoo_model, '_get_integration_id_for_job'):
-
-                _logger.info("33333333333")
                 value = odoo_model.exists()._get_integration_id_for_job()
+                _logger.info("33333333333 %s", value)
 
             rec.commande_sah_id = value
 
