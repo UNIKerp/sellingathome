@@ -11,6 +11,9 @@
                         <group>
                             <field name="token_sah"/>
                             <field name="secret_key_sah"/>
+                            <field name="url_commande"/>
+                            <field name="date_debut"/>
+                            <field name="date_fin"/>
                         </group>
                     </page>
                 </page>
