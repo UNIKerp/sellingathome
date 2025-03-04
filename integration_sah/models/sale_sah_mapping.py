@@ -12,6 +12,7 @@ class MappingSAHOdoo(models.Model):
     _description = "Table pour stoker les commandes de SAH dans Odoo"
 
     name = fields.Char(string='Reference commande SAH',required=True, copy=False)
+    id_order_sah = fields.Char(string='ID commande SAH',required=True, copy=False)
     job_id = fields.Many2one('queue.job',string="Job",copy=False)
     commande_id = fields.Many2one("sale.order",string="Commande Odoo",copy=False)
     donnes_sah = fields.Json("Données")
@@ -35,23 +36,21 @@ class MappingSAHOdoo(models.Model):
             for commande in commandes_sah:
                 if commande['Status'] not in ['InProgress','Created','Shipped'] :
                     id_order = commande['Id']
-                    commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
+                    commandes_odoo = self.search([('id_order_sah','=',id_order)])
                     if not commandes_odoo:
-                        job_kwargs_commandes = {
-                            "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
-                        }
-                        self.with_delay(**job_kwargs_commandes).get_commande(commande)     
-    
-    def get_commande(self,commande):
-        if commande and commande['Status'] not in ['InProgress','Created','Shipped']:  
-               
-            for elt in commande['Products']:
-                if elt['TaxRate']:
-                    self._get_mapping_tax(elt['TaxRate'])
-                        
-            if commande['DeliveryAmount'] != '0.0':
-                self._get_mapping_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax']),
-                        
+                        order_map = self.create({'name':commande['OrderRefCode'],'id_order_sah':id_order,'donnes_sah':commande})
+                        for elt in commande['Products']:
+                            if elt['TaxRate']:
+                                self._get_mapping_tax(elt['TaxRate'])
+                                    
+                        if commande['DeliveryAmount'] != '0.0':
+                            self._get_mapping_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax'])
+                        if order_map:
+                            job_kwargs_commandes = {
+                                "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
+                            }
+                            order=self.env['sale.order']
+                            order.with_delay(**job_kwargs_commandes).get_commande(commande)                
     
             
     def _get_mapping_tax(self, tax_rate):
