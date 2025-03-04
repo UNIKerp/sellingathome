@@ -60,7 +60,7 @@ class MappingSAHOdoo(models.Model):
                     if not commandes_odoo:
                         order_map = self.create({'name':commande['OrderRefCode'],'id_order_sah':id_order,'donnes_sah':commande})
                         for elt in commande['Products']:
-                            if elt['TaxRate']:
+                            if elt['TaxRate'] and elt['TaxRate'] != '0.0':
                                 self._get_mapping_tax(elt['TaxRate'])
                                     
                         if commande['DeliveryAmount'] != '0.0':
