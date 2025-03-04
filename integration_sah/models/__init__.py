@@ -11,4 +11,5 @@ from . import methode_paiement
 from . import nomenclature
 from . import tarifs
 from . import sale_sah_mapping
+from . import queue_job
 

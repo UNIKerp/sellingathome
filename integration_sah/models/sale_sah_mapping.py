@@ -21,6 +21,10 @@ class MappingSAHOdoo(models.Model):
         required=True,
         default=lambda self: self.env.company,
     )
+
+    def _get_integration_id_for_job(self):
+        return self.id
+        
     # Synchronisation des commandes de SAH vers Odoo
     def _mapping_commandes_sah_odoo(self):
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'           
