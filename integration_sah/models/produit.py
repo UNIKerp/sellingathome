@@ -365,7 +365,7 @@ class ProduitSelligHome(models.Model):
                 product_id.default_list_price = pricelist.id
             
             ###### kit composant  ######
-            """if product_id.type == 'combo':
+            if product_id.type == 'combo':
                 product_component_products = []
                 for component in product_id.combo_ids:
 
@@ -422,7 +422,7 @@ class ProduitSelligHome(models.Model):
                 if response.status_code == 200:
                     _logger.info("========== Composants ajoutés au combo SAH avec succès ==========")
                 else:
-                    _logger.error(f"========== Erreur lors de l'ajout des composants du combo SAH: {response.text} ==========")"""
+                    _logger.error(f"========== Erreur lors de l'ajout des composants du combo SAH: {response.text} ==========")
 
 
            
