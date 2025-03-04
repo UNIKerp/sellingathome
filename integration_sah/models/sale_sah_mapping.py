@@ -49,7 +49,7 @@ class MappingSAHOdoo(models.Model):
                             job_kwargs_commandes = {
                                 "description": "Création d'une nouvelle commande de SAH vers Odoo",
                             }
-                            self.with_delay(**job_kwargs_commandes).get_commande(order_map)                
+                            order_map.with_delay(**job_kwargs_commandes).get_commande(commande)                
     
     def get_commande(self,commande):
         if commande :  
