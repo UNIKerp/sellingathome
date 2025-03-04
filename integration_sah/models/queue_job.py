@@ -5,7 +5,7 @@ import re
 from odoo import models, fields, api, _
 from odoo.addons.queue_job.job import FAILED
 from odoo.exceptions import UserError
-
+import logging
 _logger = logging.getLogger(__name__)
 
 class QueueJob(models.Model):
