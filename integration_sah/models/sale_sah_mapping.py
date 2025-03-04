@@ -24,7 +24,7 @@ class MappingSAHOdoo(models.Model):
 
     def _get_integration_id_for_job(self):
         return self.id
-        
+
     # Synchronisation des commandes de SAH vers Odoo
     def _mapping_commandes_sah_odoo(self):
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders'           
@@ -47,10 +47,10 @@ class MappingSAHOdoo(models.Model):
                
             for elt in commande['Products']:
                 if elt['TaxRate']:
-                    self._get_or_create_tax(elt['TaxRate'])
+                    self._get_mapping_tax(elt['TaxRate'])
                         
             if commande['DeliveryAmount'] != '0.0' and mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
-                self._get_or_create_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax']),
+                self._get_mapping_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax']),
                         
     
             
