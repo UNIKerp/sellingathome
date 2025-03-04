@@ -366,7 +366,7 @@ class ProduitSelligHome(models.Model):
             
             ###### kit composant  ######
             if product_id.type == 'combo':
-               _logger.info('========== combooooooooooooooooooooooooooooooooooooooooo ==========')
+               _logger.info('========== comboooooooooooooooooooooooooooooooooooooooooo ==========')
                 product_component_products = []
                 for component in product_id.combo_ids:
                     _logger.info('========== componenttttttttttttttttttttttttttttt ========== %s',component)
