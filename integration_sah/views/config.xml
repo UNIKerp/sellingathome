@@ -19,5 +19,19 @@
                 </page>
             </field>
         </record>
+
+        <record id="view_queue_job_sah_form" model="ir.ui.view">
+        <field name="name">queue.job.sah.form</field>
+        <field name="model">queue.job</field>
+        <field name="priority">99</field>
+        <field name="inherit_id" ref="queue_job.view_queue_job_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='result']" position="before">
+                <group name="Commande SAH">
+                    <field name="commande_sah_id" readonly="1"/>
+                </group>
+            </xpath>
+         </field>
+        </record>
     </data>
 </odoo>
