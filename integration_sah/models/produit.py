@@ -212,6 +212,7 @@ class ProduitSelligHome(models.Model):
     #
     """ Creation d'un produit de Odoo => SAH """
     def creation_produit_odoo_sah(self,product_id):
+        _logger.info('========== CREATEE PRODUCTTTTTTTTTTTTTTTTTTTTTTTTTTTT ==========')
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(product_id.is_published)
         virtual = type == 'service'
@@ -438,6 +439,7 @@ class ProduitSelligHome(models.Model):
     """ Redéfiniton de la fonction création du produit """
     @api.model
     def create(self, vals):
+        _logger.info('========== CREATEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE ==========')
         res = super(ProduitSelligHome, self).create(vals)
         if res:
             job_kwargs = {
@@ -448,6 +450,7 @@ class ProduitSelligHome(models.Model):
 
     """ Modification d'un produit """
     def write(self, vals):
+        _logger.info('========== WRITEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE ==========')
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         if vals and self.produit_sah_id:
