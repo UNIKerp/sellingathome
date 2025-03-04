@@ -399,7 +399,7 @@ class ProduitSelligHome(models.Model):
                 ]
 
                 datas = {
-                    "ProductComponents": product_components
+                    "ProductComponents": product_components,
 
                     "Prices": [
                         {
