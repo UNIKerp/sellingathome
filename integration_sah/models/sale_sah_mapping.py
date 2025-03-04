@@ -49,7 +49,7 @@ class MappingSAHOdoo(models.Model):
                 if elt['TaxRate']:
                     self._get_mapping_tax(elt['TaxRate'])
                         
-            if commande['DeliveryAmount'] != '0.0' and mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
+            if commande['DeliveryAmount'] != '0.0':
                 self._get_mapping_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax']),
                         
     
