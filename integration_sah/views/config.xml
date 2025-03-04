@@ -28,7 +28,7 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='result']" position="before">
                 <group name="Commande SAH">
-                    <field name="commande_sah_id" readonly="1"/>
+                    <field name="commande_sah_id" readonly="1" force_save="1"/>
                 </group>
             </xpath>
          </field>
