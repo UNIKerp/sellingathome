@@ -90,9 +90,10 @@
 		<field	name="name">commande.sah.form</field>
 		<field	name="model">commande.sah</field>
 		<field	name="arch"	type="xml">
-			<form create="false" >
+			<form create="false" edit="false">
 				<sheet>
 					<group>
+						<field name="id_order_sah" />
 						<field name="name" />
 						<field name="commande_id" />
 						<field name="job_id"/>

@@ -47,12 +47,14 @@ class MappingSAHOdoo(models.Model):
                             self._get_mapping_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax'])
                         if order_map:
                             job_kwargs_commandes = {
-                                "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
+                                "description": "Création d'une nouvelle commande de SAH vers Odoo",
                             }
-                            order=self.env['sale.order']
-                            order.with_delay(**job_kwargs_commandes).get_commande(commande)                
+                            order_map.with_delay(**job_kwargs_commandes).get_commande(commande)                
     
-            
+    def get_commande(self,commande):
+        if commande :  
+            id_order = commande['Id']
+
     def _get_mapping_tax(self, tax_rate):
         # Recherche la taxe par son montant
         tax = self.env['tax.sah'].search([('amount', '=', tax_rate)], limit=1)
