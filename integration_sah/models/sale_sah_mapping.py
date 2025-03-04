@@ -194,6 +194,7 @@ class MappingSAHOdoo(models.Model):
                             else :
                                 raise ValidationError("Produit introuvable!"+" "+str(elt['ProductId']))
                         if commande['DeliveryAmount'] != '0.0' and mode_livraison_sah_id and mode_livraison_sah_id.delivery_carrier_id:
+                            
                             delivery_carrier = self.env['choose.delivery.carrier'].create({
                                 "carrier_id": mode_livraison_sah_id.delivery_carrier_id.id,
                                 "order_id":order.id,
@@ -251,4 +252,4 @@ class MappingSAHOdoo(models.Model):
         if tax_id and tax_id.amount_tax_id :
             return tax_id.amount_tax_id.id
         else:
-            raise ValidationError("Taxe pour les fraits de livraison introuvable!")
+            raise ValidationError("Taxe pour les fraits de livraison non configurer!")
