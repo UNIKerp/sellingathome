@@ -218,12 +218,13 @@ class MappingSAHOdoo(models.Model):
 
     def _get_mapping_tax(self, tax_rate):
         # Recherche la taxe par son montant
-        tax = self.env['tax.sah'].search([('amount', '=', tax_rate)], limit=1)
-        if not tax :
-            self.env['tax.sah'].create({
-                                    'name':f'Taxe {tax_rate}%',
-                                    'amount':tax_rate
-                                })
+        if tax_rate and tax_rate != '0.0':
+            tax = self.env['tax.sah'].search([('amount', '=', tax_rate)], limit=1)
+            if not tax :
+                self.env['tax.sah'].create({
+                                        'name':f'Taxe {tax_rate}%',
+                                        'amount':tax_rate
+                                    })
 
     def _get_mapping_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
