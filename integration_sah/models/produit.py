@@ -446,6 +446,7 @@ class ProduitSelligHome(models.Model):
                 'description': 'Création produit Odoo vers SAH',
             }
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
+            _logger.info('11111111111111111111111111111111111111111111111111111111111111')
         return res
 
     """ Modification d'un produit """
@@ -573,3 +574,4 @@ class ProduitSelligHome(models.Model):
                     'description': 'Création produit Odoo vers SAH',
                 }
                 self.with_delay(**job_kwargs).creation_produit_odoo_sah(product_id)
+                _logger.info('222222222222222222222222222222222222222222222222222')
