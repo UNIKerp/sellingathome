@@ -15,13 +15,20 @@ class MappingSAHOdoo(models.Model):
     id_order_sah = fields.Char(string='ID commande SAH',required=True, copy=False)
     job_id = fields.Many2one('queue.job',string="Job",copy=False)
     commande_id = fields.Many2one("sale.order",string="Commande Odoo",copy=False)
-    donnes_sah = fields.Json("Données")
+    donnes_sah = fields.Char("Données")
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
         required=True,
         default=lambda self: self.env.company,
     )
+
+    def open_job_logs(self):
+        self.ensure_one()
+        job_log_ids = self.env['queue.job'].search([
+            ('commande_sah_id', '=', self.id),
+        ])
+        return job_log_ids.open_tree_view()
 
     def _get_integration_id_for_job(self):
         return self.id

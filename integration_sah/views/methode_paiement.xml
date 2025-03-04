@@ -82,6 +82,7 @@
                 <field name="commande_id" />
 				<field name="job_id"/>
 				<field name="donnes_sah"/>
+				<button type="object"  name="open_job_logs"  string="Job Logs"/>
 			</list>
 		</field>
 	</record>
