@@ -213,6 +213,8 @@ class ProduitSelligHome(models.Model):
     """ Creation d'un produit de Odoo => SAH """
     def creation_produit_odoo_sah(self,product_id):
         _logger.info('========== CREATEE PRODUCTTTTTTTTTTTTTTTTTTTTTTTTTTTT ==========')
+        if product_id.type == 'combo':
+            _logger.info('morrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(product_id.is_published)
         virtual = type == 'service'
