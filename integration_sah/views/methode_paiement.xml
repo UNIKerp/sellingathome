@@ -15,8 +15,6 @@
 						</group>
 					</group>
 				</sheet>
-				<!-- chatter dans la vue formulaire -->
-                <chatter reload_on_post="True"/>
 			</form>
 		</field>
 	</record>
@@ -39,7 +37,7 @@
     </record>
 	<!-- Mode livraison SAH -->
 	<record id="view_list_mode_livraison_sah"	model="ir.ui.view">
-		<field	name="name">mode.livraison.sah.form</field>
+		<field	name="name">mode.livraison.sah.list</field>
 		<field	name="model">mode.livraison.sah</field>
 		<field	name="arch"	type="xml">
 			<list create="false" editable="top" >
@@ -58,7 +56,7 @@
 
 	<!-- Taxes SAH -->
 	<record id="view_list_tax_sah"	model="ir.ui.view">
-		<field	name="name">tax.sah.form</field>
+		<field	name="name">tax.sah.list</field>
 		<field	name="model">tax.sah</field>
 		<field	name="arch"	type="xml">
 			<list create="false" editable="top" >
@@ -74,11 +72,49 @@
         <field name="view_mode">list</field>
     </record>
 
+	<!-- Commandes SAH -->
+	<record id="view_list_commandes_sah"	model="ir.ui.view">
+		<field	name="name">commande.sah.list</field>
+		<field	name="model">commande.sah</field>
+		<field	name="arch"	type="xml">
+			<list create="false" edit="false" >
+                <field name="name" />
+                <field name="commande_id" />
+				<field name="job_id"/>
+				<field name="donnes_sah"/>
+			</list>
+		</field>
+	</record>
+
+	<record id="view_form_commandes_sah"	model="ir.ui.view">
+		<field	name="name">commande.sah.form</field>
+		<field	name="model">commande.sah</field>
+		<field	name="arch"	type="xml">
+			<form create="false" >
+				<sheet>
+					<group>
+						<field name="name" />
+						<field name="commande_id" />
+						<field name="job_id"/>
+						<field name="donnes_sah"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+    <record id="action_commande_sah" model="ir.actions.act_window">
+        <field name="name">Integration commande SAH</field>
+        <field name="res_model">commande.sah</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
     <menuitem name="Mappages SAH" id="info_sah_paiement" parent="sale.sale_menu_root" sequence="45"/> 
-    <menuitem name="Modes de livraison SAH" id="sah_mode_livraison" parent="info_sah_paiement"  action="action_sah_mode_livraison" sequence="1"/> 
-    <menuitem name="Méthodes de paiement SAH" id="sah_methode_paiement" parent="info_sah_paiement"  action="action_sah_methode_paiement" sequence="2"/> 
-    <menuitem name="Paiements SAH" id="sah_model_paiement" parent="info_sah_paiement"  action="action_sah_model_paiement" sequence="3"/> 
-    <menuitem name="Taxes SAH" id="sah_tax" parent="info_sah_paiement"  action="action_sah_tax" sequence="4"/> 
+    <menuitem name="Integrations commandes SAH" id="sah_command" parent="info_sah_paiement"  action="action_commande_sah" sequence="1"/> 
+    <menuitem name="Modes de livraison SAH" id="sah_mode_livraison" parent="info_sah_paiement"  action="action_sah_mode_livraison" sequence="2"/> 
+    <menuitem name="Méthodes de paiement SAH" id="sah_methode_paiement" parent="info_sah_paiement"  action="action_sah_methode_paiement" sequence="3"/> 
+    <menuitem name="Paiements SAH" id="sah_model_paiement" parent="info_sah_paiement"  action="action_sah_model_paiement" sequence="4"/> 
+    <menuitem name="Taxes SAH" id="sah_tax" parent="info_sah_paiement"  action="action_sah_tax" sequence="5"/> 
     
     </data>
 </odoo>

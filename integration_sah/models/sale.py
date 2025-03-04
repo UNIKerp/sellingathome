@@ -200,7 +200,7 @@ class SaleSAH(models.Model):
 
     def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
         # Recherche la taxe par son montant
-        taux = round((deliveryAmount - deliveryAmountExclTax ) * 100,2)
+        taux = round((deliveryAmount - deliveryAmountExclTax ) * 100,1)
         _logger.info("gggg%s", taux)
         tax_id = self.env['tax.sah'].search([('amount', '=', taux)], limit=1)
         if tax_id and tax_id.amount_tax_id :
