@@ -209,12 +209,68 @@ class ProduitSelligHome(models.Model):
             else:
                 _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
 
+
+            # Ajout spécifique si c'est un kit (combo)
+            if product.type == 'combo':
+                _logger.info('========== Traitement du combo ==========')
+
+                product_component_products = []
+                for component in product.combo_ids:
+                    for cop in component.combo_item_ids:
+                        component_sah_id = cop.product_id.produit_sah_id
+                        if component_sah_id:
+                            product_component_products.append({
+                                "ProductId": component_sah_id,
+                                "ProductRemoteId": None,
+                                "ProductCombinationId": None,
+                                "ProductCombinationBarCode": None,
+                                "Quantity": 1,
+                                "DisplayOrder": 0,
+                                "Deleted": False
+                            })
+
+                product_components = [{
+                    "Id": 1060,
+                    "Name": product.name or "kit",
+                    "ProductId": product.produit_sah_id,
+                    "MaxQuantity": 0,
+                    "Deleted": False,
+                    "RemoteReference": None,
+                    "ProductComponentLangs": [
+                        {"Label": product.name, "ISOValue": "fr"},
+                        {"Label": "", "ISOValue": "en"}
+                    ],
+                    "ProductComponentProducts": product_component_products
+                }]
+
+                datas_combo = {
+                    "ProductComponents": product_components,
+                    "Prices": [
+                        {
+                            "Id": product.produit_sah_id,
+                            "BrandTaxRate": product.taxes_id.amount if product.taxes_id else 0,
+                            "BrandTaxName": product.name,
+                            "TwoLetterISOCode": "FR",
+                            "PriceExclTax": product.list_price,
+                            "PriceInclTax": product.list_price * (1 + (product.taxes_id.amount / 100)) if product.taxes_id else product.list_price,
+                            "ProductCost": product.standard_price,
+                            "EcoTax": 8.1
+                        }
+                    ]
+                }
+
+                put_combo_url = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
+                put_response_combo = requests.put(put_combo_url, json=datas_combo, headers=headers)
+
+                if put_response_combo.status_code == 200:
+                    _logger.info(f"========== Kit {product.name} mis à jour avec succès sur l'API SAH ==========")
+                else:
+                    _logger.error(f"========== Erreur lors de la mise à jour du kit {product.name} sur l'API SAH : {put_response_combo.status_code} ==========")
+
     #
     """ Creation d'un produit de Odoo => SAH """
     def creation_produit_odoo_sah(self,product_id):
         _logger.info('========== CREATEE PRODUCTTTTTTTTTTTTTTTTTTTTTTTTTTTT ==========')
-        if product_id.type == 'combo':
-            _logger.info('morrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
         headers = self.env['authentication.sah'].establish_connection()
         est_publie = bool(product_id.is_published)
         virtual = type == 'service'
@@ -367,7 +423,7 @@ class ProduitSelligHome(models.Model):
                 product_id.default_list_price = pricelist.id
             
             ###### kit composant  ######
-            if product_id.type == 'combo':
+            """if product_id.type == 'combo':
                 _logger.info('========== comboooooooooooooooooooooooooooooooooooooooooo ==========')
                 product_component_products = []
                 for component in product_id.combo_ids:
@@ -425,7 +481,7 @@ class ProduitSelligHome(models.Model):
                 if response.status_code == 200:
                     _logger.info("========== Composants ajoutés au combo SAH avec succès ==========")
                 else:
-                    _logger.error(f"========== Erreur lors de l'ajout des composants du combo SAH: {response.text} ==========")
+                    _logger.error(f"========== Erreur lors de l'ajout des composants du combo SAH: {response.text} ==========")"""
 
 
            
