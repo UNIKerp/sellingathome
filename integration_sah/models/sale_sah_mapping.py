@@ -214,6 +214,10 @@ class MappingSAHOdoo(models.Model):
                                             'price_unit': commande['DeliveryAmount'] ,
                                             'tax_id': [(6, 0, [self._get_or_create_tax_delivery(commande['DeliveryAmount'],commande['DeliveryAmountExclTax'])])],
                                         })
+                        com_sah_id = self.env['commande.sah'].search([('id_order_sah','=',order.id_order_sh)])
+                        if com_sah_id :
+                            com_sah_id.commande_id = order.id
+
                         if order.methode_paiement_id.is_confirme == True:
                             order.action_confirm()
                         
