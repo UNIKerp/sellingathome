@@ -47,9 +47,9 @@ class SaleSAH(models.Model):
                         _logger.info('============= JOB ================= %s' )      
 
 # #########################################################################################
-    def get_commande(self,commande):
-        if commande :  
-            id_order = commande['Id']
+    # def get_commande(self,commande):
+    #     if commande :  
+    #         id_order = commande['Id']
 #             commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
 #             client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
 #             vendeur_id = self.env['res.partner'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
