@@ -28,23 +28,23 @@ class SaleSAH(models.Model):
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
 
     # Synchronisation des commandes de SAH vers Odoo
-    def _synchronisation_commandes_job(self):
-        url_commande = 'https://demoapi.sellingathome.com/v1/Orders'           
-        headers = self.env['authentication.sah'].establish_connection()
-        response = requests.get(url_commande, headers=headers)
-        if response.status_code == 200:
-            commandes_sah = response.json()
-            for commande in commandes_sah:
-                if commande['Status'] not in ['InProgress','Created','Shipped'] :
-                    id_order = commande['Id']
-                    commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
-                    if not commandes_odoo:
-                        job_kwargs_commandes = {
-                            "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
-                        }
-                        self.with_delay(**job_kwargs_commandes).get_commande(commande)     
+    # def _synchronisation_commandes_job(self):
+    #     url_commande = 'https://demoapi.sellingathome.com/v1/Orders'           
+    #     headers = self.env['authentication.sah'].establish_connection()
+    #     response = requests.get(url_commande, headers=headers)
+    #     if response.status_code == 200:
+    #         commandes_sah = response.json()
+    #         for commande in commandes_sah:
+    #             if commande['Status'] not in ['InProgress','Created','Shipped'] :
+    #                 id_order = commande['Id']
+    #                 commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
+    #                 if not commandes_odoo:
+    #                     job_kwargs_commandes = {
+    #                         "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
+    #                     }
+    #                     self.with_delay(**job_kwargs_commandes).get_commande(commande)     
                         
-                        _logger.info('============= JOB ================= %s' )      
+    #                     _logger.info('============= JOB ================= %s' )      
 
 # #########################################################################################
     # def get_commande(self,commande):

@@ -29,6 +29,9 @@ class MappingSAHOdoo(models.Model):
         readonly=True,
         copy=False,
     )
+    _sql_constraints = [
+        ('id_order_sah_uniq', 'unique (id_order_sah)', "ID commande SAH exists deja!"), ]
+
     def open_job_logs(self):
         
         return {
@@ -231,3 +234,20 @@ class MappingSAHOdoo(models.Model):
                                     'name':f'Taxe {taux}%',
                                     'amount':taux
                                 })
+
+    def _get_or_create_tax(self, tax_rate):
+#         # Recherche la taxe par son montant
+        tax = self.env['tax.sah'].search([('amount', '=', tax_rate)], limit=1)
+        if tax and tax.amount_tax_id :
+            return tax.amount_tax_id.id
+        else:
+            raise ValidationError("Taxe introuvable!")
+
+    def _get_or_create_tax_delivery(self, deliveryAmount,deliveryAmountExclTax ):
+        # Recherche la taxe par son montant
+        taux = round((deliveryAmount - deliveryAmountExclTax ) * 100,1)
+        tax_id = self.env['tax.sah'].search([('amount', '=', taux)], limit=1)
+        if tax_id and tax_id.amount_tax_id :
+            return tax_id.amount_tax_id.id
+        else:
+            raise ValidationError("Taxe pour les fraits de livraison introuvable!")
