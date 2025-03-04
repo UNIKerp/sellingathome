@@ -141,7 +141,7 @@
         <field name="name">Integration commande SAH</field>
         <field name="res_model">commande.sah</field>
         <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_started': 1}</field>
+        <field name="context">{'search_default_failed': 1}</field>
     </record>
 
     <menuitem name="Mappages SAH" id="info_sah_paiement" parent="sale.sale_menu_root" sequence="45"/> 
