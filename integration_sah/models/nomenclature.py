@@ -51,8 +51,8 @@ class NomenclatureSelligHome(models.Model):
                     if product_id:
                         new_kit = False
                         _logger.info('11***** %s',response_data_produit)
-                        if response_data_produit[AttachedProducts]:
-                            for a in response_data_produit[AttachedProducts]:
+                        if response_data_produit['AttachedProducts']:
+                            for a in response_data_produit['AttachedProducts']:
                                 if a['ProductId'] == product_id:
                                     new_kit = True
                                     break
@@ -71,7 +71,7 @@ class NomenclatureSelligHome(models.Model):
                 
                 datas = {
 
-                        "Prices": response_data_produit[Prices] ,
+                        "Prices": response_data_produit['Prices'] ,
                         "AttachedProducts": attached_products
                         
                 }
