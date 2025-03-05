@@ -195,6 +195,9 @@ class MappingSAHOdoo(models.Model):
                                     'price_unit': elt['UnitPrice'], 
                                     'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                     })
+                                if p.type == 'combo':
+                                    _logger.info('*****&&&& %s',p.name)
+                                    order.with_context(child_field='order_line').action_add_from_catalog()
                             else :
                                 raise ValidationError("Produit introuvable!"+" "+str(elt['ProductId']))
                         
