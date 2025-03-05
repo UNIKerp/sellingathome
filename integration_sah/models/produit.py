@@ -183,7 +183,7 @@ class ProduitSelligHome(models.Model):
                     }]
 
                 update_data = {
-                    # "ProductType": product.type_produit_sah,
+                    # "ProductType": product.type_produit_sah ,
                     "Reference": product.default_code,
                     "Prices": response_data_produit['Prices'],
                     "Barcode": product.barcode if product.barcode else '',
@@ -297,7 +297,7 @@ class ProduitSelligHome(models.Model):
 
 
         product_data = {
-            "ProductType": 20,
+            "ProductType": 5,
             "Reference": product_id.default_code,
             "Prices": [
                 {
