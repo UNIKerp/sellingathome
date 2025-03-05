@@ -79,8 +79,8 @@ class MappingSAHOdoo(models.Model):
         if commande :  
             id_order = commande['Id']
             commandes_odoo = self.env['sale.order'].search([('id_order_sh','=',id_order)])
-            client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])])
-            vendeur_id = self.env['res.partner'].search([('id_vendeur_sah','=',commande['Seller']['Id'])])
+            client_id = self.env['res.partner'].search([('id_client_sah','=',commande['Customer']['Id'])]) if commande.get('Customer') else None
+            vendeur_id = self.env['res.partner'].search([('id_vendeur_sah','=',commande['Seller']['Id'])]) if commande.get('Seller') else None
             Currency = self.env['res.currency'].search([('name','=',commande['Currency'])])
             methode_paiement = commande['PaymentMethod']
             mode_livraison_sah = commande['DeliveryMode']
