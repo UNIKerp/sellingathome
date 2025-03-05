@@ -50,12 +50,13 @@ class ProduitSelligHome(models.Model):
                 barcode = produit_api.get('Barcode', '')
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
+                type_produit_sah = produit_api.get('ProductType')
 
                 # Ajout des tax
                 list_prices = produit_api['Prices']
                 if list_prices:
                     for line in list_prices:
-                        if line['BrandTaxRate']:
+                        if line['BrandTaxRate'] > 0:
                             tax_sah = self.env['tax.sah'].search([('amount','=',line['BrandTaxRate'])])
                             if not tax_sah:
                                 self.env['tax.sah'].create({
@@ -79,6 +80,7 @@ class ProduitSelligHome(models.Model):
                         'weight': weight,
                         'produit_sah_id': sah_id,
                         'is_storable': True if type_sah == 1 else False,
+                        'type_produit_sah':type_produit_sah
                     }
                     
                     if barcode:
@@ -94,7 +96,6 @@ class ProduitSelligHome(models.Model):
 
     """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
-        _logger.info(f'=============================****************************=========================')
         if product.produit_sah_id:
             #Photos
             photos_maj = self.maj_images_du_produit(product)
@@ -156,7 +157,7 @@ class ProduitSelligHome(models.Model):
                     "BrandTaxRate": self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": product.list_price,
-                    "PriceInclTax": product.list_price * (1 + (elt.amount / 100)),
+                    # "PriceInclTax": product.list_price * (1 + (elt.amount / 100)),
                     "ProductCost": product.standard_price,
                     "EcoTax": 8.1
                 }
@@ -247,14 +248,14 @@ class ProduitSelligHome(models.Model):
                     "Prices": [
                         {
                             "Id": product.produit_sah_id,
-                            "BrandTaxRate": product.taxes_id.amount if product.taxes_id else 0,
-                            "BrandTaxName": product.name,
+                            "BrandTaxRate":  self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
+                            # "BrandTaxName": product.name,
                             "TwoLetterISOCode": "FR",
-                            "PriceExclTax": product.list_price,
-                            "PriceInclTax": product.list_price * (1 + (product.taxes_id.amount / 100)) if product.taxes_id else product.list_price,
+                            # "PriceExclTax": product.list_price,
+                            "PriceInclTax": product.list_price,
                             "ProductCost": product.standard_price,
                             "EcoTax": 8.1
-                        }
+                        } for elt in product_id.taxes_id if self._get_sah_tax(elt)
                     ]
                 }
 
@@ -333,10 +334,10 @@ class ProduitSelligHome(models.Model):
             "Prices": [
                 {
                     "BrandTaxRate": self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
-                    "BrandTaxName": product_id.name,
+                    # "BrandTaxName": product_id.name,
                     "TwoLetterISOCode": "FR",
-                    "PriceExclTax": product_id.list_price,
-                    "PriceInclTax": product_id.list_price * (1 + (elt.amount / 100)),
+                    # "PriceExclTax": product_id.list_price * (1 + (elt.amount / 100)),
+                    "PriceInclTax": product_id.list_price ,
                     "ProductCost": product_id.standard_price,
                     "EcoTax": 8.1
                 }
@@ -427,7 +428,6 @@ class ProduitSelligHome(models.Model):
     def _get_sah_tax(self, tax_id):
         # Recherche la taxe par son montant
         if tax_id :
-            _logger.info('========== tax du produit %s ==========',tax_id)
             tax = self.env['tax.sah'].search([('amount_tax_id', '=', tax_id.id)], limit=1)
             if tax :
                 return tax.amount
@@ -440,7 +440,6 @@ class ProduitSelligHome(models.Model):
                 'description': 'Création produit Odoo vers SAH',
             }
             self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
-            _logger.info('11111111111111111111111111111111111111111111111111111111111111')
         return res
 
     """ Modification d'un produit """
@@ -567,4 +566,3 @@ class ProduitSelligHome(models.Model):
                     'description': 'Création produit Odoo vers SAH',
                 }
                 self.with_delay(**job_kwargs).creation_produit_odoo_sah(product_id)
-                _logger.info('222222222222222222222222222222222222222222222222222')
