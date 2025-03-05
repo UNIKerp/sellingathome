@@ -152,6 +152,7 @@ class ProduitSelligHome(models.Model):
 
                 response_data_produit = get_response_produit.json()
                 # Ajout spécifique si c'est un kit (combo)
+                product_components = ''
                 if product.type == 'combo':
                     product_component_products = []
                     for component in product.combo_ids:
@@ -183,7 +184,7 @@ class ProduitSelligHome(models.Model):
                     }]
 
                 update_data = {
-                    # "ProductType": product.type_produit_sah ,
+                    "ProductType": product.type_produit_sah,
                     "Reference": product.default_code,
                     "Prices": response_data_produit['Prices'],
                     "Barcode": product.barcode if product.barcode else '',
@@ -297,14 +298,12 @@ class ProduitSelligHome(models.Model):
 
 
         product_data = {
-            "ProductType": 5,
+            "ProductType": product_id.type_produit_sah,
             "Reference": product_id.default_code,
             "Prices": [
                 {
                     "BrandTaxRate": self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
-                    # "BrandTaxName": product_id.name,
                     "TwoLetterISOCode": "FR",
-                    # "PriceExclTax": product_id.list_price * (1 + (elt.amount / 100)),
                     "PriceInclTax": product_id.list_price ,
                     "ProductCost": product_id.standard_price,
                     "EcoTax": 8.1
