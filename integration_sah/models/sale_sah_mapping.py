@@ -48,7 +48,15 @@ class MappingSAHOdoo(models.Model):
 
     # Synchronisation des commandes de SAH vers Odoo
     def _mapping_commandes_sah_odoo(self):
-        # url_commande = 'https://demoapi.sellingathome.com/v1/Orders'    
+        # url_commande = 'https://demoapi.sellingathome.com/v1/Orders'  
+        company_id = self.company_id
+        date_debut = ''
+        date_fin = ''
+        if company_id:
+            _logger.info('222 %s', company_id.date_debut)
+            date_debut = company_id.date_debut
+            date_fin = company_id.date_fin
+
         url_commande = 'https://demoapi.sellingathome.com/v1/Orders?startDate=2025-03-03&endDate=2025-03-05'       
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
