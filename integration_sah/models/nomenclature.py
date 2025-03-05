@@ -51,31 +51,32 @@ class NomenclatureSelligHome(models.Model):
                 # Récupérer les anciens produits attachés s'ils existent
                 old_attached_products = response_data_produit.get('AttachedProducts', [])
                 
-                # Ajouter les anciens produits à aggregated_products
-                for old_product in old_attached_products:
-                    product_id = old_product['ProductId']
-                    if product_id not in aggregated_products:
-                        aggregated_products[product_id] = {
-                            "ProductId": product_id,
-                            "Quantity": old_product['Quantity'],
-                            "DisplayOrder": old_product['DisplayOrder'],
-                            "Deleted": False  # Conserver l'état 'Deleted' s'il existe
-                        }
+                # # Ajouter les anciens produits à aggregated_products
+                # for old_product in old_attached_products:
+                #     product_id = old_product['ProductId']
+                #     if product_id not in aggregated_products:
+                #         aggregated_products[product_id] = {
+                #             "ProductId": product_id,
+                #             "Quantity": old_product['Quantity'],
+                #             "DisplayOrder": old_product['DisplayOrder'],
+                #             "Deleted": False  # Conserver l'état 'Deleted' s'il existe
+                #         }
+                bom_ids = self.search([('product_tmpl_id','=',res.product_tmpl_id.id)])
+                for bom in bom_ids:
+                    # Parcourir les nouvelles lignes de produits
+                    for line in bom.bom_line_ids:
+                        product_id = line.product_id.produit_sah_id or 0
+                        if product_id:
+                            if product_id in aggregated_products:
+                                aggregated_products[product_id]['Quantity'] += int(line.product_qty)
+                            else:
+                                aggregated_products[product_id] = {
+                                    "ProductId": product_id,
+                                    "Quantity": int(line.product_qty),
+                                    "DisplayOrder": len(aggregated_products) + 1,
+                                    "Deleted": False,
+                                }
                 
-                # Parcourir les nouvelles lignes de produits
-                for line in res.bom_line_ids:
-                    product_id = line.product_id.produit_sah_id or 0
-                    if product_id:
-                        if product_id in aggregated_products:
-                            aggregated_products[product_id]['Quantity'] += int(line.product_qty)
-                        else:
-                            aggregated_products[product_id] = {
-                                "ProductId": product_id,
-                                "Quantity": int(line.product_qty),
-                                "DisplayOrder": len(aggregated_products) + 1,
-                                "Deleted": False,
-                            }
-            
                 # Convertir le dictionnaire en liste pour AttachedProducts
                 attached_products = list(aggregated_products.values())
                 # Préparer les données à envoyer
