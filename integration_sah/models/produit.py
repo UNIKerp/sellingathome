@@ -255,7 +255,7 @@ class ProduitSelligHome(models.Model):
                             "PriceInclTax": product.list_price,
                             "ProductCost": product.standard_price,
                             "EcoTax": 8.1
-                        } for elt in product_id.taxes_id if self._get_sah_tax(elt)
+                        } for elt in product.taxes_id if self._get_sah_tax(elt)
                     ]
                 }
 
