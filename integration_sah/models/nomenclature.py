@@ -66,27 +66,16 @@ class NomenclatureSelligHome(models.Model):
                 for line in res.bom_line_ids:
                     product_id = line.product_id.produit_sah_id or 0
                     if product_id:
-                        new_kit = False
-                        
-                        # Vérifier si le produit existe déjà dans les anciens produits attachés
-                        if response_data_produit.get('AttachedProducts'):
-                            for a in response_data_produit['AttachedProducts']:
-                                if a['ProductId'] == product_id:
-                                    new_kit = True
-                                    break
-                        
-                        # Si le produit n'existe pas déjà, l'ajouter ou mettre à jour la quantité
-                        if not new_kit:
-                            if product_id in aggregated_products:
-                                aggregated_products[product_id]['Quantity'] += int(line.product_qty)
-                            else:
-                                aggregated_products[product_id] = {
-                                    "ProductId": product_id,
-                                    "Quantity": int(line.product_qty),
-                                    "DisplayOrder": len(aggregated_products) + 1,
-                                    "Deleted": False,
-                                }
-                
+                        if product_id in aggregated_products:
+                            aggregated_products[product_id]['Quantity'] += int(line.product_qty)
+                        else:
+                            aggregated_products[product_id] = {
+                                "ProductId": product_id,
+                                "Quantity": int(line.product_qty),
+                                "DisplayOrder": len(aggregated_products) + 1,
+                                "Deleted": False,
+                            }
+            
                 # Convertir le dictionnaire en liste pour AttachedProducts
                 attached_products = list(aggregated_products.values())
                 # Préparer les données à envoyer
