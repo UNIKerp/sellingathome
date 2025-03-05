@@ -50,11 +50,12 @@ class NomenclatureSelligHome(models.Model):
                     product_id = line.product_id.produit_sah_id or 0
                     if product_id:
                         new_kit = False
-                        _logger.info('11***** %s',response_data_produit)
-                        for a in response_data_produit[AttachedProducts]:
-                            if a['ProductId'] == product_id:
-                                new_kit = True
-                                break
+                        _logger.info('11***** %s',response_data_produit[AttachedProducts])
+                        if response_data_produit[AttachedProducts]:
+                            for a in response_data_produit[AttachedProducts]:
+                                if a['ProductId'] == product_id:
+                                    new_kit = True
+                                    break
                         if new_kit == False:
                             if product_id in aggregated_products:
                                 aggregated_products[product_id]['Quantity'] += int(line.product_qty)
