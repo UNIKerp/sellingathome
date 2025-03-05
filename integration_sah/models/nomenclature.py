@@ -44,19 +44,39 @@ class NomenclatureSelligHome(models.Model):
             post_response_produit = requests.get(url_produit, headers=headers)
             if post_response_produit.status_code == 200:
                 response_data_produit = post_response_produit.json()
-               
+                
                 aggregated_products = {}
+                
+                # Récupérer les anciens produits attachés s'ils existent
+                old_attached_products = response_data_produit.get('AttachedProducts', [])
+                
+                # Ajouter les anciens produits à aggregated_products
+                for old_product in old_attached_products:
+                    product_id = old_product['ProductId']
+                    if product_id not in aggregated_products:
+                        aggregated_products[product_id] = {
+                            "ProductId": product_id,
+                            "Quantity": old_product['Quantity'],
+                            "DisplayOrder": old_product['DisplayOrder'],
+                            "Deleted": old_product.get('Deleted', False),  # Conserver l'état 'Deleted' s'il existe
+                        }
+                
+                # Parcourir les nouvelles lignes de produits
                 for line in res.bom_line_ids:
                     product_id = line.product_id.produit_sah_id or 0
                     if product_id:
                         new_kit = False
-                        _logger.info('11***** %s',response_data_produit)
-                        if response_data_produit['AttachedProducts']:
+                        _logger.info('11***** %s', response_data_produit)
+                        
+                        # Vérifier si le produit existe déjà dans les anciens produits attachés
+                        if response_data_produit.get('AttachedProducts'):
                             for a in response_data_produit['AttachedProducts']:
                                 if a['ProductId'] == product_id:
                                     new_kit = True
                                     break
-                        if new_kit == False:
+                        
+                        # Si le produit n'existe pas déjà, l'ajouter ou mettre à jour la quantité
+                        if not new_kit:
                             if product_id in aggregated_products:
                                 aggregated_products[product_id]['Quantity'] += int(line.product_qty)
                             else:
@@ -66,17 +86,18 @@ class NomenclatureSelligHome(models.Model):
                                     "DisplayOrder": len(aggregated_products) + 1,
                                     "Deleted": False,
                                 }
-
+                
+                # Convertir le dictionnaire en liste pour AttachedProducts
                 attached_products = list(aggregated_products.values())
                 
+                # Préparer les données à envoyer
                 datas = {
-
-                        "Prices": response_data_produit['Prices'] ,
-                        "AttachedProducts": attached_products
-                        
+                    "Prices": response_data_produit['Prices'],
+                    "AttachedProducts": attached_products
                 }
+                
+                # Envoyer la requête PUT
                 response = requests.put(url_produit, json=datas, headers=headers)
-
 
 
 
