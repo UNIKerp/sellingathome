@@ -197,7 +197,6 @@ class MappingSAHOdoo(models.Model):
                                     })
                                 if p.type == 'combo' and elt['ProductComponents']:
                                     # je veux ajouter les lignes de catalog
-                                    # order.with_context(child_field='order_line').action_add_from_catalog()
                                     component=elt['ProductComponents'][0]
                                     if component['ProductComponentProducts']:
                                         for comp in component['ProductComponentProducts']:
