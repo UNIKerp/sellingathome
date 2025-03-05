@@ -54,6 +54,7 @@ class MappingSAHOdoo(models.Model):
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
             commandes_sah = response.json()
+            _logger.info('222 %s', commandes_sah)
             for commande in commandes_sah:
                 if commande['Status'] not in ['InProgress','Created','Shipped'] :
                     id_order = commande['Id']
