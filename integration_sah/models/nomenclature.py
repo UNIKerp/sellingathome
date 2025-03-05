@@ -58,7 +58,7 @@ class NomenclatureSelligHome(models.Model):
                             "ProductId": product_id,
                             "Quantity": old_product['Quantity'],
                             "DisplayOrder": old_product['DisplayOrder'],
-                            "Deleted": old_product.get('Deleted', False),  # Conserver l'état 'Deleted' s'il existe
+                            "Deleted": False  # Conserver l'état 'Deleted' s'il existe
                         }
                 
                 # Parcourir les nouvelles lignes de produits
