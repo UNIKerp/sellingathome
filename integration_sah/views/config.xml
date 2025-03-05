@@ -11,7 +11,6 @@
                         <group>
                             <field name="token_sah"/>
                             <field name="secret_key_sah"/>
-                            <field name="url_commande"/>
                             <field name="date_debut"/>
                             <field name="date_fin"/>
                         </group>
@@ -26,11 +25,9 @@
         <field name="priority">99</field>
         <field name="inherit_id" ref="queue_job.view_queue_job_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='result']" position="before">
-                <group name="Commande SAH">
-                    <field name="commande_sah_id" readonly="1" force_save="1"/>
-                </group>
-            </xpath>
+            <field name="uuid" position="before">
+                <field name="commande_sah_id" readonly="1" force_save="1"/>
+            </field>
          </field>
         </record>
     </data>
