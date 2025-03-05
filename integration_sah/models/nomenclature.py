@@ -89,7 +89,7 @@ class NomenclatureSelligHome(models.Model):
                 
                 # Convertir le dictionnaire en liste pour AttachedProducts
                 attached_products = list(aggregated_products.values())
-                
+                _logger.info('22222** %s', attached_products)
                 # Préparer les données à envoyer
                 datas = {
                     "Prices": response_data_produit['Prices'],
