@@ -16,12 +16,6 @@ class MappingSAHOdoo(models.Model):
     job_id = fields.Many2one('queue.job',string="Job",copy=False)
     commande_id = fields.Many2one("sale.order",string="Commande Odoo",copy=False)
     donnes_sah = fields.Char("Données")
-    company_id = fields.Many2one(
-        comodel_name='res.company',
-        string='Company',
-        required=True,
-        default=lambda self: self.env.company,
-    )
     state = fields.Selection(
         related="job_id.state",
         string='State',
@@ -49,7 +43,7 @@ class MappingSAHOdoo(models.Model):
     # Synchronisation des commandes de SAH vers Odoo
     def _mapping_commandes_sah_odoo(self):
         # url_commande = 'https://demoapi.sellingathome.com/v1/Orders'  
-        company_id = self.company_id
+        company_id = self.env.company
         date_debut = ''
         date_fin = ''
         if company_id:
