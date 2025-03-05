@@ -51,7 +51,7 @@ class MappingSAHOdoo(models.Model):
             date_fin = company_id.date_fin
 
         if date_fin and date_debut:
-            url_commande = 'https://demoapi.sellingathome.com/v1/Orders?startDate={date_debut}&endDate={date_fin}'       
+            url_commande = f'https://demoapi.sellingathome.com/v1/Orders?startDate={date_debut}&endDate={date_fin}'       
         headers = self.env['authentication.sah'].establish_connection()
         response = requests.get(url_commande, headers=headers)
         if response.status_code == 200:
