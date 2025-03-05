@@ -146,126 +146,94 @@ class ProduitSelligHome(models.Model):
 
            
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-            
-            update_data = {
-                "ProductType": product.type_produit_sah,
-                "Reference": product.default_code,
-                
-                "Prices": [
-                {
-                    "Id": product.produit_sah_id,
-                    "BrandTaxRate": self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
-                    "TwoLetterISOCode": "FR",
-                    "PriceExclTax": product.list_price,
-                    # "PriceInclTax": product.list_price * (1 + (elt.amount / 100)),
-                    "ProductCost": product.standard_price,
-                    "EcoTax": 8.1
-                }
-                for elt in product.taxes_id if self._get_sah_tax(elt)
-            ],
-                "Barcode": product.barcode if product.barcode else '',
-                "Weight": product.weight,
-                "IsPublished": True,
-                "InventoryMethod": 1 if product.is_storable == True else 0,
-                "ProductPhotos": photos_maj,
-                'ProductLangs': [
-                    {
-                        'Name': product.name, 
-                        'Description': product.description_sale, 
-                        'ISOValue': 'fr'
-                    }
-                ],
-                "Categories": [
-                    {
-                        "Id": id_categ,
-                    }
-                ],
-                "Combinations": [
-                    {
-                        "ProductAttributes": [
-                            {
-                                "AttributeId": value.attribute_id.id,
-                                "Attribute": value.attribute_id.name,
-                                "Value": value.name,
-                                "WeightAdjustement": product.weight,
-                                "ProductAttributeLangs": [
-                                    {
-                                        "Name": value.attribute_id.name,
-                                        "Value": value.name,
-                                        "ISOValue": 'fr'
-                                    }
-                                ]
-                            }
-                            for value in line.value_ids
-                        ]
-                    }
-                    for line in product.attribute_line_ids if line.value_ids
-                ]
-            }
 
-            put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
+            get_response_produit = requests.get(url_produit,headers=headers)
+            if get_response_produit.status_code == 200:
 
-            if put_response_produit.status_code == 200:
-                _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
-            else:
-                _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
+                response_data_produit = get_response_produit.json()
+                # Ajout spécifique si c'est un kit (combo)
+                if product.type == 'combo':
+                    product_component_products = []
+                    for component in product.combo_ids:
+                        for cop in component.combo_item_ids:
+                            component_sah_id = cop.product_id.produit_sah_id
+                            if component_sah_id:
+                                product_component_products.append({
+                                    "ProductId": component_sah_id,
+                                    "ProductRemoteId": None,
+                                    "ProductCombinationId": None,
+                                    "ProductCombinationBarCode": None,
+                                    "Quantity": 1,
+                                    "DisplayOrder": 0,
+                                    "Deleted": False
+                                })
 
+                    product_components = [{
+                        "Id": 1060,
+                        "Name": product.name,
+                        "ProductId": product.produit_sah_id,
+                        "MaxQuantity": 0,
+                        "Deleted": False,
+                        "RemoteReference": None,
+                        "ProductComponentLangs": [
+                            {"Label": product.name, "ISOValue": "fr"},
+                            {"Label": "", "ISOValue": "en"}
+                        ],
+                        "ProductComponentProducts": product_component_products
+                    }]
 
-            # Ajout spécifique si c'est un kit (combo)
-            if product.type == 'combo':
-                _logger.info('========== Traitement du combo ==========')
-                product_component_products = []
-                for component in product.combo_ids:
-                    for cop in component.combo_item_ids:
-                        component_sah_id = cop.product_id.produit_sah_id
-                        if component_sah_id:
-                            product_component_products.append({
-                                "ProductId": component_sah_id,
-                                "ProductRemoteId": None,
-                                "ProductCombinationId": None,
-                                "ProductCombinationBarCode": None,
-                                "Quantity": 1,
-                                "DisplayOrder": 0,
-                                "Deleted": False
-                            })
-
-                product_components = [{
-                    "Id": 1060,
-                    "Name": product.name or "kit",
-                    "ProductId": product.produit_sah_id,
-                    "MaxQuantity": 0,
-                    "Deleted": False,
-                    "RemoteReference": None,
-                    "ProductComponentLangs": [
-                        {"Label": product.name, "ISOValue": "fr"},
-                        {"Label": "", "ISOValue": "en"}
-                    ],
-                    "ProductComponentProducts": product_component_products
-                }]
-
-                datas_combo = {
+                update_data = {
+                    "ProductType": product.type_produit_sah,
+                    "Reference": product.default_code,
+                    "Prices": response_data_produit['Prices'],
+                    "Barcode": product.barcode if product.barcode else '',
+                    "Weight": product.weight,
+                    "IsPublished": True,
+                    "InventoryMethod": 1 if product.is_storable == True else 0,
+                    "ProductPhotos": photos_maj,
                     "ProductComponents": product_components,
-                    "Prices": [
+                    'ProductLangs': [
                         {
-                            "Id": product.produit_sah_id,
-                            "BrandTaxRate":  self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
-                            # "BrandTaxName": product.name,
-                            "TwoLetterISOCode": "FR",
-                            # "PriceExclTax": product.list_price,
-                            "PriceInclTax": product.list_price,
-                            "ProductCost": product.standard_price,
-                            "EcoTax": 8.1
-                        } for elt in product.taxes_id if self._get_sah_tax(elt)
+                            'Name': product.name, 
+                            'Description': product.description_sale, 
+                            'ISOValue': 'fr'
+                        }
+                    ],
+                    "Categories": [
+                        {
+                            "Id": id_categ,
+                        }
+                    ],
+                    "Combinations": [
+                        {
+                            "ProductAttributes": [
+                                {
+                                    "AttributeId": value.attribute_id.id,
+                                    "Attribute": value.attribute_id.name,
+                                    "Value": value.name,
+                                    "WeightAdjustement": product.weight,
+                                    "ProductAttributeLangs": [
+                                        {
+                                            "Name": value.attribute_id.name,
+                                            "Value": value.name,
+                                            "ISOValue": 'fr'
+                                        }
+                                    ]
+                                }
+                                for value in line.value_ids
+                            ]
+                        }
+                        for line in product.attribute_line_ids if line.value_ids
                     ]
                 }
 
-                put_combo_url = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-                put_response_combo = requests.put(put_combo_url, json=datas_combo, headers=headers)
+                put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
 
-                if put_response_combo.status_code == 200:
-                    _logger.info(f"========== Kit {product.name} mis à jour avec succès sur l'API SAH ==========")
+                if put_response_produit.status_code == 200:
+                    _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
                 else:
-                    _logger.error(f"========== Erreur lors de la mise à jour du kit {product.name} sur l'API SAH : {put_response_combo.status_code} ==========")
+                    _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
+
 
     #
     """ Creation d'un produit de Odoo => SAH """
