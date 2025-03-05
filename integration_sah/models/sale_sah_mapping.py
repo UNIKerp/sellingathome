@@ -198,8 +198,6 @@ class MappingSAHOdoo(models.Model):
                                 if p.type == 'combo' and elt['ProductComponents']:
                                     # je veux ajouter les lignes de catalog
                                     # order.with_context(child_field='order_line').action_add_from_catalog()
-                                    j=0
-                                    i=0
                                     component=elt['ProductComponents'][0]
                                     if component['ProductComponentProducts']:
                                         for comp in component['ProductComponentProducts']:
@@ -210,6 +208,7 @@ class MappingSAHOdoo(models.Model):
                                                     "order_id": order.id,
                                                     'product_id': component_product.id,
                                                     'product_uom_qty': comp['Quantity'],
+                                                    'catalog_line': True,
                                                 })
                                             else:
                                                 raise ValidationError(f"Composant introuvable ! ID : {component['ProductId']}")
