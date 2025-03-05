@@ -200,23 +200,20 @@ class MappingSAHOdoo(models.Model):
                                     # order.with_context(child_field='order_line').action_add_from_catalog()
                                     j=0
                                     i=0
-                                    for component in elt['ProductComponents']:
-                                        j+=1
-                                        if component['ProductComponentProducts']:
-                                            for comp in component['ProductComponentProducts']:
-                                                component_product = self.env['product.product'].search([('produit_sah_id', '=', comp['ProductId'])], limit=1)
-                                                i+=1
-                                                if component_product:
-                                                    self.env['sale.order.line'].create({
-                                                        "name": component_product.name,
-                                                        "order_id": order.id,
-                                                        'product_id': component_product.id,
-                                                        'product_uom_qty': comp['Quantity'],
-                                                    })
-                                                else:
-                                                    raise ValidationError(f"Composant introuvable ! ID : {component['ProductId']}")
-                                    _logger.info('***** 8888 @@@@@ %s',j)
-                                    _logger.info('***** 9999999 @@@@@ %s',i)
+                                    component=elt['ProductComponents'][0]
+                                    if component['ProductComponentProducts']:
+                                        for comp in component['ProductComponentProducts']:
+                                            component_product = self.env['product.product'].search([('produit_sah_id', '=', comp['ProductId'])], limit=1)
+                                            if component_product:
+                                                self.env['sale.order.line'].create({
+                                                    "name": component_product.name,
+                                                    "order_id": order.id,
+                                                    'product_id': component_product.id,
+                                                    'product_uom_qty': comp['Quantity'],
+                                                })
+                                            else:
+                                                raise ValidationError(f"Composant introuvable ! ID : {component['ProductId']}")
+
                             else :
                                 raise ValidationError("Produit introuvable!"+" "+str(elt['ProductId']))
                         
