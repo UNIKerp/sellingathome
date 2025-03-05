@@ -153,7 +153,7 @@ class ProduitSelligHome(models.Model):
                 "Prices": [
                 {
                     "Id": product.produit_sah_id,
-                    "BrandTaxRate": self._get_sah_tax(elt),
+                    "BrandTaxRate": self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": product.list_price,
                     "PriceInclTax": product.list_price * (1 + (elt.amount / 100)),
@@ -332,7 +332,7 @@ class ProduitSelligHome(models.Model):
             "Reference": product_id.default_code,
             "Prices": [
                 {
-                    "BrandTaxRate": self._get_sah_tax(elt),
+                    "BrandTaxRate": self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
                     "BrandTaxName": product_id.name,
                     "TwoLetterISOCode": "FR",
                     "PriceExclTax": product_id.list_price,
