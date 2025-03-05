@@ -195,9 +195,25 @@ class MappingSAHOdoo(models.Model):
                                     'price_unit': elt['UnitPrice'], 
                                     'tax_id': [(6, 0, [self._get_or_create_tax(elt['TaxRate'])])],
                                     })
-                                if p.type == 'combo':
-                                    _logger.info('*****&&&& %s',p.name)
-                                    order.with_context(child_field='order_line').action_add_from_catalog()
+                                if p.type == 'combo' and elt['ProductComponents']:
+                                    # je veux ajouter les lignes de catalog
+                                    # order.with_context(child_field='order_line').action_add_from_catalog()
+                                    for component in elt['ProductComponents']:
+                                        if component['ProductComponentProducts']:
+                                            for comp in component['ProductComponentProducts']:
+                                                component_product = self.env['product.product'].search([('produit_sah_id', '=', comp['ProductId'])], limit=1)
+                                                
+                                                if component_product:
+                                                    self.env['sale.order.line'].create({
+                                                        "name": component_product.name,
+                                                        "order_id": order.id,
+                                                        'product_id': component_product.id,
+                                                        'product_uom_qty': comp['Quantity'],
+                                                        # 'price_unit': component_product,  # Souvent les composants d’un combo sont gratuits (ajustable selon ton besoin)
+                                                        # 'tax_id': [(6, 0, [self._get_or_create_tax(0)])],  # Ajuste selon la TVA applicable
+                                                    })
+                                                else:
+                                                    raise ValidationError(f"Composant introuvable ! ID : {component['ProductId']}")
                             else :
                                 raise ValidationError("Produit introuvable!"+" "+str(elt['ProductId']))
                         
