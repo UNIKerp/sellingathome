@@ -198,22 +198,25 @@ class MappingSAHOdoo(models.Model):
                                 if p.type == 'combo' and elt['ProductComponents']:
                                     # je veux ajouter les lignes de catalog
                                     # order.with_context(child_field='order_line').action_add_from_catalog()
+                                    j=0
+                                    i=0
                                     for component in elt['ProductComponents']:
+                                        j+=1
                                         if component['ProductComponentProducts']:
                                             for comp in component['ProductComponentProducts']:
                                                 component_product = self.env['product.product'].search([('produit_sah_id', '=', comp['ProductId'])], limit=1)
-                                                
+                                                i+=1
                                                 if component_product:
                                                     self.env['sale.order.line'].create({
                                                         "name": component_product.name,
                                                         "order_id": order.id,
                                                         'product_id': component_product.id,
                                                         'product_uom_qty': comp['Quantity'],
-                                                        # 'price_unit': component_product,  # Souvent les composants d’un combo sont gratuits (ajustable selon ton besoin)
-                                                        # 'tax_id': [(6, 0, [self._get_or_create_tax(0)])],  # Ajuste selon la TVA applicable
                                                     })
                                                 else:
                                                     raise ValidationError(f"Composant introuvable ! ID : {component['ProductId']}")
+                                    _logger.info('***** 8888 @@@@@ %s',j)
+                                    _logger.info('***** 9999999 @@@@@ %s',i)
                             else :
                                 raise ValidationError("Produit introuvable!"+" "+str(elt['ProductId']))
                         
