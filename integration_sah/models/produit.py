@@ -170,7 +170,7 @@ class ProduitSelligHome(models.Model):
                                     "Deleted": False
                                 })
                         product_components.append({
-                            "Id": component.id,  # Utiliser l'ID du composant
+                            "Id": component.id,  
                             "Name": component.name,
                             "ProductId": product.produit_sah_id,
                             "MaxQuantity": 0,
@@ -182,20 +182,6 @@ class ProduitSelligHome(models.Model):
                             ],
                             "ProductComponentProducts": product_component_products
                         })
-                    # product_components.append({
-                    #     "Id": 1060,
-                    #     "Name": product.name,
-                    #     "ProductId": product.produit_sah_id,
-                    #     "MaxQuantity": 0,
-                    #     "Deleted": False,
-                    #     "RemoteReference": None,
-                    #     "ProductComponentLangs": [
-                    #         {"Label": product.name, "ISOValue": "fr"},
-                    #         {"Label": "", "ISOValue": "en"}
-                    #     ],
-                    #     "ProductComponentProducts": product_component_products
-                    #  })
-
                 update_data = {
                     "ProductType": product.type_produit_sah,
                     "Reference": product.default_code,
