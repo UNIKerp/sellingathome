@@ -152,7 +152,8 @@ class ProduitSelligHome(models.Model):
 
                 response_data_produit = get_response_produit.json()
                 # Ajout spécifique si c'est un kit (combo)
-                product_components = ''
+                # product_components = ''
+                product_components = []
                 if product.type == 'combo':
                     product_component_products = []
                     for component in product.combo_ids:
@@ -169,7 +170,7 @@ class ProduitSelligHome(models.Model):
                                     "Deleted": False
                                 })
 
-                    product_components = [{
+                    product_components.append({
                         "Id": 1060,
                         "Name": product.name,
                         "ProductId": product.produit_sah_id,
@@ -181,7 +182,7 @@ class ProduitSelligHome(models.Model):
                             {"Label": "", "ISOValue": "en"}
                         ],
                         "ProductComponentProducts": product_component_products
-                    }]
+                     })
 
                 update_data = {
                     "ProductType": product.type_produit_sah,
