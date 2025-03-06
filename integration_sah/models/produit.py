@@ -156,8 +156,8 @@ class ProduitSelligHome(models.Model):
                 product_components = []
                 if product.type == 'combo':
                     for component in product.combo_ids:
-                        for cop in component.combo_item_ids:
-                            product_component_products = []
+                        product_component_products = []
+                        for cop in component.combo_item_ids: 
                             component_sah_id = cop.product_id.produit_sah_id
                             if component_sah_id:
                                 product_component_products.append({
