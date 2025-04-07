@@ -282,7 +282,7 @@ class ClientSAH(models.Model):
                         'createCustomerAccount':data['CreateCustomerAccount'],
                         'brand':data['Brand'],
                         'additionalInformations':data['AdditionalInformations'],
-                        'accountBankCode':data['AccountBankCode'],
+                        'accountBankCode':data.get('AccountBankCode'),
                         'accountWicketCode':data['AccountWicketCode'],
                         'accountNumber':data['AccountNumber'],
                         'accountKey':data['AccountKey'],
