@@ -131,11 +131,12 @@ class ProduitSelligHome(models.Model):
 
            
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-            type_produit_sah
+            type_produit_sah = 5
             if product.attribute_line_ids:
-
+                type_produit_sah = 10
+            elif product.
             update_data = {
-                "ProductType": product.type_produit_sah,
+                "ProductType": type_produit_sah,
                 "Reference": product.default_code,
                 "Prices": [
                     {
