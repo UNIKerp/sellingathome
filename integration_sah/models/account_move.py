@@ -17,7 +17,8 @@ class AccountMove(models.Model):
     def action_post(self):
         _logger.info('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
         res = super().action_post()
-        for move in self:
+        _logger.info("hhhhhhhhhhhhhhhhhhh%s",res)
+        for move in res:
             _logger.info('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s',move)
             move.action_invoice_sent()
             move.action_print_pdf()
