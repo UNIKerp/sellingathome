@@ -240,6 +240,7 @@ class ClientSAH(models.Model):
                         mademaselle.id if data['Gender'] == 1 else
                         madame.id if data['Gender'] == 2 else None
                     )
+                parent = False
                 if contact:
                     contact.write({
                         'client_sah':'vdi',
@@ -375,6 +376,23 @@ class ClientSAH(models.Model):
                     'type': 'delivery',  
                     'parent_id': parent.id,
                 })
+    
+                compte = self.env['res.partner.bank'].search([('acc_number','=',data['AccountNumber']),('partner_id','=',contact.id)], limit=1)
+                bank = self.env['res.bank'].search([('name','=',data['BankName'])], limit=1)
+                if not compte:
+                    self.env['res.partner.bank'].create({
+                        'acc_number':data['AccountNumber'],
+                        'partner_id':contact.id,
+                        'bank_bic':data['AccountIban'],
+                        'bank_id':bank.id,
+                    })
+                else:
+                    compte.write({
+                        'acc_number':data['AccountNumber'],
+                        'partner_id':contact.id,
+                        'bank_bic':data['AccountIban'],
+                        'bank_id':bank.id,
+                    })
 
         else:
             _logger.info("==================================Erreur: %s ==========================",  response.text)
