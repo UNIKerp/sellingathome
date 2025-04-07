@@ -241,7 +241,7 @@ class ClientSAH(models.Model):
                         madame.id if data['Gender'] == 2 else None
                     )
                 parent = False
-                logging.info('########################## %s',data.get('AccountBankCode'))
+                logging.info('########################## %s',type(data['AccountBankCode']))
                 if contact:
                     contact.write({
                         'client_sah':'vdi',
@@ -282,7 +282,7 @@ class ClientSAH(models.Model):
                         'createCustomerAccount':data['CreateCustomerAccount'],
                         'brand':data['Brand'],
                         'additionalInformations':data['AdditionalInformations'],
-                        'accountBankCode':data.get('AccountBankCode'),
+                        'accountBankCode':"data['AccountBankCode']",
                         'accountWicketCode':data['AccountWicketCode'],
                         'accountNumber':data['AccountNumber'],
                         'accountKey':data['AccountKey'],
