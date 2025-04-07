@@ -134,7 +134,7 @@ class ProduitSelligHome(models.Model):
             type_produit_sah = 5
             if product.attribute_line_ids:
                 type_produit_sah = 10
-            elif product.
+            # elif product.
             update_data = {
                 "ProductType": type_produit_sah,
                 "Reference": product.default_code,
