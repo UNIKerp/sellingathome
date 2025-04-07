@@ -48,7 +48,6 @@ class AccountMove(models.Model):
         if autopost_bills_wizard := self._show_autopost_bills_wizard():
             return autopost_bills_wizard
         _logger.info('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s',self)
-        self.action_invoice_sent()
-        self.action_print_pdf()
+        self.action_send_and_print()
         _logger.info('okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
         return False
