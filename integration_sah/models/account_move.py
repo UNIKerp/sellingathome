@@ -15,9 +15,12 @@ class AccountMove(models.Model):
 
 
     def action_post(self):
+        _logger.info('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
         res = super().action_post()
         for move in self:
+            _logger.info('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s',move)
             move.action_invoice_sent()
+            _logger.info('okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
 
     # def action_post(self):
     #     # Disabled by default to avoid breaking automated action flow
