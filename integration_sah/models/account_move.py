@@ -47,7 +47,8 @@ class AccountMove(models.Model):
             self._post(soft=False)
         if autopost_bills_wizard := self._show_autopost_bills_wizard():
             return autopost_bills_wizard
-        _logger.info('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s',self)
-        self.action_send_and_print()
-        _logger.info('okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+        for move in self:
+            _logger.info('Traitement de la facture : %s', move.name)
+            move.action_invoice_sent()    # Prépare et envoie l'email au client
+            move.action_print_pdf() 
         return False
