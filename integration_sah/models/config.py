@@ -10,4 +10,6 @@ class ConfigSAH(models.Model):
 
     token_sah = fields.Char(string="Token")
     secret_key_sah = fields.Char(string="Secret Key")
+
+    
     
