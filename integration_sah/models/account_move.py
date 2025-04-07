@@ -27,10 +27,7 @@ class AccountMove(models.Model):
     def action_post(self):
         # Disabled by default to avoid breaking automated action flow
     
-        _logger.info('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s',self)
-        self.action_invoice_sent()
-        self.action_print_pdf()
-        _logger.info('okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+        
         if (
             not self.env.context.get('disable_abnormal_invoice_detection', True)
             and self.filtered(lambda m: m.abnormal_amount_warning or m.abnormal_date_warning)
@@ -50,4 +47,8 @@ class AccountMove(models.Model):
             self._post(soft=False)
         if autopost_bills_wizard := self._show_autopost_bills_wizard():
             return autopost_bills_wizard
+        _logger.info('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s',self)
+        self.action_invoice_sent()
+        self.action_print_pdf()
+        _logger.info('okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
         return False
