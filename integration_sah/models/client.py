@@ -393,20 +393,21 @@ class ClientSAH(models.Model):
     
                 compte = self.env['res.partner.bank'].search([('acc_number','=',data['AccountNumber']),('partner_id','=',contact.id)], limit=1)
                 bank = self.env['res.bank'].search([('name','=',data['BankName'])], limit=1)
-                if not compte:
-                    self.env['res.partner.bank'].create({
-                        'acc_number':data['AccountNumber'],
-                        'partner_id':contact.id,
-                        'bank_bic':data['AccountIban'],
-                        'bank_id':bank.id,
-                    })
-                else:
-                    compte.write({
-                        'acc_number':data['AccountNumber'],
-                        'partner_id':contact.id,
-                        'bank_bic':data['AccountIban'],
-                        'bank_id':bank.id,
-                    })
+                if data['AccountNumber'] and contact.id:
+                    if not compte:
+                        self.env['res.partner.bank'].create({
+                            'acc_number':data['AccountNumber'],
+                            'partner_id':contact.id,
+                            'bank_bic':data['AccountIban'],
+                            'bank_id':bank.id,
+                        })
+                    else:
+                        compte.write({
+                            'acc_number':data['AccountNumber'],
+                            'partner_id':contact.id,
+                            'bank_bic':data['AccountIban'],
+                            'bank_id':bank.id,
+                        })
 
         else:
             _logger.info("==================================Erreur: %s ==========================",  response.text)
