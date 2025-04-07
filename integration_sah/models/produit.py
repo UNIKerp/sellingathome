@@ -50,6 +50,20 @@ class ProduitSelligHome(models.Model):
                 barcode = produit_api.get('Barcode', '')
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
+                type_produit_sah = produit_api.get('ProductType')
+
+                # Ajout des tax
+                list_prices = produit_api['Prices']
+                if list_prices:
+                    for line in list_prices:
+                        if line['BrandTaxRate'] > 0:
+                            tax_sah = self.env['tax.sah'].search([('amount','=',line['BrandTaxRate'])])
+                            if not tax_sah:
+                                self.env['tax.sah'].create({
+                                    'name':f'Taxe {line['BrandTaxRate']}%',
+                                    'amount':line['BrandTaxRate']
+                                })
+                #
                 
                 existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
                 
@@ -66,6 +80,7 @@ class ProduitSelligHome(models.Model):
                         'weight': weight,
                         'produit_sah_id': sah_id,
                         'is_storable': True if type_sah == 1 else False,
+                        'type_produit_sah':type_produit_sah
                     }
                     
                     if barcode:
@@ -81,7 +96,6 @@ class ProduitSelligHome(models.Model):
 
     """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
-        _logger.info(f'=============================****************************=========================')
         if product.produit_sah_id:
             #Photos
             photos_maj = self.maj_images_du_produit(product)
@@ -132,68 +146,94 @@ class ProduitSelligHome(models.Model):
 
            
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-            
-            update_data = {
-                "ProductType": product.type_produit_sah,
-                "Reference": product.default_code,
-                "Prices": [
-                    {
-                        "Id": product.produit_sah_id,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": product.name,
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": product.list_price,
-                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
-                        "ProductCost": product.standard_price,
-                        "EcoTax": 8.1,
-                    }
-                ],
-                "Barcode": product.barcode if product.barcode else '',
-                "Weight": product.weight,
-                "IsPublished": True,
-                "InventoryMethod": 1 if product.is_storable == True else 0,
-                "ProductPhotos": photos_maj,
-                'ProductLangs': [
-                    {
-                        'Name': product.name, 
-                        'Description': product.description_sale, 
-                        'ISOValue': 'fr'
-                    }
-                ],
-                "Categories": [
-                    {
-                        "Id": id_categ,
-                    }
-                ],
-                "Combinations": [
-                    {
-                        "ProductAttributes": [
-                            {
-                                "AttributeId": value.attribute_id.id,
-                                "Attribute": value.attribute_id.name,
-                                "Value": value.name,
-                                "WeightAdjustement": product.weight,
-                                "ProductAttributeLangs": [
-                                    {
-                                        "Name": value.attribute_id.name,
-                                        "Value": value.name,
-                                        "ISOValue": 'fr'
-                                    }
-                                ]
-                            }
-                            for value in line.value_ids
-                        ]
-                    }
-                    for line in product.attribute_line_ids if line.value_ids
-                ]
-            }
 
-            put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
+            get_response_produit = requests.get(url_produit,headers=headers)
+            if get_response_produit.status_code == 200:
 
-            if put_response_produit.status_code == 200:
-                _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
-            else:
-                _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
+                response_data_produit = get_response_produit.json()
+                # Ajout spécifique si c'est un kit (combo)
+                # product_components = ''
+                product_components = []
+                if product.type == 'combo':
+                    for component in product.combo_ids:
+                        product_component_products = []
+                        for cop in component.combo_item_ids: 
+                            component_sah_id = cop.product_id.produit_sah_id
+                            if component_sah_id:
+                                product_component_products.append({
+                                    "ProductId": component_sah_id,
+                                    "ProductRemoteId": None,
+                                    "ProductCombinationId": None,
+                                    "ProductCombinationBarCode": None,
+                                    "Quantity": 1,
+                                    "DisplayOrder": 0,
+                                    "Deleted": False
+                                })
+                        product_components.append({
+                            "Id": component.id,  
+                            "Name": component.name,
+                            "ProductId": product.produit_sah_id,
+                            "MaxQuantity": 0,
+                            "Deleted": False,
+                            "RemoteReference": None,
+                            "ProductComponentLangs": [
+                                {"Label": component.name, "ISOValue": "fr"},
+                                {"Label": "", "ISOValue": "en"}
+                            ],
+                            "ProductComponentProducts": product_component_products
+                        })
+                update_data = {
+                    "ProductType": product.type_produit_sah,
+                    "Reference": product.default_code,
+                    "Prices": response_data_produit['Prices'],
+                    "Barcode": product.barcode if product.barcode else '',
+                    "Weight": product.weight,
+                    "IsPublished": True,
+                    "InventoryMethod": 1 if product.is_storable == True else 0,
+                    "ProductPhotos": photos_maj,
+                    "ProductComponents": product_components,
+                    'ProductLangs': [
+                        {
+                            'Name': product.name, 
+                            'Description': product.description_sale, 
+                            'ISOValue': 'fr'
+                        }
+                    ],
+                    "Categories": [
+                        {
+                            "Id": id_categ,
+                        }
+                    ],
+                    "Combinations": [
+                        {
+                            "ProductAttributes": [
+                                {
+                                    "AttributeId": value.attribute_id.id,
+                                    "Attribute": value.attribute_id.name,
+                                    "Value": value.name,
+                                    "WeightAdjustement": product.weight,
+                                    "ProductAttributeLangs": [
+                                        {
+                                            "Name": value.attribute_id.name,
+                                            "Value": value.name,
+                                            "ISOValue": 'fr'
+                                        }
+                                    ]
+                                }
+                                for value in line.value_ids
+                            ]
+                        }
+                        for line in product.attribute_line_ids if line.value_ids
+                    ]
+                }
+
+                put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
+
+                if put_response_produit.status_code == 200:
+                    _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
+                else:
+                    _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code} ==========")
+
 
     #
     """ Creation d'un produit de Odoo => SAH """
@@ -254,21 +294,22 @@ class ProduitSelligHome(models.Model):
             discount_end_date = discount_end_date.isoformat()
         else:
             discount_end_date = None
-      
+
+
         product_data = {
             "ProductType": product_id.type_produit_sah,
             "Reference": product_id.default_code,
             "Prices": [
                 {
-                    "BrandTaxRate": 2.1,
-                    "BrandTaxName": product_id.name,
+                    "BrandTaxRate": self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
                     "TwoLetterISOCode": "FR",
-                    "PriceExclTax": product_id.list_price,
-                    "PriceInclTax": product_id.list_price * (product_id.taxes_id.amount/100),
+                    "PriceInclTax": product_id.list_price ,
                     "ProductCost": product_id.standard_price,
                     "EcoTax": 8.1
                 }
+                for elt in product_id.taxes_id if self._get_sah_tax(elt)
             ],
+
             "Barcode": product_id.barcode if product_id.barcode else '',
             "Weight": product_id.weight,
             "Length": product_id.long_sah,
@@ -345,10 +386,17 @@ class ProduitSelligHome(models.Model):
                     })],
                 })
                 product_id.default_list_price = pricelist.id
-           
+            
+                       
         else:
             _logger.info('========== Erreur de creation du produit %s ==========',post_response)
-
+    
+    def _get_sah_tax(self, tax_id):
+        # Recherche la taxe par son montant
+        if tax_id :
+            tax = self.env['tax.sah'].search([('amount_tax_id', '=', tax_id.id)], limit=1)
+            if tax :
+                return tax.amount
     """ Redéfiniton de la fonction création du produit """
     @api.model
     def create(self, vals):
