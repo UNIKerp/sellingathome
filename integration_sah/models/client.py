@@ -367,7 +367,7 @@ class ClientSAH(models.Model):
                         'companyIdentificationNumbervendeur':data['CompanyIdentificationNumber'],
                         'isActive':data['IsActive'],
                 })
-                delivery_address = self.env['res.partner'].search([('type','=','delivery'),('parent_id','=',parent.id),('street','=',data['StreetAddress']),('city','=', data['City'])])
+                delivery_address = self.env['res.partner'].search([('type','=','delivery'),('parent_id','=',contact.id),('street','=',data['StreetAddress']),('city','=', data['City'])])
                 if not delivery_address:
                     delivery_address = self.env['res.partner'].create({
                         'name': 'Adresse de livraison' + ' '+  data['FirstName']+' '+data['LastName'],
@@ -377,7 +377,7 @@ class ClientSAH(models.Model):
                         'zip': data['Postcode'],
                         'country_id': pays.id if pays else None,
                         'type': 'delivery',  
-                        'parent_id': parent.id,
+                        'parent_id': contact.id,
                     })
                 else:
                     delivery_address.write({
@@ -388,7 +388,7 @@ class ClientSAH(models.Model):
                         'zip': data['Postcode'],
                         'country_id': pays.id if pays else None,
                         'type': 'delivery',  
-                        'parent_id': parent.id,
+                        'parent_id': contact.id,
                     })
     
                 compte = self.env['res.partner.bank'].search([('acc_number','=',data['AccountNumber']),('partner_id','=',contact.id)], limit=1)
