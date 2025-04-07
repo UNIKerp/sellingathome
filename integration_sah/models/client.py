@@ -204,7 +204,6 @@ class ClientSAH(models.Model):
                         'CustomQuestionAnswers':clients_sah['CustomQuestionAnswers'],
 
                         })
-            _logger.info("==================================Résultat: %s ==========================", json.dumps(clients_data, indent=4))
         else:
             _logger.info("==================================Erreur: %s ==========================",  response2.text)
         _logger.info("======================= Fin de mise à jour des Clients")
@@ -242,6 +241,7 @@ class ClientSAH(models.Model):
                         madame.id if data['Gender'] == 2 else None
                     )
                 parent = False
+                logging.info('########################## %s',data['AccountBankCode'])
                 if contact:
                     contact.write({
                         'client_sah':'vdi',
