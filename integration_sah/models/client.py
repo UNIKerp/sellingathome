@@ -368,7 +368,8 @@ class ClientSAH(models.Model):
                         'isActive':data['IsActive'],
                 })
                 if data['StreetAddress']:
-                    delivery_address = self.env['res.partner'].search([('type','=','delivery'),('parent_id','=',contact.id),('street','=',data['StreetAddress']),('city','=', data['City'])])
+                    logging.info('************************************** %s',contact)
+                    delivery_address = self.env['res.partner'].search([('type','=','delivery'),('parent_id','=',contact.id),('street','=',data['StreetAddress'])])
                     if not delivery_address:
                         delivery_address = self.env['res.partner'].create({
                             'name': 'Adresse de livraison' + ' '+  data['FirstName']+' '+data['LastName'],
