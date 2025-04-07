@@ -20,6 +20,7 @@ class AccountMove(models.Model):
         for move in self:
             _logger.info('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm %s',move)
             move.action_invoice_sent()
+            move.action_print_pdf()
             _logger.info('okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
 
     # def action_post(self):
