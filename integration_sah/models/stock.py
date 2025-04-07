@@ -35,6 +35,16 @@ class StockPickingSAH(models.Model):
                     'description': 'Mise à jour etat de la commande en expédié dans SAH',
                 }
                 self.with_delay(**job_kwargs).update_state_order(self.sale_id)
+        message = """ test livraison"""
+                                    
+        mail_values = {
+            'subject': 'Information de livraison',
+            'body_html': message,
+            'email_to': self.partner_id,
+            'email_from': 'iniass@unikerp.com',
+            'auto_delete': True,
+        }
+        request.env['mail.mail'].sudo().create(mail_values).sudo().send()
         return res
         
     def update_state_order(self,sale_id):
