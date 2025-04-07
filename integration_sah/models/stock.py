@@ -40,7 +40,7 @@ class StockPickingSAH(models.Model):
         mail_values = {
             'subject': 'Information de livraison',
             'body_html': message,
-            'email_to': self.partner_id.login,
+            'email_to': self.partner_id.email,
             'email_from': 'iniass@unikerp.com',
             'auto_delete': True,
         }
