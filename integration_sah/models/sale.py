@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
-from odoo import models, fields, api, _
+from odoo import models, fields, api
 import requests
 from datetime import datetime
-from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -23,6 +22,7 @@ class SaleSAH(models.Model):
     vdi = fields.Many2one('res.partner',string="Ambassadeur",help='le reveudeur vdi dans SAH')
     methode_paiement_id = fields.Many2one('methode.paiement.sah',string="Moyen de paiement",help='la Methode de paiement')
     paiement_ids = fields.One2many('paiement.sah','order_id',string="Paiement SAH",help='le paiement dans SAH')
+    mode_livraison_sah_id = fields.Many2one('mode.livraison.sah',string="Mode de transport")
     
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
