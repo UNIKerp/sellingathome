@@ -241,7 +241,7 @@ class ClientSAH(models.Model):
                         madame.id if data['Gender'] == 2 else None
                     )
                 parent = False
-                logging.info('########################## %s',data['AccountBankCode'])
+                logging.info('########################## %s',data.get('AccountBankCode'))
                 if contact:
                     contact.write({
                         'client_sah':'vdi',
