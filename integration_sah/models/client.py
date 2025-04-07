@@ -367,31 +367,33 @@ class ClientSAH(models.Model):
                         'companyIdentificationNumbervendeur':data['CompanyIdentificationNumber'],
                         'isActive':data['IsActive'],
                 })
+                # Replace the delivery address section with this improved version
                 if data['StreetAddress']:
-                    logging.info('************************************** %s',contact)
-                    delivery_address = self.env['res.partner'].search([('type','=','delivery'),('parent_id','=',contact.id),('street','=',data['StreetAddress'])])
-                    if not delivery_address:
-                        delivery_address = self.env['res.partner'].create({
-                            'name': 'Adresse de livraison' + ' '+  data['FirstName']+' '+data['LastName'],
-                            'street': data['StreetAddress'],
-                            'street2':data['StreetAddress2'],
-                            'city': data['City'],
-                            'zip': data['Postcode'],
-                            'country_id': pays.id if pays else None,
-                            'type': 'delivery',  
-                            'parent_id': contact.id,
-                        })
+                    delivery_vals = {
+                        'name': 'Adresse de livraison' + ' '+ data['FirstName']+' '+data['LastName'],
+                        'street': data['StreetAddress'],
+                        'street2': data['StreetAddress2'],
+                        'city': data['City'],
+                        'zip': data['Postcode'],
+                        'country_id': pays.id if pays else None,
+                        'type': 'delivery',
+                        'parent_id': contact.id
+                    }
+                    
+                    domain = [
+                        ('type', '=', 'delivery'),
+                        ('parent_id', '=', contact.id),
+                        ('street', '=', data['StreetAddress']),
+                        ('city', '=', data['City']),
+                        ('zip', '=', data['Postcode'])
+                    ]
+                    
+                    delivery_address = self.env['res.partner'].search(domain, limit=1)
+                    
+                    if delivery_address:
+                        delivery_address.write(delivery_vals)
                     else:
-                        delivery_address.write({
-                            'name': 'Adresse de livraison' + ' '+  data['FirstName']+' '+data['LastName'],
-                            'street': data['StreetAddress'],
-                            'street2':data['StreetAddress2'],
-                            'city': data['City'],
-                            'zip': data['Postcode'],
-                            'country_id': pays.id if pays else None,
-                            'type': 'delivery',  
-                            'parent_id': contact.id,
-                        })
+                        self.env['res.partner'].create(delivery_vals)
     
                 compte = self.env['res.partner.bank'].search([('acc_number','=',data['AccountNumber']),('partner_id','=',contact.id)], limit=1)
                 bank = self.env['res.bank'].search([('name','=',data['BankName'])], limit=1)
