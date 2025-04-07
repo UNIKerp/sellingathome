@@ -48,7 +48,8 @@ class AccountMove(models.Model):
         if autopost_bills_wizard := self._show_autopost_bills_wizard():
             return autopost_bills_wizard
         for move in self:
-            _logger.info('Traitement de la facture : %s', move.name)
-            move.action_invoice_sent()    # Prépare et envoie l'email au client
-            move.action_print_pdf() 
+            wizard = self.env['account.move.send.wizard'].create({
+                'move_id': move.id,
+            })
+            wizard.action_send_and_print()
         return False
