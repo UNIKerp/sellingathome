@@ -243,6 +243,7 @@ class ClientSAH(models.Model):
                 parent = False
                 logging.info('########################## %s',type(data['AccountBankCode']))
                 if contact:
+                    logging.info('=============================== %s',contact)
                     contact.write({
                         'client_sah':'vdi',
                         'phone':data['Phone'],
