@@ -44,7 +44,7 @@ class StockPickingSAH(models.Model):
             'email_from': 'iniass@unikerp.com',
             'auto_delete': True,
         }
-        request.env['mail.mail'].sudo().create(mail_values).sudo().send()
+        self.env['mail.mail'].sudo().create(mail_values).sudo().send()
         return res
         
     def update_state_order(self,sale_id):
