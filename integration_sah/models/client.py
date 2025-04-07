@@ -23,7 +23,7 @@ class ClientSAH(models.Model):
         ('agent_commercial', 'AGENT COMMERCIAL')
     ], string='Type Revendeur' , help="Type de revendeur SAH")
     vdi_id = fields.Many2one('res.partner',string="VDI", help="VDI ratacher au contact")
-    client_sah=fields.Selection([('client','CLIENT'),('vdi','VDI')], string="Type Client" , help="si c'est un client ou un vdi")
+    client_sah=fields.Selection([('client','CLIENT'),('vdi','VDI'),('hote','Hôte')], string="Type Client" , help="si c'est un client, un vdi ou un hôte")
     ref_sah = fields.Char('')
    
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
