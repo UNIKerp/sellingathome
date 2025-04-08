@@ -36,12 +36,14 @@ class StockPickingSAH(models.Model):
                 }
                 self.with_delay(**job_kwargs).update_state_order(self.sale_id)
         message = """ test livraison"""
+        user = self.env.user
+        _logger.info("gggggggggggggggggggggggggggggggggggggg%s",user)
                                     
         mail_values = {
             'subject': 'Information de livraison',
             'body_html': message,
             'email_to': self.partner_id.email,
-            'email_from': 'iniass@unikerp.com',
+            'email_from': user,
             'auto_delete': True,
         }
         self.env['mail.mail'].sudo().create(mail_values).sudo().send()
