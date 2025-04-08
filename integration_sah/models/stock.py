@@ -36,9 +36,7 @@ class StockPickingSAH(models.Model):
                 }
                 self.with_delay(**job_kwargs).update_state_order(self.sale_id)
         message = """ test livraison"""
-        user = self.env.user
-        _logger.info("gggggggggggggggggggggggggggggggggggggg%s",user)
-                                    
+        user = self.env.user                          
         mail_values = {
             'subject': 'Information de livraison',
             'body_html': message,
