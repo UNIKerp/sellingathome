@@ -194,16 +194,17 @@ class ClientSAH(models.Model):
                         nommencalture = self.env['mrp.bom'].create(upload)
 
                         for bom in  data.get('AttachedProducts'):
-                            product_rattache = self.env['product.template'].search([('produit_sah_id','!=',bom.get('ProductId'))]) 
-                            upload2 = {
-                                'bom_id':nommencalture.id,
-                                'product_tmpl_id':product_rattache.id,
-                                'product_id':product_rattache.product_variant_id.id,
-                                'product_qty':bom.get('Quantity')
-                            }
-                            line = self.env['mrp.bom.line'].create(upload2)
+                            product_rattache = self.env['product.template'].search([('produit_sah_id','!=',bom.get('ProductId'))],limit=1)
+                            if product_rattache:
+                                upload2 = {
+                                    'bom_id':nommencalture.id,
+                                    'product_tmpl_id':product_rattache.id,
+                                    'product_id':product_rattache.product_variant_id.id,
+                                    'product_qty':bom.get('Quantity')
+                                }
+                                line = self.env['mrp.bom.line'].create(upload2)
 
-                            logging.info('============================= %s',line)
+                                logging.info('============================= %s',line)
 
 
 
