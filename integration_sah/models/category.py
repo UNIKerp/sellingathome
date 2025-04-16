@@ -110,7 +110,7 @@ class ClientSAH(models.Model):
                                             combo_ids.append(comb.id)
                     _logger.info('00000000 ProductComponents 1111111 %s',ProductComponents)
                     article.sudo().write({'type':'combo','combo_ids':combo_ids})
-                    
+
     def ajout_category_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url = "https://demoapi.sellingathome.com/v1/Categories"
@@ -192,11 +192,13 @@ class ClientSAH(models.Model):
                             'type':'phantom'
                         }
                         nommencalture = self.env['mrp.bom'].create(upload)
+
                         for bom in  data.get('AttachedProducts'):
+                            product_rattache = self.env['product.template'].search([('produit_sah_id','!=',bom.get('ProductId'))]) 
                             upload2 = {
                                 'bom_id':nommencalture.id,
-                                'product_tmpl_id':product.id,
-                                'product_id':product.product_variant_id.id,
+                                'product_tmpl_id':product_rattache.id,
+                                'product_id':product_rattache.product_variant_id.id,
                                 'product_qty':bom.get('Quantity')
                             }
                             line = self.env['mrp.bom.line'].create(upload2)
