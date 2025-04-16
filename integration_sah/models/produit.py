@@ -30,6 +30,35 @@ class ProduitSelligHome(models.Model):
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
 
+    def ajout_nommenclature_sah_odoo(self):
+        products = self.env['product.template'].search([('produit_sah_id','!=',0)])
+        if products:
+            for product in products:
+                headers = self.env['authentication.sah'].establish_connection()
+                url = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
+                response = requests.get(url_produit, headers=headers, timeout=120)
+                if response.status_code == 200:
+                    logging.info(f'================================ {response.json()}')
+                    datas = response.json()
+                    for data in datas:
+                        if data.get('AttachedProducts'):
+                            upload = {
+                                'product_tmpl_id':product.id,
+                                'type':'phantom'
+                            }
+                            nommencalture = self.env['mrp.bom'].create(upload)
+                            for bom in  data.get('AttachedProducts'):
+                                upload2 = {
+                                    'bom_id':nommencalture.id,
+                                    'product_tmpl_id':product.id,
+                                    'product_qty':bom.get('Quantity')
+                                }
+                                line = self.env['mrp.bom.line'].create(upload2)
+
+                                logging.info('============================= %s',line)
+
+
+
     def ajout_liste_prix_produit_sah_odoo(self):
         products = self.env['product.template'].search([('produit_sah_id','!=',0)])
         if products:
