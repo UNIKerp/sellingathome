@@ -35,7 +35,7 @@ class ProduitSelligHome(models.Model):
         if products:
             for product in products:
                 headers = self.env['authentication.sah'].establish_connection()
-                url = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
+                url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
                 response = requests.get(url_produit, headers=headers, timeout=120)
                 if response.status_code == 200:
                     logging.info(f'================================ {response.json()}')
