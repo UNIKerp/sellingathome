@@ -34,7 +34,7 @@ class ClientSAH(models.Model):
                 continue
 
             existing_categ = category_model.search([('category_sah_id', '=', sah_id)], limit=1)
-            if not existing_categ:
+            if not existing_categ and  data.get('Reference'):
                 new_categ = category_model.create({
                     'name': data.get('Reference'),
                     'category_sah_id': sah_id,
