@@ -37,6 +37,7 @@ class ProduitSelligHome(models.Model):
             url_category = "https://demoapi.sellingathome.com/v1/Categories"
             response = requests.post(url_category, headers=headers, timeout=120)
             if response.status_code == 200:
+                pass
                
 
     
