@@ -13,3 +13,4 @@ from . import tarifs
 from . import sale_sah_mapping
 from . import queue_job
 from . import account_move
+from . import category
