@@ -361,7 +361,7 @@ class ProduitSelligHome(models.Model):
         else:
             discount_end_date = None
 
-
+        list_id_categ = self.add_category_odoo_sah(product_id)
         product_data = {
             "ProductType": 5,
             "Reference": product_id.default_code,
@@ -394,11 +394,11 @@ class ProduitSelligHome(models.Model):
                 'ISOValue': 'fr',
                 }
             ],
-            # "Categories": [
-            #     {
-            #     "Id": id_categ,
-            #     },
-            # ],
+            "Categories": [
+                {
+                "Id": elt,
+                }for elt in list_id_categ
+            ],
 
             "ProductPhotos":product_photos,
 
@@ -433,6 +433,8 @@ class ProduitSelligHome(models.Model):
         }
         if not product_photos:
             product_data.pop("ProductPhotos", None)
+        if not list_id_categ:
+            update_data.pop("Categories", None)
 
         post_response = requests.post(url, json=product_data, headers=headers)
         if post_response.status_code == 200:
