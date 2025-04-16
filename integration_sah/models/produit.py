@@ -50,6 +50,7 @@ class ProduitSelligHome(models.Model):
                             upload2 = {
                                 'bom_id':nommencalture.id,
                                 'product_tmpl_id':product.id,
+                                'product_id':product.product_variant_id.id
                                 'product_qty':bom.get('Quantity')
                             }
                             line = self.env['mrp.bom.line'].create(upload2)
