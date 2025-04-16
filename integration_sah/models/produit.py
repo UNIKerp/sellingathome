@@ -180,7 +180,8 @@ class ProduitSelligHome(models.Model):
 
     def  update_article_AttachedProducts_sah_odoo(self):
         article_ids = self.env['product.template'].search([('produit_sah_id','!=',None)])
-
+        
+        headers = self.env['authentication.sah'].establish_connection()
         for article in article_ids:
             _logger.info('============ produit_sah_id =============== %s',article.produit_sah_id)
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{article.produit_sah_id}"
