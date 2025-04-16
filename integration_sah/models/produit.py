@@ -31,13 +31,26 @@ class ProduitSelligHome(models.Model):
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
 
     
+    #
     def add_category_odoo_sah(self,product):
-        if product:
-            headers = self.env['authentication.sah'].establish_connection()
-            url_category = "https://demoapi.sellingathome.com/v1/Categories"
-            response = requests.post(url_category, headers=headers, timeout=120)
-            if response.status_code == 200:
-                pass
+        if product and product.public_categ_ids:
+            list_id_categ = []
+            for categ in product.public_categ_ids:
+                if categ.category_sah_id:
+                    list_id_categ.append(categ.category_sah_id)
+                else:
+                    headers = self.env['authentication.sah'].establish_connection()
+                    url_category = "https://demoapi.sellingathome.com/v1/Categories"
+                    datas = {
+                        "Reference": categ.name,
+                        "ParentCategoryId": categ.parent_id.name if  categ.parent_id else 1,
+                    }
+                    response = requests.post(url_category,json=datas, headers=headers, timeout=120)
+                    if response.status_code == 200:
+                        datas = response.json()
+                        categ.category_sah_id = datas.get('Id')
+                        list_id_categ.append(datas.get('Id'))
+            return list_id_categ
                
 
     
@@ -283,37 +296,37 @@ class ProduitSelligHome(models.Model):
         categ_parent =''
         suivi_stock = 1 if product_id.is_storable == True else 0
         product_photos = self.creation_images_du_produit(product_id)
-        if product_id.categ_id and not product_id.produit_sah_id:
-            url_categ = "https://demoapi.sellingathome.com/v1/Categories"
-            post_response_categ = requests.get(url_categ, headers=headers)
-            if post_response_categ.status_code == 200:
-                response_data_categ = post_response_categ.json()
-                categ_parent = response_data_categ[0]['Id']
-                j=0
-                for c in response_data_categ:
-                    CategoryLangs = c['CategoryLangs']
-                    for cc in CategoryLangs :
-                        nom_cat = cc['Name']
-                        if product_id.categ_id.name==nom_cat:
-                            id_categ = c['Id']
-                            j+=1
-                if j==0:
-                    create_category = {
-                        "Reference": product_id.categ_id.name,
-                        "ParentCategoryId": categ_parent,
-                        "IsPublished": True,
-                        "CategoryLangs": [
-                            {
-                                "Name": product_id.categ_id.name,
-                                "Description": 'None',
-                                "ISOValue": "fr",
-                            },
-                        ],
-                    }
-                    post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
-                    if post_response_categ_create.status_code == 200:
-                        categ = post_response_categ_create.json()
-                        id_categ = categ['Id']
+        # if product_id.categ_id and not product_id.produit_sah_id:
+        #     url_categ = "https://demoapi.sellingathome.com/v1/Categories"
+        #     post_response_categ = requests.get(url_categ, headers=headers)
+        #     if post_response_categ.status_code == 200:
+        #         response_data_categ = post_response_categ.json()
+        #         categ_parent = response_data_categ[0]['Id']
+        #         j=0
+        #         for c in response_data_categ:
+        #             CategoryLangs = c['CategoryLangs']
+        #             for cc in CategoryLangs :
+        #                 nom_cat = cc['Name']
+        #                 if product_id.categ_id.name==nom_cat:
+        #                     id_categ = c['Id']
+        #                     j+=1
+        #         if j==0:
+        #             create_category = {
+        #                 "Reference": product_id.categ_id.name,
+        #                 "ParentCategoryId": categ_parent,
+        #                 "IsPublished": True,
+        #                 "CategoryLangs": [
+        #                     {
+        #                         "Name": product_id.categ_id.name,
+        #                         "Description": 'None',
+        #                         "ISOValue": "fr",
+        #                     },
+        #                 ],
+        #             }
+        #             post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+        #             if post_response_categ_create.status_code == 200:
+        #                 categ = post_response_categ_create.json()
+        #                 id_categ = categ['Id']
         
 
         url = "https://demoapi.sellingathome.com/v1/Products"   
@@ -364,11 +377,11 @@ class ProduitSelligHome(models.Model):
                 'ISOValue': 'fr',
                 }
             ],
-            "Categories": [
-                {
-                "Id": id_categ,
-                },
-            ],
+            # "Categories": [
+            #     {
+            #     "Id": id_categ,
+            #     },
+            # ],
 
             "ProductPhotos":product_photos,
 
