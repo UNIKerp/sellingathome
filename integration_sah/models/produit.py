@@ -31,16 +31,28 @@ class ProduitSelligHome(models.Model):
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
 
     def ajout_stock_sah_odoo(self):
-        products = self.env['product.template'].search([('produit_sah_id','!=',0)])
+        products = self.env['product.template'].search([('produit_sah_id','!=',0),('is_storable', '=', True)])
         if products:
             for product in products:
                 headers = self.env['authentication.sah'].establish_connection()
                 url_produit = f"https://demoapi.sellingathome.com/v1/Stocks?productId={product.produit_sah_id}"
                 response = requests.get(url_produit, headers=headers, timeout=120)
                 if response.status_code == 200:
-                    logging.info(f'================================ {response.json()}')
+                    location = self.env['stock.location'].search([('usage', '=', 'internal')], limit=1)
+                    datas =  response.json()
+                    if location and datas.get('StockQuantity') > 0:
+                        upload = {
+                            'product_id': product.product_variant_id.id,
+                            'location_id': location.id,
+                            'quantity': int(datas.get('StockQuantity'))
+                        }
+                        stock_quants_data = self.env['stock.quant'].create(upload)
+                        product.product_variant_id._compute_quantities()
+                        _logger.info(f'✅ =========================== {len(stock_quants_data)} lignes de stock créées =====================')
 
-                    
+                    logging.info(f'================================ {product.name}')
+
+
        
     def ajout_nommenclature_sah_odoo(self):
         products = self.env['product.template'].search([('produit_sah_id','!=',0)])
