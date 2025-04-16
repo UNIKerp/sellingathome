@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="view_form_methode_paiement"	model="ir.ui.view">
+		<field	name="name">methode.paiement.sah.form</field>
+		<field	name="model">methode.paiement.sah</field>
+		<field	name="arch"	type="xml">
+			<form create="false" >
+				<sheet>
+					<group>
+						<group>
+							<field name="name"/>
+							<field name="value" readonly="1"/>
+                            <field name="is_confirme"/>
+						</group>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+    <record id="view_list_methode_paiement"	model="ir.ui.view">
+		<field	name="name">methode.paiement.sah.form</field>
+		<field	name="model">methode.paiement.sah</field>
+		<field	name="arch"	type="xml">
+			<list create="false" editable="top" >
+                <field name="name"/>
+                <field name="value" readonly="1"/>
+                <field name="is_confirme"/>
+			</list>
+		</field>
+	</record>
+    <record id="action_sah_methode_paiement" model="ir.actions.act_window">
+        <field name="name">Méthodes de paiement SAH</field>
+        <field name="res_model">methode.paiement.sah</field>
+        <field name="view_mode">list</field>
+    </record>
+	<!-- Mode livraison SAH -->
+	<record id="view_list_mode_livraison_sah"	model="ir.ui.view">
+		<field	name="name">mode.livraison.sah.list</field>
+		<field	name="model">mode.livraison.sah</field>
+		<field	name="arch"	type="xml">
+			<list create="false" editable="top" >
+                <field name="name" readonly="1"/>
+                <field name="value" readonly="1"/>
+				<field name="delivery_carrier_id"/>
+				<field name="desciption" optional="show" />
+			</list>
+		</field>
+	</record>
+    <record id="action_sah_mode_livraison" model="ir.actions.act_window">
+        <field name="name">Modes de livraison SAH</field>
+        <field name="res_model">mode.livraison.sah</field>
+        <field name="view_mode">list</field>
+    </record>
+
+	<!-- Taxes SAH -->
+	<record id="view_list_tax_sah"	model="ir.ui.view">
+		<field	name="name">tax.sah.list</field>
+		<field	name="model">tax.sah</field>
+		<field	name="arch"	type="xml">
+			<list create="false" editable="top" >
+                <field name="name" />
+                <field name="amount" readonly="1"/>
+				<field name="amount_tax_id"/>
+			</list>
+		</field>
+	</record>
+    <record id="action_sah_tax" model="ir.actions.act_window">
+        <field name="name">Taxes SAH</field>
+        <field name="res_model">tax.sah</field>
+        <field name="view_mode">list</field>
+    </record>
+
+	<!-- Commandes SAH -->
+	<record id="view_list_commandes_sah"	model="ir.ui.view">
+		<field	name="name">commande.sah.list</field>
+		<field	name="model">commande.sah</field>
+		<field	name="arch"	type="xml">
+			<list create="false" edit="false" decoration-muted="state == 'done'" 
+                      decoration-danger="state == 'failed'"
+                      decoration-warning="state not in ('failed', 'done')"
+				 >
+                <field name="name" />
+                <field name="commande_id" />
+				<field name="state"/>
+				<button type="object"  name="open_job_logs"  string="Voir le Job"/>
+			</list>
+		</field>
+	</record>
+
+	<record id="view_form_commandes_sah"	model="ir.ui.view">
+		<field	name="name">commande.sah.form</field>
+		<field	name="model">commande.sah</field>
+		<field	name="arch"	type="xml">
+			<form create="false" edit="false">
+				<header>
+					<field name="state" widget="statusbar" />
+				</header>
+				<sheet>
+					<group>
+						<field name="id_order_sah" />
+						<field name="name" />
+						<field name="commande_id" />
+						<field name="job_id"/>
+						<field name="donnes_sah"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+	 <!-- vue search -->
+    <record id="view_commande_sah_search" model="ir.ui.view">
+        <field name="name">commande.sah.search</field>
+        <field name="model">commande.sah</field>
+        <field name="arch" type="xml">
+            <search >
+                <field name="id_order_sah" />
+				<field name="name" />
+				<field name="commande_id" />
+				<field name="job_id"/>
+				<field name="state"/>
+				<filter name="wait_dependencies" string="Wait Dependencies" domain="[('state', '=', 'wait_dependencies')]"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="enqueued" string="Enqueued" domain="[('state', '=', 'enqueued')]"/>
+                <filter name="started" string="Started" domain="[('state', '=', 'started')]"/>
+                <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+               <group expand="0" string="Group By">
+                    <filter
+                        context="{'group_by':'state'}"
+                        name="state"
+                        string="State"
+                    /> 
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_commande_sah" model="ir.actions.act_window">
+        <field name="name">Integration commande SAH</field>
+        <field name="res_model">commande.sah</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_failed': 1}</field>
+    </record>
+
+    <menuitem name="Mappages SAH" id="info_sah_paiement" parent="sale.sale_menu_root" sequence="45"/> 
+    <menuitem name="Integrations commandes SAH" id="sah_command" parent="info_sah_paiement"  action="action_commande_sah" sequence="1"/> 
+    <menuitem name="Modes de livraison SAH" id="sah_mode_livraison" parent="info_sah_paiement"  action="action_sah_mode_livraison" sequence="2"/> 
+    <menuitem name="Méthodes de paiement SAH" id="sah_methode_paiement" parent="info_sah_paiement"  action="action_sah_methode_paiement" sequence="3"/> 
+    <menuitem name="Paiements SAH" id="sah_model_paiement" parent="info_sah_paiement"  action="action_sah_model_paiement" sequence="4"/> 
+    <menuitem name="Taxes SAH" id="sah_tax" parent="info_sah_paiement"  action="action_sah_tax" sequence="5"/> 
+    
+    </data>
+</odoo>

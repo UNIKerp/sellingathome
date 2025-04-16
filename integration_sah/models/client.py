@@ -16,6 +16,7 @@ class ClientSAH(models.Model):
 
     id_client_sah = fields.Integer("ID client SAH",copy=False, help="l'ID du client dans SAH")
     id_vendeur_sah = fields.Integer(string='ID vendeur SAH',copy=False, help="l'ID du vendeur dans SAH")
+    id_hote_sah = fields.Integer(string='ID Hôte SAH',copy=False, help="l'ID de l'Hôte dans SAH")
     type_revendeur = fields.Selection([
         ('vendeur_domicile', 'VENDEUR À DOMICILE INDÉPENDANT'),
         ('vdi', 'VDI INSCRIT AU RCS'),
@@ -23,7 +24,7 @@ class ClientSAH(models.Model):
         ('agent_commercial', 'AGENT COMMERCIAL')
     ], string='Type Revendeur' , help="Type de revendeur SAH")
     vdi_id = fields.Many2one('res.partner',string="VDI", help="VDI ratacher au contact")
-    client_sah=fields.Selection([('client','CLIENT'),('vdi','VDI')], string="Type Client" , help="si c'est un client ou un vdi")
+    client_sah=fields.Selection([('client','CLIENT'),('vdi','VDI'),('hote','Hôte')], string="Type Client" , help="si c'est un client, un vdi ou un hôte")
     ref_sah = fields.Char('')
    
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
@@ -80,8 +81,9 @@ class ClientSAH(models.Model):
     companyIdentificationNumbervendeur= fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
 
     _sql_constraints = [
-        ('id_client_sah_uniq', 'unique (id_client_sah)', "ID client SAH already exists !"),
+        ('id_client_sah_uniq', 'unique(id_client_sah)', "ID client SAH doit être unique !"),
         ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
+        ('id_hote_sah_uniq','unique(id_hote_sah)', "ID Hôte SAH doit être unique !" )
         ]
     
     def copy(self, default=None):
@@ -93,19 +95,16 @@ class ClientSAH(models.Model):
         return super(ClientSAH, self).copy(default)
     
     # Fonction maj des donnéés de SAH 
-    def _update_infos_customers_and_sellers_and_commandes(self):
+    def _update_infos_customers_and_sellers(self):
         job_kwargs_customers = {
             "description": "Mise à jour et création de nouveaux clients s'ils existent de SAH vers Odoo",
         }
         job_kwargs_sellers = {
             "description": "Mise à jour et création de nouveaux vendeurs s'ils existent de SAH vers Odoo",
         }
-        job_kwargs_commandes = {
-            "description": "Mise à jour et création de nouveaux commandes s'ils existent de SAH vers Odoo",
-        }
         self.with_delay(**job_kwargs_sellers).recuperation_vendeurs_sah_vers_odoo()
         self.with_delay(**job_kwargs_customers).get_update_client_sah()
-        self.env['sale.order'].with_delay(**job_kwargs_commandes).get_commande()
+        
         
     def get_update_client_sah(self):
         _logger.info("======================= Debut de mise à jour des clients")
@@ -115,7 +114,6 @@ class ClientSAH(models.Model):
         if response2.status_code == 200:
             clients_data = response2.json()
             for clients_sah in clients_data:
-                # client_odoo = self.env['res.partner'].search(['|',('id_client_sah','=',clients_sah['Id']),('email','=',clients_sah['Email'])])
                 client_odoo = self.env['res.partner'].search([('id_client_sah','=',clients_sah['Id'])])
                 ref_vendeur = 'V'+str(clients_sah['SellerId'])
                 ref_sah ='C'+str(clients_sah['Id'])
@@ -132,7 +130,7 @@ class ClientSAH(models.Model):
                         None
                     )
                 if not client_odoo:
-                    self.create({
+                    parent = self.create({
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
                         'client_sah':'client',
@@ -194,17 +192,16 @@ class ClientSAH(models.Model):
                         'CustomQuestionAnswers':clients_sah['CustomQuestionAnswers'],
 
                         })
-            _logger.info("==================================Résultat: %s ==========================", json.dumps(clients_data, indent=4))
         else:
             _logger.info("==================================Erreur: %s ==========================",  response2.text)
         _logger.info("======================= Fin de mise à jour des Clients")
 
     def recuperation_vendeurs_sah_vers_odoo(self):
-        _logger.info("======================= Debut de mise à jour des vendeurs")
         headers = self.env['authentication.sah'].establish_connection()
         url = 'https://demoapi.sellingathome.com/v1/Sellers'
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
+            _logger.info("======================= Debut de mise à jour des vendeurs")
             datas = response.json()
             for data in datas:
                 ref_sah= 'V'+str(data['Id'])
@@ -231,6 +228,7 @@ class ClientSAH(models.Model):
                         madame.id if data['Gender'] == 2 else None
                     )
                 if contact:
+                    
                     contact.write({
                         'client_sah':'vdi',
                         'phone':data['Phone'],
@@ -292,69 +290,90 @@ class ClientSAH(models.Model):
                         'companyVAT':data['CompanyVAT'],
                     })
                 else:
-       
-                    contact.create({
-                    'id_vendeur_sah':data['Id'],
-                    'client_sah':'vdi',
-                    'ref_sah':ref_sah,
-                    'name':data['FirstName']+' '+data['LastName'],
-                    'type_revendeur':type_revendeur,
-                    'phone':data['Phone'],
-                    'mobile':data['MobilePhone'],
-                    'street':data['StreetAddress'],
-                    'street2':data['StreetAddress2'],
-                    'zip':data['Postcode'],
-                    'city':data['City'],
-                    'partner_latitude':data['Latitude'],
-                    'partner_longitude':data['Longitude'],
-                    'company_name':data['CompanyName'],
-                    'country_id':pays.id if pays else None,
-                    'lang':active_lang.code,
-                    'email': data['Email'],
-                    'status':data['Status'],
-                    'statut_pour_toujours':data['StatusForever'],
-                    'candidacyId':data['CandidacyId'],
-                    'emailIsFlagged':data['EmailIsFlagged'],
-                    'birthdate':data['Birthdate'],
-                    'birthPlace':data['BirthPlace'],
-                    'parentSeller':data['ParentSeller'],
-                    'animatorSeller':data['AnimatorSeller'],
-                    'customerAccount':data['CustomerAccount'],
-                    'nationalIdentificationNumber':data['NationalIdentificationNumber'],
-                    'identityCardNumber':data['IdentityCardNumber'],
-                    'nationalite':data['Nationality'],
-                    # 'CompanyStatus':data[''],
-                    'companyIdentificationNumber':data['CompanyIdentificationNumber'],
-                    'socialContributionsType':data['SocialContributionsType'],
-                    'startContractDate':data['StartContractDate'],
-                    'endContractDate':data['EndContractDate'],
-                    'startActivityDate':data['StartActivityDate'],
-                    'remoteStatus':data['RemoteStatus'],
-                    'createCustomerAccount':data['CreateCustomerAccount'],
-                    'brand':data['Brand'],
-                    'additionalInformations':data['AdditionalInformations'],
-                    'accountBankCode':data['AccountBankCode'],
-                    'accountWicketCode':data['AccountWicketCode'],
-                    'accountNumber':data['AccountNumber'],
-                    'accountKey':data['AccountKey'],
-                    'accountIban':data['AccountIban'],
-                    'accountSwiftCode':data['AccountSwiftCode'],
-                    'bankName':data['BankName'],
-                    'bankingDomiciliation':data['BankingDomiciliation'],
-                    'bankAccountOwner':data['BankAccountOwner'],
-                    'gdprAccepted':data['GdprAccepted'],
-                    'authorizeSellerDeliveryModeOnEcommerce':data['AuthorizeSellerDeliveryModeOnEcommerce'],
-                    'gdprLastAcceptedDate':data['GdprLastAcceptedDate'],
-                    'photo':data['Photo'],
-                    'signature':data['Signature'],
-                    'miniSiteUrl':data['MiniSiteUrl'],
-                    'miniSiteUsername':data['MiniSiteUsername'],
-                    'miniSiteIsActive':data['MiniSiteIsActive'],
-                    'companyRCSNumber':data['CompanyRCSNumber'],
-                    'companyVAT':data['CompanyVAT'],
-                    'companyIdentificationNumbervendeur':data['CompanyIdentificationNumber'],
-                    'isActive':data['IsActive'],
-                })
+                    
+                    contact = contact.create({
+                        'id_vendeur_sah':data['Id'],
+                        'client_sah':'vdi',
+                        'ref_sah':ref_sah,
+                        'name':data['FirstName']+' '+data['LastName'],
+                        'type_revendeur':type_revendeur,
+                        'phone':data['Phone'],
+                        'mobile':data['MobilePhone'],
+                        'street':data['StreetAddress'],
+                        'street2':data['StreetAddress2'],
+                        'zip':data['Postcode'],
+                        'city':data['City'],
+                        'partner_latitude':data['Latitude'],
+                        'partner_longitude':data['Longitude'],
+                        'company_name':data['CompanyName'],
+                        'country_id':pays.id if pays else None,
+                        'lang':active_lang.code,
+                        'email': data['Email'],
+                        'status':data['Status'],
+                        'statut_pour_toujours':data['StatusForever'],
+                        'candidacyId':data['CandidacyId'],
+                        'emailIsFlagged':data['EmailIsFlagged'],
+                        'birthdate':data['Birthdate'],
+                        'birthPlace':data['BirthPlace'],
+                        'parentSeller':data['ParentSeller'],
+                        'animatorSeller':data['AnimatorSeller'],
+                        'customerAccount':data['CustomerAccount'],
+                        'nationalIdentificationNumber':data['NationalIdentificationNumber'],
+                        'identityCardNumber':data['IdentityCardNumber'],
+                        'nationalite':data['Nationality'],
+                        'companyIdentificationNumber':data['CompanyIdentificationNumber'],
+                        'socialContributionsType':data['SocialContributionsType'],
+                        'startContractDate':data['StartContractDate'],
+                        'endContractDate':data['EndContractDate'],
+                        'startActivityDate':data['StartActivityDate'],
+                        'remoteStatus':data['RemoteStatus'],
+                        'createCustomerAccount':data['CreateCustomerAccount'],
+                        'brand':data['Brand'],
+                        'additionalInformations':data['AdditionalInformations'],
+                        'accountBankCode':data['AccountBankCode'],
+                        'accountWicketCode':data['AccountWicketCode'],
+                        'accountNumber':data['AccountNumber'],
+                        'accountKey':data['AccountKey'],
+                        'accountIban':data['AccountIban'],
+                        'accountSwiftCode':data['AccountSwiftCode'],
+                        'bankName':data['BankName'],
+                        'bankingDomiciliation':data['BankingDomiciliation'],
+                        'bankAccountOwner':data['BankAccountOwner'],
+                        'gdprAccepted':data['GdprAccepted'],
+                        'authorizeSellerDeliveryModeOnEcommerce':data['AuthorizeSellerDeliveryModeOnEcommerce'],
+                        'gdprLastAcceptedDate':data['GdprLastAcceptedDate'],
+                        'photo':data['Photo'],
+                        'signature':data['Signature'],
+                        'miniSiteUrl':data['MiniSiteUrl'],
+                        'miniSiteUsername':data['MiniSiteUsername'],
+                        'miniSiteIsActive':data['MiniSiteIsActive'],
+                        'companyRCSNumber':data['CompanyRCSNumber'],
+                        'companyVAT':data['CompanyVAT'],
+                        'companyIdentificationNumbervendeur':data['CompanyIdentificationNumber'],
+                        'isActive':data['IsActive'],
+                    })
+                    # if data['StreetAddress'] or data['City'] or pays:
+                        # delivery_address = self.env['res.partner'].create({
+                        #     'name': 'Adresse de livraison' + ' '+  data['FirstName']+' '+data['LastName'],
+                        #     'street': data['StreetAddress'],
+                        #     'street2':data['StreetAddress2'],
+                        #     'city': data['City'],
+                        #     'zip': data['Postcode'],
+                        #     'country_id': pays.id if pays else None,
+                        #     'type': 'delivery',  
+                        #     'parent_id': parent.id,
+                        # })
+                    
+                
+                if data['AccountNumber'] and contact:
+                    compte = self.env['res.partner.bank'].search([('acc_number','=',data['AccountNumber']),('partner_id','=',contact.id)], limit=1)
+                
+                    if not compte:
+                        self.env['res.partner.bank'].create({
+                            'acc_number':data['AccountNumber'],
+                            'partner_id':contact.id,
+                            'allow_out_payment': True,
+                        })
 
         else:
             _logger.info("==================================Erreur: %s ==========================",  response.text)

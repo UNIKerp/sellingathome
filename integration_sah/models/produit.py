@@ -3,9 +3,16 @@ import requests
 import json
 from datetime import date
 from datetime import datetime
+import os
+import base64
+from odoo.tools import config
 import pytz
 import logging
 _logger = logging.getLogger(__name__)
+import json
+from PIL import Image
+from io import BytesIO
+from dateutil import parser
 
 class ProduitSelligHome(models.Model):
     _inherit = "product.template"
@@ -19,227 +26,302 @@ class ProduitSelligHome(models.Model):
     discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
     discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
     discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
-
+   
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
 
-    # création des articles venant de l'api dans odoo
+    def ajout_liste_prix_produit_sah_odoo(self):
+        products = self.env['product.template'].search([('produit_sah_id','!=',0)])
+        if products:
+            for product in products:
+                headers = self.env['authentication.sah'].establish_connection()
+                url_produit = f"https://demoapi.sellingathome.com/v1/Prices?productid={product.produit_sah_id}"
+                response = requests.get(url_produit, headers=headers, timeout=120)
+                if response.status_code == 200:
+                    logging.info(f'================================ {response.json()}')
+                    datas = response.json()
+                    for data in datas:
+                        code = data.get('Country').get('TwoLetterISOCode')
+                        country = self.env['res.country'].search([('code','=',code)])
+                        pricelist_id = self.env['product.pricelist'].search([('name','=',data.get('BrandTaxName'))], limit=1)
+                        if not pricelist_id:
+                            upload = {
+                                'price_list_sah_id':data.get('Id'),
+                                'country_id':country.id if country else False,
+                                'name':data.get('BrandTaxName'),
+                            }
+                            pricelist_id = self.env['product.pricelist'].create(upload)
+                        if data.get('RolePrices'):
+                            logging.info('################################ %s',data.get('RolePrices'))
+                            for role in data.get('RolePrices'):
+                                start_raw = role.get('StartDate')
+                                end_raw = role.get('EndDate')
+
+                                if isinstance(start_raw, str):
+                                    start_date = datetime.fromisoformat(start_raw).date()
+                                else:
+                                    start_date = start_raw.date() if hasattr(start_raw, 'date') else False
+
+                                if isinstance(end_raw, str):
+                                    end_date = datetime.fromisoformat(end_raw).date()
+                                else:
+                                    end_date = end_raw.date() if hasattr(end_raw, 'date') else False
+                                upload2 = {
+                                    'product_tmpl_id':product.id,
+                                    'min_quantity': role.get('Quantity'),
+                                    'fixed_price':role.get('NewPriceExclTax'),
+                                    'date_start':start_date,
+                                    'date_end':end_date,
+                                    'pricelist_id':pricelist_id.id,
+                                    'price_sah_id':role.get('Id'),
+                                }
+                                price = self.env['product.pricelist.item'].create(upload2)
+                                logging.info('===============================price %s',price)
+                        else:
+                            upload2 = {
+                                'product_tmpl_id':product.id,
+                                'min_quantity': 1,
+                                'fixed_price':data.get('PriceExclTax'),
+                                'pricelist_id':pricelist_id.id,
+                                'price_sah_id':role.get('Id'),
+                            }
+                            price = self.env['product.pricelist.item'].create(upload2)
+                            logging.info('=============================== %s',price)
+                               
+
+                    
+
+    """ Création des produits de SAH dans Odoo """
     def create_article_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url_produit = "https://demoapi.sellingathome.com/v1/Products"
-        
         post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
         
         if post_response_produit.status_code == 200:
             response_data_produit = post_response_produit.json()
-            _logger.info("Produits récupérés depuis l'API SAH")
             
-            # Parcourir la liste des produits de l'API
             for produit_api in response_data_produit:
                 sah_id = produit_api['Id']
                 reference = produit_api['Reference']
                 name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
                 description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
                 price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
-                barcode = produit_api.get('Barcode', False)
+                barcode = produit_api.get('Barcode', '')
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
 
+                # Ajout des tax
+                list_prices = produit_api['Prices']
+                if list_prices:
+                    for line in list_prices:
+                        if line['BrandTaxRate'] > 0:
+                            tax_sah = self.env['tax.sah'].search([('amount','=',line['BrandTaxRate'])])
+                            if not tax_sah:
+                                self.env['tax.sah'].create({
+                                    'name':f'Taxe {line['BrandTaxRate']}%',
+                                    'amount':line['BrandTaxRate']
+                                })
+                #
+                
                 existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
                 
                 if not existing_product:
-                    if not barcode:
-                        barcode = False
-
-                    if barcode:
-                        product_with_same_barcode = self.env['product.template'].search([('barcode', '=', barcode)], limit=1)
-                        if product_with_same_barcode:
-                            _logger.warning(f"Code-barres {barcode} déjà attribué au produit {product_with_same_barcode.name}. Ignoré pour {name}.")
-                            barcode = False
-
-                    # Créer le produit dans Odoo
-                    new_product = self.env['product.template'].create({
+                    if barcode and self.env['product.template'].search([('barcode', '=', barcode)]):
+                        _logger.warning(f"Code-barres déjà utilisé : {barcode} pour le produit {name}")
+                        barcode = None
+                    
+                    product_data = {
                         'name': name,
                         'default_code': reference,
                         'list_price': price,
                         'description_sale': description,
-                        'barcode': barcode,
                         'weight': weight,
                         'produit_sah_id': sah_id,
-                        'is_storable' : True if type_sah == 1 else False
-                    })
-
-                    # Créer un élément de liste de prix associé
-                    # price_list = self.env['product.pricelist'].search([('price_list_sah_id', '=', None)], limit=1)
-                    # if price_list:
-                    #     price_list = self.env['product.pricelist'].create({
-                    #         'name': 'SAH Liste de Prix',
-                    #         'currency_id': self.env.user.company_id.currency_id.id
-                    #     })
+                        'is_storable': True if type_sah == 1 else False,
+                    }
                     
-                    # self.env['product.pricelist.item'].create({
-                    #     'pricelist_id': price_list.id,
-                    #     'product_tmpl_id': new_product.id,
-                    #     'fixed_price': price,
-                    # })
-                    # _logger.info(f"Liste de prix ajoutée pour le produit : {name} (ID SAH: {sah_id})")
-
-                    _logger.info(f"Produit créé dans Odoo : {name} (ID SAH: {sah_id})")
-                else:
-                    _logger.info(f"Produit déjà existant dans Odoo : {name} (ID SAH: {sah_id})")
+                    if barcode:
+                        product_data['barcode'] = barcode
+                    
+                    self.env['product.template'].create(product_data)
+                    _logger.info(f"Le produit {name} est créé avec succès")
         else:
-            _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {post_response_produit.status_code}")
+            _logger.error(f"Connexion à l'API échouée : {post_response_produit.status_code}")
 
-    def update_aticle_sah(self):
-        headers = self.env['authentication.sah'].establish_connection()
-        url_produit = "https://demoapi.sellingathome.com/v1/Products"
-        get_response_produit = requests.get(url_produit, headers=headers)
-        if get_response_produit.status_code == 200:
-            response_data_produit = get_response_produit.json()
-            for identifiant in response_data_produit:
-                identite_api = identifiant['Id']
 
-                product_odoo = self.env['product.template'].search([('produit_sah_id', '=', identite_api)], limit=1)
-                if product_odoo:
-                    self.update_produit_dans_sah(product_odoo, headers)
-                else:
-                    _logger.warning(f"Produit avec ID {identite_api} non trouvé dans Odoo, création possible.")
+    def  update_article_AttachedProducts_sah_odoo(self):
+        article_ids = self.env['product.template'].search([('produit_sah_id','!=',None)])
 
-        else:
-            _logger.error(f"Erreur lors de la récupération des produits depuis l'API SAH : {get_response_produit.status_code}")
-
-    # Met à jour les informations d'un produit sur l'API SAH avec les données d'Odoo
+        for article in article_ids:
+            
+            _logger.info('============ produit_sah_id =============== %s',article.produit_sah_id)
+    """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
-        _logger.info("======================= Debut de mise à jour de l'Article")
-        id_categ = ''
-        # Si le produit a une catégorie, récupérer ou créer la catégorie dans l'API
-        if product.categ_id:
-            url_categ = "https://demoapi.sellingathome.com/v1/Categories"
-            post_response_categ = requests.get(url_categ, headers=headers)
-            
-            if post_response_categ.status_code == 200:
-                response_data_categ = post_response_categ.json()
-                categ_parent = response_data_categ[0]['Id']
-                j = 0
-                
-                # Parcourir les catégories et comparer les noms
-                for c in response_data_categ:
-                    CategoryLangs = c['CategoryLangs']
-                    for cc in CategoryLangs:
-                        nom_cat = cc['Name']
-                        
-                        # Remplacer res.categ_id.name par product.categ_id.name
-                        if product.categ_id.name == nom_cat:
-                            id_categ = c['Id']
-                            j += 1
-                
-                # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
-                if j == 0:
-                    create_category = {
-                        "Reference": product.categ_id.name,
-                        "ParentCategoryId": categ_parent,
-                        "IsPublished": True,
-                        "CategoryLangs": [
-                            {
-                                "Name": product.categ_id.name,
-                                "Description": 'None',
-                                "ISOValue": "fr",
-                            },
-                        ],
-                    }
-                    
-                    post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
-                    
-                    if post_response_categ_create.status_code == 200:
-                        categ = post_response_categ_create.json()
-                        id_categ = categ['Id']
-            else:
-                _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
-        
-        # Si le produit a un produit_sah_id, mettre à jour le produit dans l'API
         if product.produit_sah_id:
+            #Photos
+            photos_maj = self.maj_images_du_produit(product)
+            _logger.info('=========================== %s',photos_maj)
+            #
+            id_categ = ''
+            if product.categ_id:
+                url_categ = "https://demoapi.sellingathome.com/v1/Categories"
+                post_response_categ = requests.get(url_categ, headers=headers)
+                
+                if post_response_categ.status_code == 200:
+                    response_data_categ = post_response_categ.json()
+                    categ_parent = response_data_categ[0]['Id']
+                    j = 0
+                    
+                    # Parcourir les catégories et comparer les noms
+                    for c in response_data_categ:
+                        CategoryLangs = c['CategoryLangs']
+                        for cc in CategoryLangs:
+                            nom_cat = cc['Name']
+                            
+                            # Remplacer res.categ_id.name par product.categ_id.name
+                            if product.categ_id.name == nom_cat:
+                                id_categ = c['Id']
+                                j += 1
+                    
+                    # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
+                    if j == 0:
+                        create_category = {
+                            "Reference": product.categ_id.name,
+                            "ParentCategoryId": categ_parent,
+                            "IsPublished": True,
+                            "CategoryLangs": [
+                                {
+                                    "Name": product.categ_id.name,
+                                    "Description": 'None',
+                                    "ISOValue": "fr",
+                                },
+                            ],
+                        }
+                        
+                        post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+                        
+                        if post_response_categ_create.status_code == 200:
+                            categ = post_response_categ_create.json()
+                            id_categ = categ['Id']
+                else:
+                    _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
+
+           
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-            
-            # Préparer les données à envoyer à l'API (basées sur les informations dans Odoo)
-            update_data = {
-                "ProductType": 5,
-                "Reference": product.default_code,
-                "Prices": [
-                    {
-                        "Id": product.produit_sah_id,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": product.name,
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": product.list_price,
-                        "PriceInclTax": product.list_price * (1 + product.taxes_id.amount / 100),
-                        "ProductCost": product.standard_price,
-                        "EcoTax": 8.1
-                    }
-                ],
-                "Barcode": product.barcode,
-                "Weight": product.weight,
-                "IsPublished": True,
-                "InventoryMethod": 1 if product.is_storable == True else 0,
-                'ProductLangs': [
-                    {
-                        'Name': product.name, 
-                        'Description': product.description_sale, 
-                        'ISOValue': 'fr'
-                    }
-                ],
-                "Categories": [
-                    {
-                        "Id": id_categ,
-                    }
-                ],
-                "Combinations": [
-                    {
-                        "ProductAttributes": [
-                            {
-                                "AttributeId": value.attribute_id.id,
-                                "Attribute": value.attribute_id.name,
-                                "Value": value.name,
-                                "WeightAdjustement": product.weight,
-                                "ProductAttributeLangs": [
-                                    {
-                                        "Name": value.attribute_id.name,
-                                        "Value": value.name,
-                                        "ISOValue": 'fr'
-                                    }
-                                ]
-                            }
-                            for value in line.value_ids
-                        ]
-                    }
-                    for line in product.attribute_line_ids if line.value_ids
-                ]
-            }
-            
-            put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
-            
-            if put_response_produit.status_code == 200:
-                _logger.info(f"Article {product.name} mis à jour avec succès sur l'API SAH")
-            else:
-                _logger.error(f"Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.status_code}")
 
-        _logger.info("======================= Fin de mise à jour de l'Article")
+            get_response_produit = requests.get(url_produit,headers=headers)
+            if get_response_produit.status_code == 200:
 
-    def creation_produit_odoo_sah(self,objet,is_published,type,allow_out_of_stock_order,sale_ok,is_storable,categ_id,
-                                    discountStartDate,discountEndDate,default_code,id,name,list_price,taxes_id,
-                                    standard_price,barcode,weight,long_sah,haut_sah,availableOnHostMinisites,
-                                    description,accessory_product_ids,attribute_line_ids):
+                response_data_produit = get_response_produit.json()
+                # Ajout spécifique si c'est un kit (combo)
+                type_produit_sah = 5
+                product_components = []
+                if product.type == 'combo':
+                    type_produit_sah = 20
+                    for component in product.combo_ids:
+                        product_component_products = []
+                        for cop in component.combo_item_ids: 
+                            component_sah_id = cop.product_id.produit_sah_id
+                            if component_sah_id:
+                                product_component_products.append({
+                                    "ProductId": component_sah_id,
+                                    "ProductRemoteId": None,
+                                    "ProductCombinationId": None,
+                                    "ProductCombinationBarCode": None,
+                                    "Quantity": 1,
+                                    "DisplayOrder": 0,
+                                    "Deleted": False
+                                })
+                        product_components.append({
+                            "Id": component.id,  
+                            "Name": component.name,
+                            "ProductId": product.produit_sah_id,
+                            "MaxQuantity": 0,
+                            "Deleted": False,
+                            "RemoteReference": None,
+                            "ProductComponentLangs": [
+                                {"Label": component.name, "ISOValue": "fr"},
+                                {"Label": "", "ISOValue": "en"}
+                            ],
+                            "ProductComponentProducts": product_component_products
+                        })
+                elif product.type == 'consu':
+                    bom_ids = self.env['mrp.bom'].search([('product_tmpl_id','=',product.id)])
+                    for bom in bom_ids:
+                        if bom.type == 'phantom':
+                            type_produit_sah = 10
+                            break
+                update_data = {
+                    "ProductType": type_produit_sah,
+                    "Reference": product.default_code,
+                    "Prices": response_data_produit['Prices'],
+                    "Barcode": product.barcode if product.barcode else '',
+                    "Weight": product.weight,
+                    "IsPublished": True,
+                    "InventoryMethod": 1 if product.is_storable == True else 0,
+                    "ProductPhotos": photos_maj,
+                    "ProductComponents": product_components,
+                    'ProductLangs': [
+                        {
+                            'Name': product.name, 
+                            'Description': product.description_sale, 
+                            'ISOValue': 'fr'
+                        }
+                    ],
+                    "Categories": [
+                        {
+                            "Id": id_categ,
+                        }
+                    ],
+                    "Combinations": [
+                        {
+                            "ProductAttributes": [
+                                {
+                                    "AttributeId": value.attribute_id.id,
+                                    "Attribute": value.attribute_id.name,
+                                    "Value": value.name,
+                                    "WeightAdjustement": product.weight,
+                                    "ProductAttributeLangs": [
+                                        {
+                                            "Name": value.attribute_id.name,
+                                            "Value": value.name,
+                                            "ISOValue": 'fr'
+                                        }
+                                    ]
+                                }
+                                for value in line.value_ids
+                            ]
+                        }
+                        for line in product.attribute_line_ids if line.value_ids
+                    ]
+                }
+                if not product_components:
+                    update_data.pop("ProductComponents", None)
+                if type_produit_sah !=5:
+                    update_data.pop("Combinations", None)
+                put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
+
+                if put_response_produit.status_code == 200:
+                    _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
+                else:
+                    _logger.error(f"========== Erreur lors de la mise à jour de l'article {product.name} sur l'API SAH : {put_response_produit.text} ==========")
+
+
+    #
+    """ Creation d'un produit de Odoo => SAH """
+    def creation_produit_odoo_sah(self,product_id):
         headers = self.env['authentication.sah'].establish_connection()
-        est_publie = bool(is_published)
+        est_publie = bool(product_id.is_published)
         virtual = type == 'service'
-        rupture_stock = bool(allow_out_of_stock_order)
-        is_sale = bool(sale_ok)
+        rupture_stock = bool(product_id.allow_out_of_stock_order)
+        is_sale = bool(product_id.sale_ok)
         id_categ = ''
         categ_parent =''
-        suivi_stock = 1 if is_storable == True else 0
-        if categ_id:
+        suivi_stock = 1 if product_id.is_storable == True else 0
+        product_photos = self.creation_images_du_produit(product_id)
+        if product_id.categ_id and not product_id.produit_sah_id:
             url_categ = "https://demoapi.sellingathome.com/v1/Categories"
             post_response_categ = requests.get(url_categ, headers=headers)
-            
             if post_response_categ.status_code == 200:
                 response_data_categ = post_response_categ.json()
                 categ_parent = response_data_categ[0]['Id']
@@ -248,17 +330,17 @@ class ProduitSelligHome(models.Model):
                     CategoryLangs = c['CategoryLangs']
                     for cc in CategoryLangs :
                         nom_cat = cc['Name']
-                        if categ_id.name==nom_cat:
+                        if product_id.categ_id.name==nom_cat:
                             id_categ = c['Id']
                             j+=1
                 if j==0:
                     create_category = {
-                        "Reference": categ_id.name,
+                        "Reference": product_id.categ_id.name,
                         "ParentCategoryId": categ_parent,
                         "IsPublished": True,
                         "CategoryLangs": [
                             {
-                                "Name": categ_id.name,
+                                "Name": product_id.categ_id.name,
                                 "Description": 'None',
                                 "ISOValue": "fr",
                             },
@@ -268,108 +350,126 @@ class ProduitSelligHome(models.Model):
                     if post_response_categ_create.status_code == 200:
                         categ = post_response_categ_create.json()
                         id_categ = categ['Id']
-            else:
-                _logger.info(f"Error {post_response_categ.status_code}: {post_response_categ.text}")
+        
 
-            url = "https://demoapi.sellingathome.com/v1/Products"   
+        url = "https://demoapi.sellingathome.com/v1/Products"   
+        discount_start_date = product_id.discountStartDate
+        discount_end_date = product_id.discountEndDate
+        user_timezone = self.env.user.tz or 'UTC'
+        if discount_start_date:
+            discount_start_date = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
+            discount_start_date = discount_start_date.isoformat()
+        else:
+            discount_start_date = None
+        if discount_end_date:
+            discount_end_date = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
+            discount_end_date = discount_end_date.isoformat()
+        else:
+            discount_end_date = None
 
-            discount_start_date = discountStartDate
-            discount_end_date = discountEndDate
-            user_timezone = self.env.user.tz or 'UTC'
 
-            if discount_start_date:
-                discount_start_date_utc = pytz.timezone(user_timezone).localize(discount_start_date).astimezone(pytz.UTC)
-                discount_start_date_iso = discount_start_date_utc.isoformat()
-            else:
-                discount_start_date_iso = None
+        product_data = {
+            "ProductType": 5,
+            "Reference": product_id.default_code,
+            "Prices": [
+                {
+                    "BrandTaxRate": self._get_sah_tax(elt) if self._get_sah_tax(elt) else 2.1,
+                    "TwoLetterISOCode": "FR",
+                    "PriceInclTax": product_id.list_price ,
+                    "ProductCost": product_id.standard_price,
+                    "EcoTax": 8.1
+                }
+                for elt in product_id.taxes_id if self._get_sah_tax(elt)
+            ],
 
-            if discount_end_date:
-                discount_end_date_utc = pytz.timezone(user_timezone).localize(discount_end_date).astimezone(pytz.UTC)
-                discount_end_date_iso = discount_end_date_utc.isoformat()
-            else:
-                discount_end_date_iso = None
+            "Barcode": product_id.barcode if product_id.barcode else '',
+            "Weight": product_id.weight,
+            "Length": product_id.long_sah,
+            "Height": product_id.haut_sah,
+            "IsPublished": est_publie,
+            "IsVirtual": virtual,
+            "UncommissionedProduct": is_sale,
+            "InventoryMethod": suivi_stock,
+            "AllowOutOfStockOrders": rupture_stock,
+            "AvailableOnSellerMinisites": product_id.availableOnHostMinisites,
+            "DiscountEndDate": discount_start_date,
+            "DiscountStartDate": discount_start_date,
+            'ProductLangs': [
+                {'Name': product_id.name,
+                'Description': product_id.description, 
+                'ISOValue': 'fr',
+                }
+            ],
+            "Categories": [
+                {
+                "Id": id_categ,
+                },
+            ],
 
-            product_data = {
-                "ProductType": 5,
-                "Reference": default_code,
-                "Prices": [
-                    {
-                        "ProductId": id,
-                        "BrandTaxRate": 2.1,
-                        "BrandTaxName": name,
-                        "TwoLetterISOCode": "FR",
-                        "PriceExclTax": list_price,
-                        "PriceInclTax": list_price * (taxes_id.amount/100),
-                        "ProductCost": standard_price,
-                        "EcoTax": 8.1
-                    }
-                ],
-                # "RemoteId": "sample string 2",
-                # "RemoteReference": "sample string 3",
-                "Barcode": barcode,
-                "Weight": weight,
-                "Length": long_sah,
-                # "Width": 1.1,
-                "Height": haut_sah,
-                "IsPublished": est_publie,
-                "IsVirtual": virtual,
-                "UncommissionedProduct": is_sale,
-                "InventoryMethod": suivi_stock,
-                # "LowStockQuantity": 1,
-                "AllowOutOfStockOrders": rupture_stock,
-                "AvailableOnSellerMinisites": availableOnHostMinisites,
-                "DiscountEndDate": discount_end_date_iso,
-                "DiscountStartDate": discount_start_date_iso,
-                'ProductLangs': [
-                    {'Name': name,
-                    'Description': description, 
-                    'ISOValue': 'fr',
-                    }
-                ],
-                "Categories": [
-                    {
-                    "Id": id_categ,
-                    },
-                ],
-                "ProductRelatedProducts": [
-                    {
-                        "ProductId": id,
-                        "ProductRemoteId": str(related_product.id),
-                        "ProductReference": related_product.default_code,
-                        "IsDeleted": False
-                    } for related_product in accessory_product_ids
-                ],
-                "Combinations": [
-                    {
-                        "ProductAttributes": [
-                            {
-                                "AttributeId": value.attribute_id.id,
-                                "Attribute": value.attribute_id.name,
-                                "Value": value.name,
-                                "WeightAdjustement": weight,
-                                "ProductAttributeLangs": [
-                                    {
-                                        "Name": value.attribute_id.name,
-                                        "Value": value.name,
-                                        "ISOValue": 'fr'
-                                    }
-                                ]
-                            }
-                            for value in line.value_ids
-                        ]
-                    }
-                    for line in attribute_line_ids if line.value_ids
-                ]
-            }
-            post_response = requests.post(url, json=product_data, headers=headers)
+            "ProductPhotos":product_photos,
+
+            "ProductRelatedProducts": [
+                {
+                    "ProductRemoteId": str(related_product.id),
+                    "ProductReference": related_product.default_code,
+                    "IsDeleted": False
+                } for related_product in product_id.accessory_product_ids
+            ],
+            "Combinations": [
+                {
+                    "ProductAttributes": [
+                        {
+                            "AttributeId": value.attribute_id.id,
+                            "Attribute": value.attribute_id.name,
+                            "Value": value.name,
+                            "WeightAdjustement": weight,
+                            "ProductAttributeLangs": [
+                                {
+                                    "Name": value.attribute_id.name,
+                                    "Value": value.name,
+                                    "ISOValue": 'fr'
+                                }
+                            ]
+                        }
+                        for value in line.value_ids
+                    ]
+                }
+                for line in product_id.attribute_line_ids if line.value_ids
+            ]
+        }
+        if not product_photos:
+            product_data.pop("ProductPhotos", None)
+
+        post_response = requests.post(url, json=product_data, headers=headers)
+        if post_response.status_code == 200:
+            response_data = post_response.json()
+            product_id.produit_sah_id = int(response_data.get('Id'))
+            _logger.info('========== creation du produit dans SAH avec succes  %s ==========',product_id.produit_sah_id)
+            prices = response_data.get('Prices')
+            for price in prices:
+                pays = self.env['res.country'].search([('code', '=', price['TwoLetterISOCode'])], limit=1)
+                pricelist = self.env['product.pricelist'].create({
+                    'name': price['BrandTaxName'],
+                    'price_list_sah_id': price['Id'],
+                    'country_id': pays.id if pays else False,
+                    'item_ids': [(0, 0, {
+                        'product_tmpl_id': product_id.id,
+                        'price':  product_id.list_price,
+                    })],
+                })
+                product_id.default_list_price = pricelist.id
             
-            if post_response.status_code == 200:
-                response_data = post_response.json()
-                product_id = response_data.get('Id')
-                objet.produit_sah_id = product_id
-                
-
-
+                       
+        else:
+            _logger.info('========== Erreur de creation du produit %s ==========',post_response)
+    
+    def _get_sah_tax(self, tax_id):
+        # Recherche la taxe par son montant
+        if tax_id :
+            tax = self.env['tax.sah'].search([('amount_tax_id', '=', tax_id.id)], limit=1)
+            if tax :
+                return tax.amount
+    """ Redéfiniton de la fonction création du produit """
     @api.model
     def create(self, vals):
         res = super(ProduitSelligHome, self).create(vals)
@@ -377,44 +477,105 @@ class ProduitSelligHome(models.Model):
             job_kwargs = {
                 'description': 'Création produit Odoo vers SAH',
             }
-            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res,res.is_published,res.type,res.allow_out_of_stock_order,res.sale_ok,res.is_storable,res.categ_id,
-                                    res.discountStartDate,res.discountEndDate,res.default_code,res.id,res.name,res.list_price,res.taxes_id,
-                                    res.standard_price,res.barcode,res.weight,res.long_sah,res.haut_sah,res.availableOnHostMinisites,
-                                    res.description,res.accessory_product_ids,res.attribute_line_ids)
+            self.with_delay(**job_kwargs).creation_produit_odoo_sah(res)
         return res
 
-
+    """ Modification d'un produit """
     def write(self, vals):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
-        if vals:
-            job_kwargs = {
-                'description': 'Mise à jour du produit dans SAH',
-            }
-            self.with_delay(**job_kwargs).update_produit_dans_sah(self, headers)
+        for record in self:
+            if vals and record.produit_sah_id:
+                job_kwargs = {
+                    'description': 'Mise à jour du produit dans SAH',
+                }
+                self.with_delay(**job_kwargs).update_produit_dans_sah(record, headers)
 
-            ### Modification stock
-            job_kwargs2 = {
-                'description': 'Mise à jour du stock produit',
-            }
-            self.with_delay(**job_kwargs2).maj_des_stocks(self.is_storable,self.produit_sah_id,self.default_code,self.qty_available,self.virtual_available)
+                ### Modification stock
+                job_kwargs2 = {
+                    'description': 'Mise à jour du stock produit',
+                }
+                self.with_delay(**job_kwargs2).maj_des_stocks(record)
         return rec
 
-    def maj_des_stocks(self,is_storable,produit_sah_id,default_code,qty_available,virtual_available):
+
+
+    def maj_des_stocks(self,product_id):
         headers = self.env['authentication.sah'].establish_connection()
-        if is_storable == True:
+        if product_id.is_storable == True:
             url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
             values = {
-                "ProductId": produit_sah_id,
-                "ProductReference": default_code,
-                "StockQuantity": int(qty_available),
-                "StockQuantityComing":int(virtual_available),
+                "ProductId": product_id.produit_sah_id,
+                "ProductReference": product_id.default_code,
+                "StockQuantity": int(product_id.qty_available),
+                "StockQuantityComing":int(product_id.virtual_available),
                 "AllowOutOfStockOrders": True
                 
             }
             requests.put(url2, headers=headers, json=values)
           
+    
 
+    """ Creation des images du produits """
+    def creation_images_du_produit(self, product_id):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        directory = '/home/odoo/src/user/integration_sah/static/description/tmp'
+        photos_produit = []
+        if product_id.image_1920:
+            image_data = base64.b64decode(product_id.image_1920)
+            
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            image_filename = "image_1920.png"
+            file_path = os.path.join(directory, image_filename)
+            with open(file_path, 'wb') as f:
+                f.write(image_data)
+            link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
+           
+            photos_produit.append({
+                'Link': link,
+                'IsDefault': True,
+                'Deleted': True
+            })
+        if product_id.product_template_image_ids:
+            i = 0
+            for image in product_id.product_template_image_ids:
+                image_data = base64.b64decode(image.image_1920)
+                i += 1
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                image_filename = f"image_supp_{i}.png"
+                file_path = os.path.join(directory, image_filename)
+                with open(file_path, 'wb') as f:
+                    f.write(image_data)
+                link = f"{base_url}/integration_sah/static/description/tmp/{image_filename}"
+                photos_produit.append({
+                    'Link': link,
+                    'IsDefault': False,
+                    'Deleted': True
+                })
+
+        return photos_produit
+
+
+    """ Mise à jour des images du produits """
+    def maj_images_du_produit(self,product_id):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        photos_produit = []
+        url = f"https://demoapi.sellingathome.com/v1/Products/{product_id.produit_sah_id}"
+        headers = self.env['authentication.sah'].establish_connection()
+        response =  requests.get(url, headers=headers)
+        if response.status_code == 200:
+            playload = response.json()
+            photos_produit = self.creation_images_du_produit(product_id)
+            for i in range(len(photos_produit)):
+                if i < len(playload['ProductPhotos']):
+                    # Remplacer les liens existants
+                    playload['ProductPhotos'][i]['Link'] = photos_produit[i]['Link']
+                else:
+                    playload['ProductPhotos'].append(photos_produit[i])
+            return playload['ProductPhotos']
+        
 
     def _export_stock_produit(self):
         headers = self.env['authentication.sah'].establish_connection()
@@ -424,7 +585,7 @@ class ProduitSelligHome(models.Model):
             job_kwargs2 = {
                 'description': 'Export stock',
             }
-            self.with_delay(**job_kwargs2).maj_des_stocks(product_id.is_storable,product_id.produit_sah_id,product_id.default_code,product_id.qty_available,product_id.virtual_available)
+            self.with_delay(**job_kwargs2).maj_des_stocks(product_id)
         
         
 
@@ -433,7 +594,13 @@ class ProduitSelligHome(models.Model):
         active_ids = self.env.context.get('active_ids')
         for active_id in active_ids:
             product_id = self.env['product.template'].search([('id','=',active_id)])
-            job_kwargs = {
-                    'description': 'Export  produit',
-            }
-            self.with_delay(**job_kwargs).update_produit_dans_sah(product_id, headers)
+            if product_id.produit_sah_id:
+                job_kwargs = {
+                        'description': ' Mise à jour du produit de odoo vers SAH',
+                }
+                self.with_delay(**job_kwargs).update_produit_dans_sah(product_id, headers)
+            else:
+                job_kwargs = {
+                    'description': 'Création produit Odoo vers SAH',
+                }
+                self.with_delay(**job_kwargs).creation_produit_odoo_sah(product_id)

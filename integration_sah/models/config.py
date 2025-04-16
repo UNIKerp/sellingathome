@@ -10,6 +10,6 @@ class ConfigSAH(models.Model):
 
     token_sah = fields.Char(string="Token")
     secret_key_sah = fields.Char(string="Secret Key")
-
-    
+    date_debut = fields.Date(string="Date de debut")
+    date_fin = fields.Date(string="Date de Fin")
     

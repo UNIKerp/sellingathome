@@ -2,7 +2,7 @@
 {
     'name': "Integration Selling at home",
     'version': '18.0.2.0.0',
-    'depends': ["stock","contacts",'sale_management','point_of_sale','website_sale','queue_job'],
+    'depends': ["stock","contacts",'sale_management','website_sale','queue_job','mrp'],
     "author":"Unikerp",
     "website" : "www.unikerp.com",
     'description': """ Integration sellingathome et odoo """,
@@ -16,6 +16,12 @@
         'views/client.xml',
         'views/crons.xml',
         'views/gestion_vdi.xml',
+        'views/model_paiement.xml',
+        'views/methode_paiement.xml',
+        'views/stock_picking.xml',
+        'views/tarifs.xml',
+        'data/methode_paiement_sah.xml',
+        'data/mode_livraison.xml',
     ],
     'images':['static/description/icon.png',],
 }

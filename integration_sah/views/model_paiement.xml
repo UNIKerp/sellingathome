@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+  <record id="view_form_model_paiement"	model="ir.ui.view">
+		<field	name="name">paiement.sah.form</field>
+		<field	name="model">paiement.sah</field>
+		<field	name="arch"	type="xml">
+			<form create="false" edit="false">
+				<sheet>
+					<group>
+						<group>
+							<field name="name"/>
+							<field name="methode" />
+							<field name="montant"/>
+							<field name="numero_transaction" />
+						</group>
+						<group>
+							<field name="date_paiement"/>
+							<field name="date_echeance"/>
+							<field name="date_validation"/>
+						</group>
+					</group>
+				</sheet>
+				<!-- chatter dans la vue formulaire -->
+                <chatter reload_on_post="True"/>
+			</form>
+		</field>
+	</record>
+
+    <record id="view_list_model_paiement"	model="ir.ui.view">
+		<field	name="name">paiement.sah.form</field>
+		<field	name="model">paiement.sah</field>
+		<field	name="arch"	type="xml">
+			<list create="false" edit="false">
+                <field	name="name"/>
+                <field	name="methode" />
+                <field	name="montant"/>
+                <field  name="numero_transaction" />
+                <field	name="date_paiement"/>
+                <field	name="date_echeance"/>
+				<field	name="date_validation"/>
+			</list>
+		</field>
+	</record>
+    <record id="action_sah_model_paiement" model="ir.actions.act_window">
+        <field name="name">Paiements</field>
+        <field name="res_model">paiement.sah</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    
+  </data>
+</odoo>

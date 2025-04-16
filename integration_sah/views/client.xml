@@ -14,7 +14,7 @@
               <field name="vdi_id" invisible="client_sah == 'vdi'"  domain="[('client_sah','=','vdi')]"/> 
             </xpath>
             <xpath expr="//notebook/page[@name='internal_notes']" position="after">
-            <page name="Information SAH" string="Information SAH">
+            <page name="Informations SAH" string="Informations SAH">
             <group>
               <group>
                 <field name="hostedMeeting"/> 
@@ -52,7 +52,6 @@
                 <field name="miniSiteUsername"/> 
                 <field name="miniSiteUrl"/> 
                 <field name="signature"/> 
-                <!-- <field name="timeZone"/>  -->
                 <field name="photo"/> 
                 <field name="bankAccountOwner"/> 
                 <field name="bankingDomiciliation"/> 

@@ -7,13 +7,29 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet/div[@class='oe_title']" position="after">
-                <group>
-                    <field name="id_order_sh" string="ID commande SAH" readonly="1"  invisible="id_order_sh == 0"/>
-                </group>
-                            </xpath>
-                <xpath expr="//form/sheet/group[@name='sale_header']/group[@name='order_details']/field[@name='payment_term_id']" position="after">
-                    <field name="vdi" string="VDI"/>
+                    <group>
+                        <field name="id_order_sh" string="ID commande SAH" readonly="1"  invisible="1"/>
+                    </group>
                 </xpath>
+                <xpath expr="//form/sheet/group[@name='sale_header']/group[@name='order_details']/field[@name='payment_term_id']" position="after">
+                    <field name="vdi" />
+                    <field name="methode_paiement_id" readonly="1" force_save="1"/>
+                </xpath> 
+                <page name="other_information" position="after">
+                    <page string="Infos paiement SAH" name="info_paiement_sah">
+                        <field name="paiement_ids"  readonly="1" force_save="1">
+                            <list>
+                                <field  name="numero_transaction" />
+                                <field	name="name"/>
+                                <field	name="methode" />
+                                <field	name="montant"/>
+                                <field	name="date_paiement"/>
+                                <field	name="date_echeance"/>
+                                <field	name="date_validation"/>
+                            </list>
+                        </field>
+                    </page>
+                </page>
             </field>
         </record>
     </data>
