@@ -126,11 +126,28 @@ class ProduitSelligHome(models.Model):
 
                 response_data_produit = get_response_produit.json()
                 if response_data_produit['ProductType'] == 20:
-                    
+                    combo_ids = []
                     ProductComponents = response_data_produit['ProductComponents']
-                    
+                    if ProductComponents:
+                        for p in ProductComponents[0]:
+                            for c in p['ProductComponentProducts']:
+                                p_id = self.env['product.template'].search([('produit_sah_id','=',c['ProductId'])])
+                                if p_id:
+                                    comb_id = self.env['product.combo'].search([('name','=',p['Name'])],limit=1)
+                                    if comb_id:
+                                        self.env['product.combo.item'].create({
+                                            'combo_id':comb_id.id,
+                                            'product_id':p_id.product_variant_id.id
+                                        })
+                                    else:
+                                        comb = self.env['product.combo'].create({
+                                            'name':p['Name'],
+                                            'combo_ids':[{'product_id':p_id.product_variant_id.id}]
+                                        })
+                                        if comb :
+                                            combo_ids.append(comb.id)
                     _logger.info('00000000 ProductComponents 1111111 %s',ProductComponents)
-                    article.sudo().write({'type':'combo'})
+                    article.sudo().write({'type':'combo','combo_ids':combo_ids})
                
     """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
