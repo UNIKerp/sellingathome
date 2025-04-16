@@ -29,7 +29,16 @@ class ProduitSelligHome(models.Model):
    
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
+
     
+    def add_category_odoo_sah(self,product):
+        if product:
+            headers = self.env['authentication.sah'].establish_connection()
+            url_category = "https://demoapi.sellingathome.com/v1/Categories"
+            response = requests.post(url_category, headers=headers, timeout=120)
+            if response.status_code == 200:
+               
+
     
 
     """ Création des produits de SAH dans Odoo """
