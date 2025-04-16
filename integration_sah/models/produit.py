@@ -39,23 +39,22 @@ class ProduitSelligHome(models.Model):
                 response = requests.get(url_produit, headers=headers, timeout=120)
                 if response.status_code == 200:
                     logging.info(f'================================ {response.json()}')
-                    datas = response.json()
-                    for data in datas:
-                        if data.get('AttachedProducts'):
-                            upload = {
+                    data = response.json()
+                    if data.get('AttachedProducts'):
+                        upload = {
+                            'product_tmpl_id':product.id,
+                            'type':'phantom'
+                        }
+                        nommencalture = self.env['mrp.bom'].create(upload)
+                        for bom in  data.get('AttachedProducts'):
+                            upload2 = {
+                                'bom_id':nommencalture.id,
                                 'product_tmpl_id':product.id,
-                                'type':'phantom'
+                                'product_qty':bom.get('Quantity')
                             }
-                            nommencalture = self.env['mrp.bom'].create(upload)
-                            for bom in  data.get('AttachedProducts'):
-                                upload2 = {
-                                    'bom_id':nommencalture.id,
-                                    'product_tmpl_id':product.id,
-                                    'product_qty':bom.get('Quantity')
-                                }
-                                line = self.env['mrp.bom.line'].create(upload2)
+                            line = self.env['mrp.bom.line'].create(upload2)
 
-                                logging.info('============================= %s',line)
+                            logging.info('============================= %s',line)
 
 
 
