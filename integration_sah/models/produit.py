@@ -182,8 +182,20 @@ class ProduitSelligHome(models.Model):
         article_ids = self.env['product.template'].search([('produit_sah_id','!=',None)])
 
         for article in article_ids:
-            
             _logger.info('============ produit_sah_id =============== %s',article.produit_sah_id)
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{article.produit_sah_id}"
+
+            get_response_produit = requests.get(url_produit,headers=headers)
+            if get_response_produit.status_code == 200:
+
+                response_data_produit = get_response_produit.json()
+                if response_data_produit['ProductType'] == 20:
+                    
+                    ProductComponents = response_data_produit['ProductComponents']
+                    
+                    _logger.info('00000000 ProductComponents 1111111 %s',ProductComponents)
+                    article.sudo().write({'type':'combo'})
+               
     """ Mise à jour d'un produit de Odoo => SAH """ 
     def update_produit_dans_sah(self, product, headers):
         if product.produit_sah_id:
