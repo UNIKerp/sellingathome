@@ -34,4 +34,5 @@
             <field name="interval_type">days</field>
         </record>
     </data>
+    
 </odoo>
