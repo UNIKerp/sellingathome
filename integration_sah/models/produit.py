@@ -30,6 +30,18 @@ class ProduitSelligHome(models.Model):
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
 
+    def ajout_stock_sah_odoo(self):
+        products = self.env['product.template'].search([('produit_sah_id','!=',0)])
+        if products:
+            for product in products:
+                headers = self.env['authentication.sah'].establish_connection()
+                url_produit = f"https://demoapi.sellingathome.com/v1/Stocks?productId={product.produit_sah_id}"
+                response = requests.get(url_produit, headers=headers, timeout=120)
+                if response.status_code == 200:
+                    logging.info(f'================================ {response.json()}')
+
+                    
+       
     def ajout_nommenclature_sah_odoo(self):
         products = self.env['product.template'].search([('produit_sah_id','!=',0)])
         if products:
