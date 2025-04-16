@@ -16,6 +16,101 @@ class ClientSAH(models.Model):
 
     category_sah_id = fields.Integer(string="ID Catégorie SAH")
 
+    
+    """ Création des produits de SAH dans Odoo """
+    def create_article_sah_odoo(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        url_produit = "https://demoapi.sellingathome.com/v1/Products"
+        post_response_produit = requests.get(url_produit, headers=headers, timeout=120)
+        
+        if post_response_produit.status_code == 200:
+            response_data_produit = post_response_produit.json()
+            
+            for produit_api in response_data_produit:
+                sah_id = produit_api['Id']
+                reference = produit_api['Reference']
+                name = produit_api['ProductLangs'][0]['Name'] if produit_api.get('ProductLangs') else 'Sans nom'
+                description = produit_api['ProductLangs'][0]['Description'] if produit_api.get('ProductLangs') else ''
+                price = produit_api['Prices'][0]['PriceExclTax'] if produit_api.get('Prices') else 0.0
+                barcode = produit_api.get('Barcode', '')
+                weight = produit_api.get('Weight', 0.0)
+                type_sah = produit_api.get('InventoryMethod')
+
+                # Ajout des tax
+                list_prices = produit_api['Prices']
+                if list_prices:
+                    for line in list_prices:
+                        if line['BrandTaxRate'] > 0:
+                            tax_sah = self.env['tax.sah'].search([('amount','=',line['BrandTaxRate'])])
+                            if not tax_sah:
+                                self.env['tax.sah'].create({
+                                    'name':f'Taxe {line['BrandTaxRate']}%',
+                                    'amount':line['BrandTaxRate']
+                                })
+                #
+                
+                existing_product = self.env['product.template'].search([('produit_sah_id', '=', sah_id)], limit=1)
+                
+                if not existing_product:
+                    if barcode and self.env['product.template'].search([('barcode', '=', barcode)]):
+                        _logger.warning(f"Code-barres déjà utilisé : {barcode} pour le produit {name}")
+                        barcode = None
+                    
+                    product_data = {
+                        'name': name,
+                        'default_code': reference,
+                        'list_price': price,
+                        'description_sale': description,
+                        'weight': weight,
+                        'produit_sah_id': sah_id,
+                        'is_storable': True if type_sah == 1 else False,
+                    }
+                    
+                    if barcode:
+                        product_data['barcode'] = barcode
+                    
+                    self.env['product.template'].create(product_data)
+                    _logger.info(f"Le produit {name} est créé avec succès")
+        else:
+            _logger.error(f"Connexion à l'API échouée : {post_response_produit.status_code}")
+
+
+    def  update_article_AttachedProducts_sah_odoo(self):
+        article_ids = self.env['product.template'].search([('produit_sah_id','!=',None)])
+        
+        headers = self.env['authentication.sah'].establish_connection()
+        for article in article_ids:
+            _logger.info('============ produit_sah_id =============== %s',article.produit_sah_id)
+            url_produit = f"https://demoapi.sellingathome.com/v1/Products/{article.produit_sah_id}"
+
+            get_response_produit = requests.get(url_produit,headers=headers)
+            if get_response_produit.status_code == 200:
+
+                response_data_produit = get_response_produit.json()
+                if response_data_produit['ProductType'] == 20:
+                    combo_ids = []
+                    ProductComponents = response_data_produit['ProductComponents']
+                    if ProductComponents:
+                        for p in ProductComponents[0]:
+                            for c in p['ProductComponentProducts']:
+                                p_id = self.env['product.template'].search([('produit_sah_id','=',c['ProductId'])])
+                                if p_id:
+                                    comb_id = self.env['product.combo'].search([('name','=',p['Name'])],limit=1)
+                                    if comb_id:
+                                        self.env['product.combo.item'].create({
+                                            'combo_id':comb_id.id,
+                                            'product_id':p_id.product_variant_id.id
+                                        })
+                                    else:
+                                        comb = self.env['product.combo'].create({
+                                            'name':p['Name'],
+                                            'combo_ids':[{'product_id':p_id.product_variant_id.id}]
+                                        })
+                                        if comb :
+                                            combo_ids.append(comb.id)
+                    _logger.info('00000000 ProductComponents 1111111 %s',ProductComponents)
+                    article.sudo().write({'type':'combo','combo_ids':combo_ids})
+                    
     def ajout_category_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
         url = "https://demoapi.sellingathome.com/v1/Categories"
