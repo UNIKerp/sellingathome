@@ -257,7 +257,7 @@ class ClientSAH(models.Model):
                     )
                 image_base64 =''
                 if data.get('ImageUrl'):
-                    image_base64 = get_image_from_url(data['ImageUrl'])
+                    image_base64 = self.get_image_from_url(data['ImageUrl'])
                 if contact:
                     
                     contact.write({
