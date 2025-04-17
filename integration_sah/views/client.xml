@@ -12,6 +12,7 @@
               <field name="client_sah" /> 
               <field name="type_revendeur" invisible="client_sah == 'client'"/> 
               <field name="vdi_id" invisible="client_sah == 'vdi'"  domain="[('client_sah','=','vdi')]"/> 
+              <field name="add_photo"/>
             </xpath>
             <xpath expr="//notebook/page[@name='internal_notes']" position="after">
             <page name="Informations SAH" string="Informations SAH">

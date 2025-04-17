@@ -3,6 +3,7 @@ import logging
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError,UserError
 import requests
+import base64
 import json
 _logger = logging.getLogger(__name__)
 
@@ -85,6 +86,8 @@ class ClientSAH(models.Model):
     companyVAT = fields.Char(string='TVA de la société vendeuse',help="TVA de la société vendeuse")
     companyIdentificationNumbervendeur= fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
 
+    add_photo = fields.Boolean(compute="_get_photo_vendeurs")
+
     _sql_constraints = [
         ('id_client_sah_uniq', 'unique(id_client_sah)', "ID client SAH doit être unique !"),
         ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
@@ -122,16 +125,13 @@ class ClientSAH(models.Model):
         self.with_delay(**job_kwargs_sellers).recuperation_vendeurs_sah_vers_odoo()
         self.with_delay(**job_kwargs_customers).get_update_client_sah()
     
-    def get_photo_vendeurs(self):
-        headers = self.env['authentication.sah'].establish_connection()
-        url = 'https://demoapi.sellingathome.com/v1/Sellers'
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            datas = response.json()
-            for data in datas:
-                _logger.info('*********************************** %s   %s',data.get('LastName'),data.get('FirstName'))
-                _logger.info('================================= %s  %s',data.get('photo'),data.get('ImageUrl'))
-
+    def _get_photo_vendeurs(self):
+        for record in self:
+            response = requests.get(record.photo)
+            response.raise_for_status()
+            image_binary = base64.b64encode(response.content)
+            _logger.info('============================== %s',image_binary)
+        
         
     def get_update_client_sah(self):
         _logger.info("======================= Debut de mise à jour des clients")
