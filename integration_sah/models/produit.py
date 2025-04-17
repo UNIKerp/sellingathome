@@ -117,6 +117,7 @@ class ProduitSelligHome(models.Model):
                     "ProductType": type_produit_sah,
                     "Reference": product.default_code,
                     "Prices": response_data_produit['Prices'],
+                    "AttachedProducts": response_data_produit['AttachedProducts'],
                     "Barcode": product.barcode if product.barcode else '',
                     "Weight": product.weight,
                     "IsPublished": True,
