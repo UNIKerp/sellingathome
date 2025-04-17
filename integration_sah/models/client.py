@@ -86,7 +86,6 @@ class ClientSAH(models.Model):
     companyVAT = fields.Char(string='TVA de la société vendeuse',help="TVA de la société vendeuse")
     companyIdentificationNumbervendeur= fields.Char(string="Numéro d'identification de l'entreprise du vendeur",help="Numéro d'identification de l'entreprise du vendeur")
 
-    add_photo = fields.Boolean(compute="_get_photo_vendeurs")
 
     _sql_constraints = [
         ('id_client_sah_uniq', 'unique(id_client_sah)', "ID client SAH doit être unique !"),
@@ -126,13 +125,7 @@ class ClientSAH(models.Model):
         self.with_delay(**job_kwargs_sellers).recuperation_vendeurs_sah_vers_odoo()
         self.with_delay(**job_kwargs_customers).get_update_client_sah()
     
-    def _get_photo_vendeurs(self):
-        for record in self:
-            response = requests.get(record.photo)
-            response.raise_for_status()
-            image_binary = base64.b64encode(response.content)
-            _logger.info('============================== %s',image_binary)
-        
+       
         
     def get_update_client_sah(self):
         _logger.info("======================= Debut de mise à jour des clients")
