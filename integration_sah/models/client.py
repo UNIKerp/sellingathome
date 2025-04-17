@@ -129,6 +129,7 @@ class ClientSAH(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
+                _logger.info('*********************************** %s',data.get('LastName'))
                 _logger.info('================================= %s',data.get('photo'))
 
         
