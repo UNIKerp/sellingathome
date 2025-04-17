@@ -84,7 +84,9 @@
         <field name="inherit_id" ref="base.view_res_partner_filter" />
         <field name="arch" type="xml">
             <filter name="type_company" position="before">
-                <filter string="Type Client" name="client_sah" domain="[('client_sah','!=',0)]" help="Si c'est un client, un vdi ou un hôte"/>
+                <filter string="Clients" name="client_sah" domain="[('client_sah','=','client)]" help="Est un client"/>
+                <filter string="VDI" name="client_sah" domain="[('client_sah','=','vdi)]" help="Est un vdi"/>
+                <filter string="Hôte" name="client_sah" domain="[('client_sah','=','hote)]" help="Est un hôte"/>
             </filter>
         </field>
       </record>
