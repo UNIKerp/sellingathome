@@ -6,9 +6,6 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
-                <field name="categ_id" position="after">
-                    <field name="produit_sah_id" readonly='1'/>
-                </field>
                 <div name="options" position="inside">
                     <span class="d-inline-flex">
                         <field name="a_synchroniser"/>
@@ -16,8 +13,9 @@
                     </span>
                 </div>
                 <xpath expr="//notebook//page[@name='general_information']" position="after">
-                    <page string="Informations SAH" name="information_sah">
+                    <page string="Informations SAH" name="information_sah" invisible="a_synchroniser" >
                         <group>
+                            <field name="produit_sah_id" readonly='1'/>
                             <field name='long_sah'/>       
                             <field name='haut_sah'/>       
                             <field name='unitcapacity'/>       
