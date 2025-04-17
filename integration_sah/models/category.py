@@ -194,7 +194,8 @@ class ClientSAH(models.Model):
                         nommencalture = self.env['mrp.bom'].create(upload)
 
                         for bom in  data.get('AttachedProducts'):
-                            product_rattache = self.env['product.template'].search([('produit_sah_id','!=',bom.get('ProductId'))],limit=1)
+                            _logger.info('================================ %s',bom)
+                            product_rattache = self.env['product.template'].search([('produit_sah_id','!=',bom.get('ProductCombinationId'))],limit=1)
                             line = self.env['mrp.bom.line'].search([('bom_id','=',nommencalture.id),('product_id','=',product_rattache.product_variant_id.id)])
                             if not line:
                                 if product_rattache:
