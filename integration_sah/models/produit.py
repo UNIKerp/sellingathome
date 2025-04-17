@@ -67,50 +67,6 @@ class ProduitSelligHome(models.Model):
             photos_maj = self.maj_images_du_produit(product)
             _logger.info('=========================== %s',photos_maj)
             #
-            # id_categ = ''
-            # if product.categ_id:
-            #     url_categ = "https://demoapi.sellingathome.com/v1/Categories"
-            #     post_response_categ = requests.get(url_categ, headers=headers)
-                
-            #     if post_response_categ.status_code == 200:
-            #         response_data_categ = post_response_categ.json()
-            #         categ_parent = response_data_categ[0]['Id']
-            #         j = 0
-                    
-            #         # Parcourir les catégories et comparer les noms
-            #         for c in response_data_categ:
-            #             CategoryLangs = c['CategoryLangs']
-            #             for cc in CategoryLangs:
-            #                 nom_cat = cc['Name']
-                            
-            #                 # Remplacer res.categ_id.name par product.categ_id.name
-            #                 if product.categ_id.name == nom_cat:
-            #                     id_categ = c['Id']
-            #                     j += 1
-                    
-            #         # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
-            #         if j == 0:
-            #             create_category = {
-            #                 "Reference": product.categ_id.name,
-            #                 "ParentCategoryId": categ_parent,
-            #                 "IsPublished": True,
-            #                 "CategoryLangs": [
-            #                     {
-            #                         "Name": product.categ_id.name,
-            #                         "Description": 'None',
-            #                         "ISOValue": "fr",
-            #                     },
-            #                 ],
-            #             }
-                        
-            #             post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
-                        
-            #             if post_response_categ_create.status_code == 200:
-            #                 categ = post_response_categ_create.json()
-            #                 id_categ = categ['Id']
-            #     else:
-            #         _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
-
            
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
 
@@ -226,38 +182,6 @@ class ProduitSelligHome(models.Model):
             categ_parent =''
             suivi_stock = 1 if product_id.is_storable == True else 0
             product_photos = self.creation_images_du_produit(product_id)
-            # if product_id.categ_id and not product_id.produit_sah_id:
-            #     url_categ = "https://demoapi.sellingathome.com/v1/Categories"
-            #     post_response_categ = requests.get(url_categ, headers=headers)
-            #     if post_response_categ.status_code == 200:
-            #         response_data_categ = post_response_categ.json()
-            #         categ_parent = response_data_categ[0]['Id']
-            #         j=0
-            #         for c in response_data_categ:
-            #             CategoryLangs = c['CategoryLangs']
-            #             for cc in CategoryLangs :
-            #                 nom_cat = cc['Name']
-            #                 if product_id.categ_id.name==nom_cat:
-            #                     id_categ = c['Id']
-            #                     j+=1
-            #         if j==0:
-            #             create_category = {
-            #                 "Reference": product_id.categ_id.name,
-            #                 "ParentCategoryId": categ_parent,
-            #                 "IsPublished": True,
-            #                 "CategoryLangs": [
-            #                     {
-            #                         "Name": product_id.categ_id.name,
-            #                         "Description": 'None',
-            #                         "ISOValue": "fr",
-            #                     },
-            #                 ],
-            #             }
-            #             post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
-            #             if post_response_categ_create.status_code == 200:
-            #                 categ = post_response_categ_create.json()
-            #                 id_categ = categ['Id']
-            
 
             url = "https://demoapi.sellingathome.com/v1/Products"   
             discount_start_date = product_id.discountStartDate
@@ -394,18 +318,18 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         for record in self:
-        #   if record.a_synchroniser==True or ( 'a_synchroniser' in vals and vals['a_synchroniser']==True):
-            if vals and record.produit_sah_id:
-                job_kwargs = {
-                    'description': 'Mise à jour du produit dans SAH',
-                }
-                self.with_delay(**job_kwargs).update_produit_dans_sah(record, headers)
+            if record.a_synchroniser==True or ( 'a_synchroniser' in vals and vals['a_synchroniser']==True):
+                if vals and record.produit_sah_id:
+                    job_kwargs = {
+                        'description': 'Mise à jour du produit dans SAH',
+                    }
+                    self.with_delay(**job_kwargs).update_produit_dans_sah(record, headers)
 
-                ### Modification stock
-                job_kwargs2 = {
-                    'description': 'Mise à jour du stock produit',
-                }
-                self.with_delay(**job_kwargs2).maj_des_stocks(record)
+                    ### Modification stock
+                    job_kwargs2 = {
+                        'description': 'Mise à jour du stock produit',
+                    }
+                    self.with_delay(**job_kwargs2).maj_des_stocks(record)
         return rec
 
 
