@@ -44,8 +44,12 @@ class ClientSAH(models.Model):
     emailIsFlagged = fields.Boolean(string="État de l'e-mail du vendeur",help="État de l'e-mail du vendeur")
     birthdate = fields.Date(string="Date de naissance du vendeur",help="Date de naissance du vendeur")
     birthPlace = fields.Char(string="Lieu de naissance du vendeur",help="Lieu de naissance du vendeur")
-    parentSeller = fields.Integer(string="Vendeur parent rattaché au vendeur",help="Vendeur parent rattaché au vendeur")
-    animatorSeller = fields.Integer(string="Vendeur Animateur",help="Vendeur Animateur")
+    parentSeller = fields.Integer(string="ID SAH Recruteur",help="ID SAH Vendeur parent rattaché au vendeur")
+    animatorSeller = fields.Integer(string="ID SAH Animateur",help="ID SAH Animateur du Vendeur")
+
+    parentSeller_id = fields.Many2one('res.partner', string="Recruteur du vendeur",help="Vendeur parent rattaché au vendeur" , compute='_compute_parentSeller_animatorSeller')
+    animatorSeller_id = fields.Many2one('res.partner', string="Animateur du vendeur",help="nimateur du Vendeur" , compute='_compute_parentSeller_animatorSeller')
+
     customerAccount = fields.Integer(string="ID de compte client du vendeur",help="ID de compte client du vendeur")
     nationalIdentificationNumber = fields.Char(string="Numéro d'identification national du vendeur",help="Numéro d'identification national du vendeur")
     identityCardNumber = fields.Char(string="Numéro de carte d'identité du vendeur",help="Numéro de carte d'identité du vendeur")
@@ -93,7 +97,18 @@ class ClientSAH(models.Model):
         default['id_vendeur_sah'] = 0
         # Appeler la méthode copy du parent pour créer la copie avec les valeurs par défaut
         return super(ClientSAH, self).copy(default)
-    
+   
+    def _compute_parentSeller_animatorSeller(self):
+        for rec in self:
+            if rec.parentSeller:
+               rec.parentSeller_id = self.env['res.partner'].search([('id_vendeur_sah','=',rec.parentSeller)],limit=1)
+            else:
+                rec.parentSeller_id = rec.parentSeller_id
+            if rec.animatorSeller:
+               rec.animatorSeller_id = self.env['res.partner'].search([('id_vendeur_sah','=',rec.animatorSeller)],limit=1)
+            else:
+                rec.animatorSeller_id = rec.animatorSeller_id
+
     # Fonction maj des donnéés de SAH 
     def _update_infos_customers_and_sellers(self):
         job_kwargs_customers = {

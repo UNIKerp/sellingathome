@@ -7,8 +7,8 @@
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
             <xpath expr="//span[@name='address_name']" position="before">
-              <field name="id_client_sah" readonly="1" invisible="client_sah == 'vdi' or not id_client_sah"/>
-              <field name="id_vendeur_sah" readonly="1" invisible="client_sah == 'client' or not id_vendeur_sah"/> 
+              <field name="id_client_sah" readonly="1" invisible="client_sah == 'vdi' or not id_client_sah" widget="char"/>
+              <field name="id_vendeur_sah" readonly="1" invisible="client_sah == 'client' or not id_vendeur_sah" widget="char"/> 
               <field name="client_sah" /> 
               <field name="type_revendeur" invisible="client_sah == 'client'"/> 
               <field name="vdi_id" invisible="client_sah == 'vdi'"  domain="[('client_sah','=','vdi')]"/> 
@@ -32,8 +32,10 @@
                 <field name="authorizeSellerDeliveryModeOnEcommerce"/> 
                 <field name="sellerId"/>  
                 <field name="candidacyId"/> 
-                <field name="parentSeller"/> 
-                <field name="animatorSeller"/> 
+                <field name="parentSeller" invisible="1"/>
+                <field name="parentSeller_id"/>
+                <field name="animatorSeller" invisible="1"/> 
+                <field name="animatorSeller_id"/>
                 <field name="brand"/> 
                 <field name="socialContributionsType"/> 
                 <field name="customerAccount"/> 
