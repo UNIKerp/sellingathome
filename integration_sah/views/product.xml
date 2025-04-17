@@ -53,7 +53,7 @@
             <field name="inherit_id" ref="product.product_template_search_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//filter[@name='type']" position="after">
-                    <filter name="a_synchroniser" string="À synchroniser SAH" domain="[('a_synchroniser', '=', True)]"/>
+                    <filter name="a_synchroniser" string="Synchroniser dans SAH" domain="[('a_synchroniser', '=', True)]"/>
                 </xpath>
             </field>
         </record>
