@@ -317,7 +317,7 @@ class ClientSAH(models.Model):
                             product.image_1920 = binaire
                         if i >= 1:
                             self.env['product.image'].create({
-                                'name':f'{product}_{i}.png', 
+                                'name':f'imgsup_{i}.png', 
                                 'image_1920':binaire,
                                 'product_tmpl_id':product.id,
                                 'product_variant_id':product.product_variant_id.id,
