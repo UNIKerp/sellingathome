@@ -75,41 +75,94 @@ class ClientSAH(models.Model):
             _logger.error(f"Connexion à l'API échouée : {post_response_produit.status_code}")
 
 
-    def  update_article_AttachedProducts_sah_odoo(self):
-        article_ids = self.env['product.template'].search([('produit_sah_id','!=',None)])
+    # def  update_article_AttachedProducts_sah_odoo(self):
+    #     article_ids = self.env['product.template'].search([('produit_sah_id','!=',None)])
         
+    #     headers = self.env['authentication.sah'].establish_connection()
+    #     for article in article_ids:
+    #         _logger.info('============ produit_sah_id =============== %s',article.produit_sah_id)
+    #         url_produit = f"https://demoapi.sellingathome.com/v1/Products/{article.produit_sah_id}"
+
+    #         get_response_produit = requests.get(url_produit,headers=headers)
+    #         if get_response_produit.status_code == 200:
+
+    #             response_data_produit = get_response_produit.json()
+                
+    #             if response_data_produit['ProductType'] == 20:
+    #                 combo_ids = []
+    #                 ProductComponents = response_data_produit['ProductComponents']
+    #                 if ProductComponents:
+    #                     for p in ProductComponents[0]:
+    #                         for c in p['ProductComponentProducts']:
+    #                             p_id = self.env['product.template'].search([('produit_sah_id','=',c['ProductId'])])
+    #                             if p_id:
+    #                                 comb_id = self.env['product.combo'].search([('name','=',p['Name'])],limit=1)
+    #                                 if comb_id:
+    #                                     self.env['product.combo.item'].create({
+    #                                         'combo_id':comb_id.id,
+    #                                         'product_id':p_id.product_variant_id.id
+    #                                     })
+    #                                 else:
+    #                                     comb = self.env['product.combo'].create({
+    #                                         'name':p['Name'],
+    #                                         'combo_ids':[{'product_id':p_id.product_variant_id.id}]
+    #                                     })
+    #                                     if comb :
+    #                                         combo_ids.append(comb.id)
+    #                 _logger.info('00000000 ProductComponents 1111111 %s',ProductComponents)
+    #                 article.sudo().write({'type':'combo','combo_ids':combo_ids})
+
+    def update_article_AttachedProducts_sah_odoo(self):
+        article_ids = self.env['product.template'].search([('produit_sah_id', '!=', None)])
         headers = self.env['authentication.sah'].establish_connection()
+
         for article in article_ids:
-            _logger.info('============ produit_sah_id =============== %s',article.produit_sah_id)
+            _logger.info('============ produit_sah_id =============== %s', article.produit_sah_id)
+
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{article.produit_sah_id}"
+            get_response_produit = requests.get(url_produit, headers=headers)
 
-            get_response_produit = requests.get(url_produit,headers=headers)
-            if get_response_produit.status_code == 200:
+            if get_response_produit.status_code != 200:
+                _logger.warning('Échec de récupération du produit SAH ID %s', article.produit_sah_id)
+                continue
 
-                response_data_produit = get_response_produit.json()
-                if response_data_produit['ProductType'] == 20:
-                    combo_ids = []
-                    ProductComponents = response_data_produit['ProductComponents']
-                    if ProductComponents:
-                        for p in ProductComponents[0]:
-                            for c in p['ProductComponentProducts']:
-                                p_id = self.env['product.template'].search([('produit_sah_id','=',c['ProductId'])])
-                                if p_id:
-                                    comb_id = self.env['product.combo'].search([('name','=',p['Name'])],limit=1)
-                                    if comb_id:
-                                        self.env['product.combo.item'].create({
-                                            'combo_id':comb_id.id,
-                                            'product_id':p_id.product_variant_id.id
-                                        })
-                                    else:
-                                        comb = self.env['product.combo'].create({
-                                            'name':p['Name'],
-                                            'combo_ids':[{'product_id':p_id.product_variant_id.id}]
-                                        })
-                                        if comb :
-                                            combo_ids.append(comb.id)
-                    _logger.info('00000000 ProductComponents 1111111 %s',ProductComponents)
-                    article.sudo().write({'type':'combo','combo_ids':combo_ids})
+            response_data_produit = get_response_produit.json()
+            if response_data_produit.get('ProductType') != 20:
+                continue
+
+            combo_ids = []
+            product_components = response_data_produit.get('ProductComponents', [])
+            if product_components:
+                for component in product_components:
+                    for c in component.get('ProductComponentProducts', []):
+                        p_id = self.env['product.template'].search([('produit_sah_id', '=', c['ProductId'])], limit=1)
+                        if not p_id:
+                            _logger.warning("Produit avec SAH ID %s non trouvé dans Odoo", c['ProductId'])
+                            continue
+
+                        combo_name = component.get('Name')
+                        comb_id = self.env['product.combo'].search([('name', '=', combo_name)], limit=1)
+
+                        if comb_id:
+                            self.env['product.combo.item'].create({
+                                'combo_id': comb_id.id,
+                                'product_id': p_id.product_variant_id.id
+                            })
+                        else:
+                            comb = self.env['product.combo'].create({
+                                'name': combo_name,
+                            })
+                            self.env['product.combo.item'].create({
+                                'combo_id': comb.id,
+                                'product_id': p_id.product_variant_id.id
+                            })
+                            combo_ids.append(comb.id)
+
+            _logger.info('ProductComponents récupérés pour produit ID %s : %s', article.produit_sah_id, product_components)
+            article.sudo().write({
+                'type': 'combo',
+                'combo_ids': [(6, 0, combo_ids)]
+            })
 
     def ajout_category_sah_odoo(self):
         headers = self.env['authentication.sah'].establish_connection()
