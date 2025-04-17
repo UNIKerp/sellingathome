@@ -47,6 +47,17 @@
             <field name="state">code</field>
             <field name="code">action = model._export_datas_produit()</field>
         </record>
+        <record id="product_template_search_view_inherit_sah" model="ir.ui.view">
+            <field name="name">product.template.search.inherit.sah</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='type']" position="after">
+                    <filter name="a_synchroniser" string="À synchroniser SAH" domain="[('a_synchroniser', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+
 
     </data>
 </odoo>
