@@ -13,7 +13,7 @@
                     </span>
                 </div>
                 <xpath expr="//notebook//page[@name='general_information']" position="after">
-                    <page string="Informations SAH" name="information_sah" invisible="a_synchroniser" >
+                    <page string="Informations SAH" name="information_sah" invisible="not a_synchroniser" >
                         <group>
                             <field name="produit_sah_id" readonly='1'/>
                             <field name='long_sah'/>       
