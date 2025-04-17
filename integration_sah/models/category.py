@@ -177,15 +177,15 @@ class ClientSAH(models.Model):
 
        
     def ajout_nommenclature_sah_odoo(self):
-        products = self.env['product.template'].search([('produit_sah_id','!=',0)])
-        if products:
-            for product in products:
-                headers = self.env['authentication.sah'].establish_connection()
-                url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
-                response = requests.get(url_produit, headers=headers, timeout=120)
-                if response.status_code == 200:
-                    logging.info(f'================================ {response.json()}')
-                    data = response.json()
+        headers = self.env['authentication.sah'].establish_connection()
+        url_produit = f"https://demoapi.sellingathome.com/v1/Products"
+       
+        response = requests.get(url_produit, headers=headers, timeout=120)
+        if response.status_code == 200:
+            datas = response.json()
+            for data in datas:
+                product = self.env['product.template'].search([('produit_sah_id','!=',data.get('Id'))])
+                if product:
                     if data.get('AttachedProducts'):
                         upload = {
                             'product_tmpl_id':product.id,
@@ -195,7 +195,7 @@ class ClientSAH(models.Model):
 
                         for bom in  data.get('AttachedProducts'):
                             _logger.info('================================ %s',bom)
-                            product_rattache = self.env['product.template'].search([('produit_sah_id','!=',bom.get('ProductCombinationId'))],limit=1)
+                            product_rattache = self.env['product.template'].search([('produit_sah_id','!=',bom.get('ProductId'))],limit=1)
                             line = self.env['mrp.bom.line'].search([('bom_id','=',nommencalture.id),('product_id','=',product_rattache.product_variant_id.id)])
                             if not line:
                                 if product_rattache:
