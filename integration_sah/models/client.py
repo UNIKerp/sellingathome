@@ -29,6 +29,9 @@ class ClientSAH(models.Model):
    
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
     sellerId = fields.Integer(string="Identifiant du vendeur principal du client",help="Identifiant du vendeur principal du client")
+    
+    Seller_id = fields.Many2one('res.partner',string="Vendeur principal",help="Vendeur principal du client" )
+
     hostedMeeting = fields.Boolean(string="A déjà accueilli une réunion",help="A déjà accueilli une réunion")
     participedMeeting = fields.Boolean(string="A déjà participé à une réunion",help="A déjà participé à une réunion")
     hasOrdered = fields.Boolean(string='A déjà commandé',help='A déjà commandé')
@@ -48,7 +51,7 @@ class ClientSAH(models.Model):
     animatorSeller = fields.Integer(string="ID SAH Animateur",help="ID SAH Animateur du Vendeur")
 
     parentSeller_id = fields.Many2one('res.partner', string="Recruteur du vendeur",help="Vendeur parent rattaché au vendeur" , compute='_compute_parentSeller_animatorSeller')
-    animatorSeller_id = fields.Many2one('res.partner', string="Animateur du vendeur",help="nimateur du Vendeur" , compute='_compute_parentSeller_animatorSeller')
+    animatorSeller_id = fields.Many2one('res.partner', string="Animateur du vendeur",help="Animateur du Vendeur" )
 
     customerAccount = fields.Integer(string="ID de compte client du vendeur",help="ID de compte client du vendeur")
     nationalIdentificationNumber = fields.Char(string="Numéro d'identification national du vendeur",help="Numéro d'identification national du vendeur")
@@ -106,8 +109,9 @@ class ClientSAH(models.Model):
                 rec.parentSeller_id = rec.parentSeller_id
             if rec.animatorSeller:
                rec.animatorSeller_id = self.env['res.partner'].search([('id_vendeur_sah','=',rec.animatorSeller)],limit=1)
-            else:
-                rec.animatorSeller_id = rec.animatorSeller_id
+
+            if rec.sellerId:
+                rec.Seller_id = self.env['res.partner'].search([('id_vendeur_sah','=',rec.sellerId)],limit=1)
 
     # Fonction maj des donnéés de SAH 
     def _update_infos_customers_and_sellers(self):

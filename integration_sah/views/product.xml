@@ -10,7 +10,7 @@
                     <field name="produit_sah_id" readonly='1'/>
                 </field>
                 <xpath expr="//notebook//page[@name='inventory']//group//group[@name='group_lots_and_weight']" position="inside">
-                   
+                    <field name='a_synchroniser' />
                     <field name='long_sah'/>       
                     <field name='haut_sah'/>       
                     <field name='unitcapacity'/>       

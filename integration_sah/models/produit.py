@@ -26,6 +26,8 @@ class ProduitSelligHome(models.Model):
     discountEndDate = fields.Datetime("Date Fin SAH", help="Date de fin dans SAH")
     discountStartDate = fields.Datetime("Date debut SAH", help="Date de début dans SAH")
     discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
+    
+    a_synchroniser = fields.Boolean("Synchroniser dans SAH ?", help="Si vous voulez synchroniser ce produit dans SAH")
    
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists deja !"), ]
