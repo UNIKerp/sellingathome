@@ -129,8 +129,8 @@ class ClientSAH(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
-                _logger.info('*********************************** %s',data.get('LastName'))
-                _logger.info('================================= %s',data.get('photo'))
+                _logger.info('*********************************** %s   %s',data.get('LastName'),data.get('FirstName'))
+                _logger.info('================================= %s  %s',data.get('photo'),date.get('ImageUrl'))
 
         
     def get_update_client_sah(self):
