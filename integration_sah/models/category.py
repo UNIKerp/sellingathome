@@ -184,7 +184,7 @@ class ClientSAH(models.Model):
         if response.status_code == 200:
             datas = response.json()
             for data in datas:
-                product = self.env['product.template'].search([('produit_sah_id','!=',data.get('Id'))])
+                product = self.env['product.template'].search([('produit_sah_id','=',data.get('Id'))])
                 if product:
                     if data.get('AttachedProducts'):
                         upload = {
