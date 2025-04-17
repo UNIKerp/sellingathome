@@ -130,7 +130,7 @@ class ClientSAH(models.Model):
             datas = response.json()
             for data in datas:
                 _logger.info('*********************************** %s   %s',data.get('LastName'),data.get('FirstName'))
-                _logger.info('================================= %s  %s',data.get('photo'),date.get('ImageUrl'))
+                _logger.info('================================= %s  %s',data.get('photo'),data.get('ImageUrl'))
 
         
     def get_update_client_sah(self):
