@@ -121,7 +121,16 @@ class ClientSAH(models.Model):
         }
         self.with_delay(**job_kwargs_sellers).recuperation_vendeurs_sah_vers_odoo()
         self.with_delay(**job_kwargs_customers).get_update_client_sah()
-        
+    
+    def get_photo_vendeurs(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        url = 'https://demoapi.sellingathome.com/v1/Sellers'
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            datas = response.json()
+            for data in datas:
+                _logger.info('================================= %s',data.get('photo'))
+
         
     def get_update_client_sah(self):
         _logger.info("======================= Debut de mise à jour des clients")
