@@ -171,16 +171,17 @@ class MappingSAHOdoo(models.Model):
                 
             if client_id :
                 if not adresse_livraison_id:
-                    adresse_livraison_id = self.env['res.partner'].create({
-                    'name': 'Adresse de livraison ' + client_id.name,
-                    'street': street,
-                    'street2':street2,
-                    'city': city,
-                    'zip': zip,
-                    'country_id': pays,
-                    'type': 'delivery',  
-                    'parent_id': client_id.id,
-                })
+                    if street or city or pays:
+                        adresse_livraison_id = self.env['res.partner'].create({
+                        'name': 'Adresse de livraison ' + client_id.name,
+                        'street': street,
+                        'street2':street2,
+                        'city': city,
+                        'zip': zip,
+                        'country_id': pays,
+                        'type': 'delivery',  
+                        'parent_id': client_id.id,
+                    })
                 if not commandes_odoo :
                     order = commandes_odoo.create({
                         "id_order_sh" : commande['Id'],
