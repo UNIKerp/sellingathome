@@ -35,7 +35,7 @@ class ClientSAH(models.Model):
                 barcode = produit_api.get('Barcode', '')
                 weight = produit_api.get('Weight', 0.0)
                 type_sah = produit_api.get('InventoryMethod')
-
+                ProductType = produit_api.get('ProductType')
                 # Ajout des tax
                 list_prices = produit_api['Prices']
                 if list_prices:
@@ -63,6 +63,8 @@ class ClientSAH(models.Model):
                         'description_sale': description,
                         'weight': weight,
                         'produit_sah_id': sah_id,
+                        'a_synchroniser':True,
+                        'est_combo': True if ProductType==20 else False,
                         'is_storable': True if type_sah == 1 else False,
                     }
                     
@@ -75,45 +77,9 @@ class ClientSAH(models.Model):
             _logger.error(f"Connexion à l'API échouée : {post_response_produit.status_code}")
 
 
-    # def  update_article_AttachedProducts_sah_odoo(self):
-    #     article_ids = self.env['product.template'].search([('produit_sah_id','!=',None)])
-        
-    #     headers = self.env['authentication.sah'].establish_connection()
-    #     for article in article_ids:
-    #         _logger.info('============ produit_sah_id =============== %s',article.produit_sah_id)
-    #         url_produit = f"https://demoapi.sellingathome.com/v1/Products/{article.produit_sah_id}"
-
-    #         get_response_produit = requests.get(url_produit,headers=headers)
-    #         if get_response_produit.status_code == 200:
-
-    #             response_data_produit = get_response_produit.json()
-                
-    #             if response_data_produit['ProductType'] == 20:
-    #                 combo_ids = []
-    #                 ProductComponents = response_data_produit['ProductComponents']
-    #                 if ProductComponents:
-    #                     for p in ProductComponents[0]:
-    #                         for c in p['ProductComponentProducts']:
-    #                             p_id = self.env['product.template'].search([('produit_sah_id','=',c['ProductId'])])
-    #                             if p_id:
-    #                                 comb_id = self.env['product.combo'].search([('name','=',p['Name'])],limit=1)
-    #                                 if comb_id:
-    #                                     self.env['product.combo.item'].create({
-    #                                         'combo_id':comb_id.id,
-    #                                         'product_id':p_id.product_variant_id.id
-    #                                     })
-    #                                 else:
-    #                                     comb = self.env['product.combo'].create({
-    #                                         'name':p['Name'],
-    #                                         'combo_ids':[{'product_id':p_id.product_variant_id.id}]
-    #                                     })
-    #                                     if comb :
-    #                                         combo_ids.append(comb.id)
-    #                 _logger.info('00000000 ProductComponents 1111111 %s',ProductComponents)
-    #                 article.sudo().write({'type':'combo','combo_ids':combo_ids})
 
     def update_article_AttachedProducts_sah_odoo(self):
-        article_ids = self.env['product.template'].search([('produit_sah_id', '!=', None)])
+        article_ids = self.env['product.template'].search([('produit_sah_id', '!=', None),('est_combo','=',True)])
         headers = self.env['authentication.sah'].establish_connection()
 
         for article in article_ids:

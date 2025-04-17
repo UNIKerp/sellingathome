@@ -28,7 +28,7 @@ class ProduitSelligHome(models.Model):
     discountBadgeIsActive = fields.Boolean("BadgeEst Actif", help="Le badge de réduction est actif dans SAH")
     
     a_synchroniser = fields.Boolean("synchronisé dans SAH ?", help="Si vous voulez synchronisé ce produit dans SAH")
-   
+    est_combo = fields.Boolean()
     _sql_constraints = [
         ('produit_sah_id_uniq', 'unique (produit_sah_id)', "ID du produit SAH exists déjà !"), ]
 
