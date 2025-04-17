@@ -106,14 +106,14 @@ class MappingSAHOdoo(models.Model):
                 meetings_data = meetings.json()
                 for meet in meetings_data:
                     if int(meet['Id']) == int(commande['MeetingId']) :
-                        hote_id = self.env['res.partner'].search([('client_sah','=','hote'),('id_hote_sah','=',meet['HostId'])])
+                        hote_id = self.env['res.partner'].search([('client_sah','=','hote'),('id_client_sah','=',meet['HostId'])])
                         if hote_id:
                             adresse_livraison_id = hote_id
                         else:
 
                             pays = self.env['res.country'].search([('code', '=', meet.get('CountryIso'))]).id if meet.get('CountryIso') else None
                             adresse_livraison_id = self.env['res.partner'].create({
-                                'id_hote_sah':meet['HostId'],
+                                'id_client_sah':meet['HostId'],
                                 'vdi_id':vendeur_id.id or False,
                                 'client_sah':'hote',
                                 'sellerId':meet['SellerId'],

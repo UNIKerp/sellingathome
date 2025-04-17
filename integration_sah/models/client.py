@@ -15,7 +15,7 @@ class ClientSAH(models.Model):
 
     id_client_sah = fields.Integer("ID client SAH",copy=False, help="l'ID du client dans SAH")
     id_vendeur_sah = fields.Integer(string='ID vendeur SAH',copy=False, help="l'ID du vendeur dans SAH")
-    id_hote_sah = fields.Integer(string='ID Hôte SAH',copy=False, help="l'ID de l'Hôte dans SAH")
+    # id_hote_sah = fields.Integer(string='ID Hôte SAH',copy=False, help="l'ID de l'Hôte dans SAH")
     type_revendeur = fields.Selection([
         ('vendeur_domicile', 'VENDEUR À DOMICILE INDÉPENDANT'),
         ('vdi', 'VDI INSCRIT AU RCS'),
@@ -90,7 +90,7 @@ class ClientSAH(models.Model):
     _sql_constraints = [
         ('id_client_sah_uniq', 'unique(id_client_sah)', "ID client SAH doit être unique !"),
         ('ref_sah_unique', 'unique(ref_sah)', 'Le champ Reference SAH doit être unique !'),
-        ('id_hote_sah_uniq','unique(id_hote_sah)', "ID Hôte SAH doit être unique !" )
+        # ('id_hote_sah_uniq','unique(id_hote_sah)', "ID Hôte SAH doit être unique !" )
         ]
     
     def get_image_from_url(self,url):
@@ -150,11 +150,13 @@ class ClientSAH(models.Model):
                         madame.id if clients_sah['Gender'] == 2 else
                         None
                     )
+                HostedMeeting = clients_sah.get('HostedMeeting')
+
                 if not client_odoo:
                     parent = self.create({
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
-                        'client_sah':'client',
+                        'client_sah':'hote' if HostedMeeting==True else 'client',
                         'ref_sah':ref_sah,
                         'title':gender,
                         'sellerId':clients_sah['SellerId'],
@@ -186,7 +188,7 @@ class ClientSAH(models.Model):
                     client_odoo.write({
                         'id_client_sah':clients_sah['Id'],
                         'vdi_id':vendeur_id.id or False,
-                        'client_sah':'client',
+                        'client_sah':'hote' if HostedMeeting==True else 'client',
                         'title':gender,
                         'sellerId':clients_sah['SellerId'],
                         'name':clients_sah['Firstname']+'  '+clients_sah['Lastname'],
