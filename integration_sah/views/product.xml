@@ -9,16 +9,24 @@
                 <field name="categ_id" position="after">
                     <field name="produit_sah_id" readonly='1'/>
                 </field>
-                <xpath expr="//notebook//page[@name='inventory']//group//group[@name='group_lots_and_weight']" position="inside">
-                    <field name='a_synchroniser' />
-                    <field name='long_sah'/>       
-                    <field name='haut_sah'/>       
-                    <field name='unitcapacity'/>       
-                    <field name='availableOnHostMinisites'/>     
-                    <field name='discountEndDate'/>     
-                    <field name='discountStartDate'/>     
-                    <field name='discountBadgeIsActive'/>
-                  
+                <div name="options" position="inside">
+                    <span class="d-inline-flex">
+                        <field name="a_synchroniser"/>
+                        <label for="a_synchroniser"/>
+                    </span>
+                </div>
+                <xpath expr="//notebook//page[@name='general_information']" position="after">
+                    <page string="Informations SAH" name="information_sah">
+                        <group>
+                            <field name='long_sah'/>       
+                            <field name='haut_sah'/>       
+                            <field name='unitcapacity'/>       
+                            <field name='availableOnHostMinisites'/>     
+                            <field name='discountEndDate'/>     
+                            <field name='discountStartDate'/>     
+                            <field name='discountBadgeIsActive'/>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>
