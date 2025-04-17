@@ -293,3 +293,31 @@ class ClientSAH(models.Model):
                             price = self.env['product.pricelist.item'].create(upload2)
                             logging.info('=============================== %s',price)
 
+
+    def synchronisation_des_photo_produits(self):
+        headers = self.env['authentication.sah'].establish_connection()
+        url_produit = "https://demoapi.sellingathome.com/v1/Products"
+        response = requests.get(url_produit, headers=headers, timeout=120)
+        
+        if response.status_code == 200:
+            datas = response.json()
+            for data in datas:
+                if data.get('ProductPhotos'):
+                    i = 0
+                    for photo in  data.get('ProductPhotos'):
+                        url = photo.get('Link')
+                        res = requests.get(url, timeout=10)
+                        res.raise_for_status()
+                        binaire = base64.b64encode(res.content)
+                        product = self.env['product.template'].search([('produit_sah_id','=',photo.get('ProductId'))])
+                        _logger.info('oooooooooooooooooooooooooooooooooooooo %s',product.name)
+                        i += 1
+                        if product:
+                            product.image_1920 = binaire
+                        if i >= 1:
+                            self.env['product.image'].create({
+                                'name':f'{product}_{i}.png', 
+                                'image_1920':binaire,
+                                'product_tmpl_id':product.id,
+                                'product_variant_id':product.product_variant_id.id,
+                            })
