@@ -24,7 +24,7 @@ class ClientSAH(models.Model):
     ], string='Type Revendeur' , help="Type de revendeur SAH")
     vdi_id = fields.Many2one('res.partner',string="VDI", help="VDI ratacher au contact")
     client_sah=fields.Selection([('client','CLIENT'),('vdi','VDI'),('hote','Hôte')], string="Type Client" , help="si c'est un client, un vdi ou un hôte")
-    ref_sah = fields.Char('')
+    ref_sah = fields.Char('',copy=False)
    
     companyIdentificationNumber = fields.Char(string="Numéro d'identification de l'entreprise cliente",help="Numéro d'identification de l'entreprise cliente")
     sellerId = fields.Integer(string="Identifiant du vendeur principal du client",help="Identifiant du vendeur principal du client")
@@ -94,13 +94,14 @@ class ClientSAH(models.Model):
         ('id_hote_sah_uniq','unique(id_hote_sah)', "ID Hôte SAH doit être unique !" )
         ]
     
-    def copy(self, default=None):
-        default = dict(default or {})
-        default['ref_sah'] = ''
-        default['id_client_sah'] = 0
-        default['id_vendeur_sah'] = 0
-        # Appeler la méthode copy du parent pour créer la copie avec les valeurs par défaut
-        return super(ClientSAH, self).copy(default)
+    def get_image_from_url(url):
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            return base64.b64encode(response.content)
+        except Exception as e:
+            _logger.info(f"Erreur lors du téléchargement de l'image : {str(e)}")
+
    
     def _compute_parentSeller_animatorSeller(self):
         for rec in self:
@@ -254,6 +255,9 @@ class ClientSAH(models.Model):
                         mademaselle.id if data['Gender'] == 1 else
                         madame.id if data['Gender'] == 2 else None
                     )
+                image_base64 =''
+                if data.get('ImageUrl'):
+                    image_base64 = get_image_from_url(data['ImageUrl'])
                 if contact:
                     
                     contact.write({
@@ -315,6 +319,7 @@ class ClientSAH(models.Model):
                         'miniSiteIsActive':data['MiniSiteIsActive'],
                         'companyRCSNumber':data['CompanyRCSNumber'],
                         'companyVAT':data['CompanyVAT'],
+                        'image_1920': image_base64 if image_base64 else contact.image_1920,
                     })
                 else:
                     
@@ -378,6 +383,7 @@ class ClientSAH(models.Model):
                         'companyVAT':data['CompanyVAT'],
                         'companyIdentificationNumbervendeur':data['CompanyIdentificationNumber'],
                         'isActive':data['IsActive'],
+                        'image_1920': image_base64,
                     })
                     # if data['StreetAddress'] or data['City'] or pays:
                         # delivery_address = self.env['res.partner'].create({
