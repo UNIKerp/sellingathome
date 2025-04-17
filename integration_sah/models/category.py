@@ -7,6 +7,7 @@ from odoo.exceptions import ValidationError
 import requests
 import json
 from datetime import datetime,date
+import base64
 _logger = logging.getLogger(__name__)
 
 
