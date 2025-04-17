@@ -85,9 +85,9 @@
         <field name="arch" type="xml">
             <filter name="type_company" position="before">
                 <field name="client_sah"/>
-                <filter string="Clients" name="client_sah" domain="[('client_sah','=','client)]" help="Est un client"/>
-                <filter string="VDI" name="client_sah" domain="[('client_sah','=','vdi)]" help="Est un vdi"/>
-                <filter string="Hôte" name="client_sah" domain="[('client_sah','=','hote)]" help="Est un hôte"/>
+                <filter string="Clients" name="client_sah" domain="[('client_sah','=','client')]" help="Est un client"/>
+                <filter string="VDI" name="client_sah" domain="[('client_sah','=','vdi')]" help="Est un vdi"/>
+                <filter string="Hôte" name="client_sah" domain="[('client_sah','=','hote')]" help="Est un hôte"/>
             </filter>
         </field>
       </record>
