@@ -83,7 +83,7 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_res_partner_filter" />
         <field name="arch" type="xml">
-            <filter name="salesperson" position="before">
+            <filter name="type_company" position="before">
                 <filter string="Type Client" name="client_sah" domain="[('client_sah','!=',0)]" help="Si c'est un client, un vdi ou un hôte"/>
             </filter>
         </field>
