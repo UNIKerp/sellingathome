@@ -163,7 +163,7 @@ class ProduitSelligHome(models.Model):
                 if type_produit_sah !=5:
                     update_data.pop("Combinations", None)
                 put_response_produit = requests.put(url_produit, json=update_data, headers=headers)
-
+                _logger.info(f"========== Article {product.name} Statut SAH {put_response_produit.status_code}==========")
                 if put_response_produit.status_code == 200:
                     _logger.info(f"========== Article {product.name} mis à jour avec succès sur l'API SAH ==========")
                 else:
