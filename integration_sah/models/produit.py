@@ -393,7 +393,7 @@ class ProduitSelligHome(models.Model):
         headers = self.env['authentication.sah'].establish_connection()
         rec = super(ProduitSelligHome, self).write(vals)
         for record in self:
-          if record.a_synchroniser==True or ( 'a_synchroniser' in vals and vals['a_synchroniser']==True):
+        #   if record.a_synchroniser==True or ( 'a_synchroniser' in vals and vals['a_synchroniser']==True):
             if vals and record.produit_sah_id:
                 job_kwargs = {
                     'description': 'Mise à jour du produit dans SAH',
