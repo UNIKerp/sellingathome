@@ -144,10 +144,15 @@ class ClientSAH(models.Model):
                         comb_id = self.env['product.combo'].search([('name', '=', combo_name)], limit=1)
 
                         if comb_id:
-                            self.env['product.combo.item'].create({
-                                'combo_id': comb_id.id,
-                                'product_id': p_id.product_variant_id.id
-                            })
+                            j=0
+                            for c in comb_id.combo_item_ids:
+                                if c.product_id.id == p_id.product_variant_id.id:
+                                    j +=1
+                            if j==0:
+                                self.env['product.combo.item'].create({
+                                    'combo_id': comb_id.id,
+                                    'product_id': p_id.product_variant_id.id
+                                })
                         else:
                             comb = self.env['product.combo'].create({
                                 'name': combo_name,
