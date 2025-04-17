@@ -94,7 +94,7 @@ class ClientSAH(models.Model):
         ('id_hote_sah_uniq','unique(id_hote_sah)', "ID Hôte SAH doit être unique !" )
         ]
     
-    def get_image_from_url(url):
+    def get_image_from_url(self,url):
         try:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
