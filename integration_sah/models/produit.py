@@ -67,49 +67,49 @@ class ProduitSelligHome(models.Model):
             photos_maj = self.maj_images_du_produit(product)
             _logger.info('=========================== %s',photos_maj)
             #
-            id_categ = ''
-            if product.categ_id:
-                url_categ = "https://demoapi.sellingathome.com/v1/Categories"
-                post_response_categ = requests.get(url_categ, headers=headers)
+            # id_categ = ''
+            # if product.categ_id:
+            #     url_categ = "https://demoapi.sellingathome.com/v1/Categories"
+            #     post_response_categ = requests.get(url_categ, headers=headers)
                 
-                if post_response_categ.status_code == 200:
-                    response_data_categ = post_response_categ.json()
-                    categ_parent = response_data_categ[0]['Id']
-                    j = 0
+            #     if post_response_categ.status_code == 200:
+            #         response_data_categ = post_response_categ.json()
+            #         categ_parent = response_data_categ[0]['Id']
+            #         j = 0
                     
-                    # Parcourir les catégories et comparer les noms
-                    for c in response_data_categ:
-                        CategoryLangs = c['CategoryLangs']
-                        for cc in CategoryLangs:
-                            nom_cat = cc['Name']
+            #         # Parcourir les catégories et comparer les noms
+            #         for c in response_data_categ:
+            #             CategoryLangs = c['CategoryLangs']
+            #             for cc in CategoryLangs:
+            #                 nom_cat = cc['Name']
                             
-                            # Remplacer res.categ_id.name par product.categ_id.name
-                            if product.categ_id.name == nom_cat:
-                                id_categ = c['Id']
-                                j += 1
+            #                 # Remplacer res.categ_id.name par product.categ_id.name
+            #                 if product.categ_id.name == nom_cat:
+            #                     id_categ = c['Id']
+            #                     j += 1
                     
-                    # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
-                    if j == 0:
-                        create_category = {
-                            "Reference": product.categ_id.name,
-                            "ParentCategoryId": categ_parent,
-                            "IsPublished": True,
-                            "CategoryLangs": [
-                                {
-                                    "Name": product.categ_id.name,
-                                    "Description": 'None',
-                                    "ISOValue": "fr",
-                                },
-                            ],
-                        }
+            #         # Si aucune catégorie correspondante n'est trouvée, en créer une nouvelle
+            #         if j == 0:
+            #             create_category = {
+            #                 "Reference": product.categ_id.name,
+            #                 "ParentCategoryId": categ_parent,
+            #                 "IsPublished": True,
+            #                 "CategoryLangs": [
+            #                     {
+            #                         "Name": product.categ_id.name,
+            #                         "Description": 'None',
+            #                         "ISOValue": "fr",
+            #                     },
+            #                 ],
+            #             }
                         
-                        post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
+            #             post_response_categ_create = requests.post(url_categ, json=create_category, headers=headers)
                         
-                        if post_response_categ_create.status_code == 200:
-                            categ = post_response_categ_create.json()
-                            id_categ = categ['Id']
-                else:
-                    _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
+            #             if post_response_categ_create.status_code == 200:
+            #                 categ = post_response_categ_create.json()
+            #                 id_categ = categ['Id']
+            #     else:
+            #         _logger.info(f"Erreur {post_response_categ.status_code}: {post_response_categ.text}")
 
            
             url_produit = f"https://demoapi.sellingathome.com/v1/Products/{product.produit_sah_id}"
@@ -156,6 +156,7 @@ class ProduitSelligHome(models.Model):
                         if bom.type == 'phantom':
                             type_produit_sah = 10
                             break
+                list_id_categ = self.add_category_odoo_sah(product)
                 update_data = {
                     "ProductType": type_produit_sah,
                     "Reference": product.default_code,
@@ -175,8 +176,8 @@ class ProduitSelligHome(models.Model):
                     ],
                     "Categories": [
                         {
-                            "Id": id_categ,
-                        }
+                            "Id": elt,
+                        }for elt in list_id_categ
                     ],
                     "Combinations": [
                         {
@@ -411,7 +412,7 @@ class ProduitSelligHome(models.Model):
 
     def maj_des_stocks(self,product_id):
         headers = self.env['authentication.sah'].establish_connection()
-        if product_id.is_storable == True:
+        if product_id.is_storable == True and product_id.a_synchroniser==True:
             url2 = 'https://demoapi.sellingathome.com/v1/Stocks'
             values = {
                 "ProductId": product_id.produit_sah_id,
