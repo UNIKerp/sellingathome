@@ -20,7 +20,7 @@ class AccountCommissionWizard(models.TransientModel):
         data = base64.b64decode(self.file)
         df = pd.read_excel(io.BytesIO(data))
 
-        # Nettoyage des noms de colonnes pour éviter les espaces cachés
+        # Nettoyage des noms de colonnes
         df.columns = df.columns.str.strip()
 
         # Renommer les colonnes selon le fichier fourni
@@ -36,12 +36,11 @@ class AccountCommissionWizard(models.TransientModel):
             if col not in df.columns:
                 raise ValueError(f"Colonne manquante dans le fichier : {col}")
 
-        # Convertir les formats
+        # Conversion des formats
         df['Montant'] = df['Montant'].astype(str).str.replace(',', '.').astype(float)
         df['Date'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce')
-        df = df.dropna(subset=['Date'])  # Supprimer les lignes avec date invalide
+        df = df.dropna(subset=['Date'])
 
-        # Regrouper par mois
         grouped = df.groupby(df['Date'].dt.to_period('M'))
 
         journal = self.env['account.journal'].search([('code', '=', 'COMM')], limit=1)
@@ -55,7 +54,6 @@ class AccountCommissionWizard(models.TransientModel):
         for period, group in grouped:
             date = group['Date'].iloc[0].to_pydatetime().replace(day=1)
 
-            # Vérifier si une pièce existe déjà
             move_exist = self.env['account.move'].search([
                 ('journal_id', '=', journal.id),
                 ('date', '>=', date),
@@ -67,42 +65,44 @@ class AccountCommissionWizard(models.TransientModel):
 
             lines = []
             for _, row in group.iterrows():
-                vdi_id = int(row['VDI_ID'])
-                
-                # Log de l'ID du partenaire pour débogage
-                _logger.info(f"Vérification du partenaire avec l'ID: {vdi_id}")
-                
-                # Vérifier l'existence du partenaire
-                vdi = self.env['res.partner'].search([('id', '=', vdi_id)], limit=1)
-                
-                if not vdi:
-                    _logger.info(f"Le partenaire avec l’ID {vdi_id} n’existe pas.")
-                
-                if not vdi.property_account_payable_id:
-                    _logger.info(f"Le partenaire {vdi.name} n’a pas de compte fournisseur défini.")
+                try:
+                    vdi_id = int(str(row['VDI_ID']).strip())
+                    montant = float(row['Montant'])
 
-                montant = float(row['Montant'])
+                    vdi = self.env['res.partner'].search([('id', '=', vdi_id)], limit=1)
 
-                lines.append((0, 0, {
-                    'name': 'Commission VDI',
-                    'debit': montant,
-                    'credit': 0.0,
-                    'account_id': account_622.id,
-                }))
-                lines.append((0, 0, {
-                    'name': f"Commission - {vdi.name}",
-                    'debit': 0.0,
-                    'credit': montant,
-                    'account_id': vdi.property_account_payable_id.id,
-                    'partner_id': vdi.id,
-                }))
+                    if not vdi or not vdi.property_account_payable_id:
+                        _logger.warning(f"Partenaire invalide ou sans compte fournisseur : ID {vdi_id}")
+                        continue
 
-            self.env['account.move'].create({
-                'date': date,
-                'journal_id': journal.id,
-                'move_type': 'entry',
-                'line_ids': lines,
-            })
+                    # Ligne de débit (compte de charge)
+                    lines.append((0, 0, {
+                        'name': 'Commission VDI',
+                        'debit': montant,
+                        'credit': 0.0,
+                        'account_id': account_622.id,
+                    }))
+
+                    # Ligne de crédit (compte fournisseur du partenaire)
+                    lines.append((0, 0, {
+                        'name': f"Commission - {vdi.name}",
+                        'debit': 0.0,
+                        'credit': montant,
+                        'account_id': vdi.property_account_payable_id.id,
+                        'partner_id': vdi.id,
+                    }))
+                except Exception as e:
+                    _logger.error(f"Erreur lors du traitement de la ligne avec VDI_ID {row['VDI_ID']}: {e}")
+                    continue
+
+            if lines:
+                self.env['account.move'].create({
+                    'date': date,
+                    'journal_id': journal.id,
+                    'move_type': 'entry',
+                    'line_ids': lines,
+                })
+
 
 
 
