@@ -1,5 +1,5 @@
 from odoo import models, fields
-import base64
+import base64, ValueError
 import io
 import pandas as pd
 from datetime import datetime
@@ -76,11 +76,10 @@ class AccountCommissionWizard(models.TransientModel):
                 vdi = self.env['res.partner'].search([('id', '=', vdi_id)], limit=1)
                 
                 if not vdi:
-                    _logger.error(f"Le partenaire avec l’ID {vdi_id} n’existe pas.")
-                    raise ValueError(f"Le partenaire avec l’ID {vdi_id} n’existe pas.")
+                    _logger.info(f"Le partenaire avec l’ID {vdi_id} n’existe pas.")
                 
                 if not vdi.property_account_payable_id:
-                    raise ValueError(f"Le partenaire {vdi.name} n’a pas de compte fournisseur défini.")
+                    _logger.info(f"Le partenaire {vdi.name} n’a pas de compte fournisseur défini.")
 
                 montant = float(row['Montant'])
 
