@@ -27,4 +27,30 @@ class SaleSAH(models.Model):
     _sql_constraints = [
         ('id_order_sh_uniq', 'unique (id_order_sh)', "ID commande SAH exists deja!"), ]
 
+    
+    def action_confirm(self):
+        res = super(SaleOrder, self).action_confirm()
+        for order in self:
+            if order.invoice_status == 'to invoice':
+                invoice = self.env['account.move'].create({
+                    'move_type': 'out_invoice',
+                    'partner_id': order.partner_id.id,
+                    'currency_id': order.pricelist_id.currency_id.id,
+                    'invoice_line_ids': [(0, 0, {
+                        'name': line.name,
+                        'quantity': line.product_uom_qty,
+                        'price_unit': line.price_unit,
+                        'discount': line.discount,
+                        'product_id': line.product_id.id,
+                        'tax_ids': [(6, 0, line.tax_id.ids)],
+                        'sale_line_ids': [(6, 0, [line.id])],
+                    }) for line in order.order_line],
+                    'invoice_origin': order.name,
+                    'ref': order.client_order_ref,
+                    'company_id': order.company_id.id,
+                    'user_id': order.user_id.id,
+                })
+                invoice.action_post()
+        return res
+
   
