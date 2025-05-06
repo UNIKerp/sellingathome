@@ -52,12 +52,13 @@ class AccountCommissionWizard(models.TransientModel):
             raise ValueError("Le compte 622 n’existe pas.")
 
         for period, group in grouped:
-            date = group['Date'].iloc[0].to_pydatetime().replace(day=1)
+            date_start = group['Date'].iloc[0].to_pydatetime().replace(day=1)
+            date_end = (date_start + relativedelta(months=1)) - timedelta(days=1)
 
             move_exist = self.env['account.move'].search([
                 ('journal_id', '=', journal.id),
-                ('date', '>=', date),
-                ('date', '<=', date.replace(day=28)),
+                ('date', '>=', date_start),
+                ('date', '<=', date_end),
                 ('state', '=', 'draft'),
             ])
             if move_exist:
@@ -103,69 +104,3 @@ class AccountCommissionWizard(models.TransientModel):
                     'line_ids': lines,
                 })
 
-
-
-
-
-    """def action_import_commissions(self):
-        # Décodage du fichier Excel
-        data = base64.b64decode(self.file)
-        df = pd.read_excel(io.BytesIO(data))
-
-        # Vérification et conversion de la colonne date
-        if 'Date de début de période' not in df.columns or 'Montant de commissions' not in df.columns or 'Identifiant du vendeur' not in df.columns:
-            raise ValueError("Le fichier doit contenir les colonnes 'Date de début de période', 'Montant de commissions' et 'Identifiant du vendeur'.")
-
-        df['Date de début de période'] = pd.to_datetime(df['Date de début de période'], dayfirst=True, errors='coerce')
-
-        grouped = df.groupby(df['Date de début de période'].dt.to_period('M'))
-
-        journal = self.env['account.journal'].search([('code', '=', 'COMM')], limit=1)
-        if not journal:
-            raise ValueError("Le journal 'COMM' (commission) n’existe pas.")
-
-        account_622 = self.env['account.account'].search([('code', '=', '622')], limit=1)
-        if not account_622:
-            raise ValueError("Le compte 622 n’existe pas.")
-
-        for period, group in grouped:
-            date = group['Date de début de période'].iloc[0].to_pydatetime().replace(day=1)
-
-            # Vérifie si un move existe déjà
-            move_exist = self.env['account.move'].search([
-                ('journal_id', '=', journal.id),
-                ('date', '>=', date),
-                ('date', '<=', date.replace(day=28)),
-                ('state', '=', 'draft'),
-            ])
-            if move_exist:
-                continue
-
-            lines = []
-            for _, row in group.iterrows():
-                montant = float(str(row['Montant de commissions']).replace(',', '.'))
-
-                vdi = self.env['res.partner'].browse(int(row['VDI_ID']))
-                if not vdi.property_account_payable_id:
-                    raise ValueError(f"Le fournisseur {vdi.name} n’a pas de compte fournisseur défini.")
-
-                lines.append((0, 0, {
-                    'name': 'Commission VDI',
-                    'debit': montant,
-                    'credit': 0.0,
-                    'account_id': account_622.id,
-                }))
-                lines.append((0, 0, {
-                    'name': f"Commission - {vdi.name}",
-                    'debit': 0.0,
-                    'credit': montant,
-                    'account_id': vdi.property_account_payable_id.id,
-                    'partner_id': vdi.id,
-                }))
-
-            self.env['account.move'].create({
-                'date': date,
-                'journal_id': journal.id,
-                'move_type': 'entry',
-                'line_ids': lines
-            })"""
