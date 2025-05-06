@@ -1,0 +1,13 @@
+<odoo>
+    <menuitem id="menu_account_commission_root" name="Commissions VDI" parent="account.menu_finance" sequence="100"/>
+
+    <menuitem id="menu_account_commission_import" name="Importer commissions"
+              parent="menu_account_commission_root" action="action_account_commission_wizard"/>
+
+    <record id="action_account_commission_wizard" model="ir.actions.act_window">
+        <field name="name">Importer Commissions</field>
+        <field name="res_model">account.commission.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

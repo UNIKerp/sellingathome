@@ -20,6 +20,7 @@
         'views/methode_paiement.xml',
         'views/stock_picking.xml',
         'views/tarifs.xml',
+        'views/account_commission_menu.xml',
         'data/methode_paiement_sah.xml',
         'data/mode_livraison.xml',
     ],
