@@ -11,4 +11,4 @@ access_tax_sah,access tax sah,model_tax_sah,integration_sah.group_manager,1,1,1,
 
 access_commande_sah,access commande sah,model_commande_sah,integration_sah.group_manager,1,1,1,1
 
-access_account_commission_wizard,access_account_commission_wizard,model_account_commission_wizard,base.group_user,1,1,1,1
+access_account_commission_wizard,access_account_commission_wizard,model_account_commission_wizard,base.group_manager,1,1,1,1
