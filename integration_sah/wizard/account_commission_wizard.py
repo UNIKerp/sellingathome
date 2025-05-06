@@ -1,5 +1,5 @@
 from odoo import models, fields
-import base64, ValueError
+import base64
 import io
 import pandas as pd
 from datetime import datetime
