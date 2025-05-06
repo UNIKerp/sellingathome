@@ -64,10 +64,13 @@ class AccountCommissionWizard(models.TransientModel):
             lines = []
             for _, row in group.iterrows():
                 vdi_id = int(row['VDI_ID'])
-                vdi = self.env['res.partner'].browse(vdi_id)
-
-                if not vdi.exists():
+                
+                # Vérifier l'existence du partenaire
+                vdi = self.env['res.partner'].search([('id', '=', vdi_id)], limit=1)
+                
+                if not vdi:
                     raise ValueError(f"Le partenaire avec l’ID {vdi_id} n’existe pas.")
+                
                 if not vdi.property_account_payable_id:
                     raise ValueError(f"Le partenaire {vdi.name} n’a pas de compte fournisseur défini.")
 
@@ -93,6 +96,7 @@ class AccountCommissionWizard(models.TransientModel):
                 'move_type': 'entry',
                 'line_ids': lines,
             })
+
 
 
     """def action_import_commissions(self):
