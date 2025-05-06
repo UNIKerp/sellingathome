@@ -3,6 +3,8 @@ import base64
 import io
 import pandas as pd
 from datetime import datetime
+import logging
+_logger = logging.getLogger(__name__)
 
 class AccountCommissionWizard(models.TransientModel):
     _name = 'account.commission.wizard'
