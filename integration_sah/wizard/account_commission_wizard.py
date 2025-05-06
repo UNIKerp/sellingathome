@@ -47,19 +47,11 @@ class AccountCommissionWizard(models.TransientModel):
 
             lines = []
             for _, row in group.iterrows():
-                try:
-                    vdi_id = int(row['Identifiant du vendeur'])
-                except ValueError:
-                    continue
+                montant = float(str(row['Montant de commissions']).replace(',', '.'))
 
-                vdi = self.env['res.partner'].search([('id', '=', vdi_id)], limit=1)
-                if not vdi:
-                    continue
-
+                vdi = self.env['res.partner'].browse(int(row['VDI_ID']))
                 if not vdi.property_account_payable_id:
-                    raise ValueError(f"Le partenaire {vdi.name} n’a pas de compte fournisseur défini.")
-
-                montant = float(row['Montant de commissions'])
+                    raise ValueError(f"Le fournisseur {vdi.name} n’a pas de compte fournisseur défini.")
 
                 lines.append((0, 0, {
                     'name': 'Commission VDI',
