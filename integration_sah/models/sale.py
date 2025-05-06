@@ -29,7 +29,7 @@ class SaleSAH(models.Model):
 
     
     def action_confirm(self):
-        res = super(SaleOrder, self).action_confirm()
+        res = super(SaleSAH, self).action_confirm()
         for order in self:
             if order.invoice_status == 'to invoice':
                 invoice = self.env['account.move'].create({
