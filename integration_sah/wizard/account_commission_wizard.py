@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields
 import base64
 import io
 import pandas as pd
@@ -12,11 +12,17 @@ class AccountCommissionWizard(models.TransientModel):
     filename = fields.Char(string="Nom du fichier")
 
     def action_import_commissions(self):
+        # Décodage du fichier Excel
         data = base64.b64decode(self.file)
         df = pd.read_excel(io.BytesIO(data))
 
-        # Attendu : colonnes ['Date', 'Montant', 'VDI_ID']
-        grouped = df.groupby(df['Date'].dt.to_period('M'))
+        # Vérification et conversion de la colonne date
+        if 'Date de début de période' not in df.columns or 'Montant de commissions' not in df.columns or 'Identifiant du vendeur' not in df.columns:
+            raise ValueError("Le fichier doit contenir les colonnes 'Date de début de période', 'Montant de commissions' et 'Identifiant du vendeur'.")
+
+        df['Date de début de période'] = pd.to_datetime(df['Date de début de période'], dayfirst=True, errors='coerce')
+
+        grouped = df.groupby(df['Date de début de période'].dt.to_period('M'))
 
         journal = self.env['account.journal'].search([('code', '=', 'COMM')], limit=1)
         if not journal:
@@ -27,9 +33,9 @@ class AccountCommissionWizard(models.TransientModel):
             raise ValueError("Le compte 622 n’existe pas.")
 
         for period, group in grouped:
-            date = group['Date'].iloc[0].to_pydatetime().replace(day=1)
+            date = group['Date de début de période'].iloc[0].to_pydatetime().replace(day=1)
 
-            # Vérifier si pièce déjà existante
+            # Vérifie si un move existe déjà
             move_exist = self.env['account.move'].search([
                 ('journal_id', '=', journal.id),
                 ('date', '>=', date),
@@ -41,20 +47,30 @@ class AccountCommissionWizard(models.TransientModel):
 
             lines = []
             for _, row in group.iterrows():
-                vdi = self.env['res.partner'].browse(int(row['VDI_ID']))
+                try:
+                    vdi_id = int(row['Identifiant du vendeur'])
+                except ValueError:
+                    continue
+
+                vdi = self.env['res.partner'].search([('id', '=', vdi_id)], limit=1)
+                if not vdi:
+                    continue
+
                 if not vdi.property_account_payable_id:
-                    raise ValueError(f"Le fournisseur {vdi.name} n’a pas de compte fournisseur défini.")
+                    raise ValueError(f"Le partenaire {vdi.name} n’a pas de compte fournisseur défini.")
+
+                montant = float(row['Montant de commissions'])
 
                 lines.append((0, 0, {
                     'name': 'Commission VDI',
-                    'debit': row['Montant'],
+                    'debit': montant,
                     'credit': 0.0,
                     'account_id': account_622.id,
                 }))
                 lines.append((0, 0, {
                     'name': f"Commission - {vdi.name}",
                     'debit': 0.0,
-                    'credit': row['Montant'],
+                    'credit': montant,
                     'account_id': vdi.property_account_payable_id.id,
                     'partner_id': vdi.id,
                 }))
