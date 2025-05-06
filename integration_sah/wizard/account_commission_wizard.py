@@ -11,6 +11,8 @@ class AccountCommissionWizard(models.TransientModel):
     file = fields.Binary(string="Fichier Excel", required=True)
     filename = fields.Char(string="Nom du fichier")
 
+
+
     def action_import_commissions(self):
         # Décodage du fichier importé
         data = base64.b64decode(self.file)
@@ -65,10 +67,14 @@ class AccountCommissionWizard(models.TransientModel):
             for _, row in group.iterrows():
                 vdi_id = int(row['VDI_ID'])
                 
+                # Log de l'ID du partenaire pour débogage
+                _logger.info(f"Vérification du partenaire avec l'ID: {vdi_id}")
+                
                 # Vérifier l'existence du partenaire
                 vdi = self.env['res.partner'].search([('id', '=', vdi_id)], limit=1)
                 
                 if not vdi:
+                    _logger.error(f"Le partenaire avec l’ID {vdi_id} n’existe pas.")
                     raise ValueError(f"Le partenaire avec l’ID {vdi_id} n’existe pas.")
                 
                 if not vdi.property_account_payable_id:
@@ -96,6 +102,7 @@ class AccountCommissionWizard(models.TransientModel):
                 'move_type': 'entry',
                 'line_ids': lines,
             })
+
 
 
 
