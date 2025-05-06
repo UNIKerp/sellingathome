@@ -22,7 +22,8 @@ class AccountCommissionWizard(models.TransientModel):
         # Renommer les colonnes selon le fichier fourni
         df.rename(columns={
             'Identifiant du vendeur': 'VDI_ID',
-            'Montant de commissions': 'Montant'
+            'Montant de commissions': 'Montant',
+            'Date de cloture': 'Date',
         }, inplace=True)
 
         # Vérification des colonnes nécessaires
