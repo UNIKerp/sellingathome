@@ -1,5 +1,9 @@
 from odoo import models, fields, api
 
+from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
+
 class SaleOrderCombo(models.Model):
     _inherit = 'sale.order'
 
@@ -26,6 +30,7 @@ class SaleOrderCombo(models.Model):
         })
 
         # Parcourir les produits associés (ex: champ combo_product_ids Many2many)
+        _logger.info("kdddddddddddddddddddddddddddddddddddddddddddd%s",combo_product.combo_ids)
         for associated_product in combo_product.combo_ids:
             self.env['sale.order.line'].create({
                 'order_id': order.id,
