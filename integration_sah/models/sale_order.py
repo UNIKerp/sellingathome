@@ -46,6 +46,25 @@ class SaleOrderCombo(models.Model):
             'product_uom_qty': 1,
             'price_unit': 0,
         })
+        self.env['sale.order.line'].create({
+            'order_id': order.id,
+            'product_id': 34,
+            'product_uom_qty': 1,
+            'price_unit': 0,
+        })
+
+          # Chargement du produit combo
+        combo_product_id = 4
+        combo_product = self.env['product.product'].browse(combo_product_id)
+
+        # Ajout du produit combo à la commande
+        self.env['sale.order.line'].create({
+            'order_id': order.id,
+            'product_id': combo_product.id,
+            'product_uom_qty': 1,
+            'price_unit': combo_product.list_price,
+        })
+       
 
 
         return order
