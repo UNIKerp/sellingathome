@@ -32,12 +32,20 @@ class SaleOrderCombo(models.Model):
 
         # Parcourir les produits associés (ex: champ combo_product_ids Many2many)
         _logger.info("kdddddddddddddddddddddddddddddddddddddddddddd%s",combo_product.combo_ids)
-        for associated_product in combo_product.combo_ids:
-            self.env['sale.order.line'].create({
-                'order_id': order.id,
-                'product_id': associated_product.id,
-                'price_unit': 0,
-                'product_uom_qty': 1,
-            })
+        # for associated_product in combo_product.combo_ids:
+        #     self.env['sale.order.line'].create({
+        #         'order_id': order.id,
+        #         'product_id': associated_product.id,
+        #         'price_unit': 0,
+        #         'product_uom_qty': 1,
+        #     })
+
+        self.env['sale.order.line'].create({
+            'order_id': order.id,
+            'product_id': 5,
+            'product_uom_qty': 1,
+            'price_unit': 0,
+        })
+
 
         return order
