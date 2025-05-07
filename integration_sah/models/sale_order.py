@@ -29,7 +29,9 @@ class SaleOrderCombo(models.Model):
         for associated_product in combo_product.combo_ids:
             self.env['sale.order.line'].create({
                 'order_id': order.id,
-                'product_id': associated_product.id
+                'product_id': associated_product.id,
+                'price_unit': 0,
+                'product_uom_qty': 1,
             })
 
         return order
