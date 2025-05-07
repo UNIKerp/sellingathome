@@ -22,7 +22,7 @@ class SaleOrderCombo(models.Model):
             'order_id': order.id,
             'product_id': combo_product.id,
             'product_uom_qty': 1,
-            'price_unit': combo_product.lst_price,
+            'price_unit': combo_product.list_price,
         })
 
         # Parcourir les produits associés (ex: champ combo_product_ids Many2many)
@@ -31,7 +31,7 @@ class SaleOrderCombo(models.Model):
                 'order_id': order.id,
                 'product_id': associated_product.id,
                 'product_uom_qty': 1,
-                'price_unit': associated_product.lst_price,
+                'price_unit': associated_product.list_price,
             })
 
         return order
