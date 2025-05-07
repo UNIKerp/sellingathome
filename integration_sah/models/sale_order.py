@@ -3,7 +3,7 @@ from odoo import models, fields, api
 class SaleOrderCombo(models.Model):
     _inherit = 'sale.order'
 
-    def create_order_with_combo(self, partner_id, combo_product_id):
+    def create_order_with_combo(self):
         """
         Crée une commande avec un produit combo et ses produits associés.
         """
