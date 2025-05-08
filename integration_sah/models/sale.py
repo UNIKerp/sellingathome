@@ -19,7 +19,7 @@ class SaleLineSAH(models.Model):
     @api.onchange('order_id')
     def produit_stock_prévisionnel(self):
         produits = self.env['product.template'].search([('virtual_available', '>', 0)])
-        pro = self.env['product.template'].search([()])
+        pro = self.env['product.template'].search([])
         tab_produit_ids =[]
         if self.order_id.show_all_products == True:
             if produits:
