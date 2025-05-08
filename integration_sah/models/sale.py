@@ -16,15 +16,15 @@ class SaleLineSAH(models.Model):
         
     _sql_constraints = [
         ('id_order_line_sh_uniq', 'unique (id_order_line_sh)', "ID linr de commande SAH exists deja!"), ]
-    @api.onchange('order_id')
-    def produit_stock_prévisionnel(self):
-        produits = self.env['product.template'].search([('virtual_available', '>', 0)])
-        if order_id.show_all_products == True:
-            tab_produit_ids =[]
-            if produits:
-                for produit in produits:
-                    tab_produit_ids.append(produit.id)
-            self.produit_available_ids = tab_produit_ids
+    # @api.onchange('order_id')
+    # def produit_stock_prévisionnel(self):
+    #     produits = self.env['product.template'].search([('virtual_available', '>', 0)])
+    #     if order_id.show_all_products == True:
+    #         tab_produit_ids =[]
+    #         if produits:
+    #             for produit in produits:
+    #                 tab_produit_ids.append(produit.id)
+    #         self.produit_available_ids = tab_produit_ids
 
     
 
