@@ -12,7 +12,7 @@
         'security/ir.model.access.csv',
         'views/config.xml',
         'views/product.xml',
-        'views/sale.xml',
+        # 'views/sale.xml',
         'views/client.xml',
         'views/crons.xml',
         'views/gestion_vdi.xml',
