@@ -11,7 +11,7 @@ class SaleLineSAH(models.Model):
     _inherit = "sale.order.line"
 
     id_order_line_sh = fields.Integer(string="ID Line de Commande SAH", copy=False, help="ID Line de Commande dans SAH")
-    produit_available_ids = fields.Many2many(product.template, string="Produit dont prévisionel possitif")
+    produit_available_ids = fields.Many2many('product.template', string="Produit dont prévisionel possitif")
 
         
     _sql_constraints = [
