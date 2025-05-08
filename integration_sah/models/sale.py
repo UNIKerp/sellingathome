@@ -11,10 +11,21 @@ class SaleLineSAH(models.Model):
     _inherit = "sale.order.line"
 
     id_order_line_sh = fields.Integer(string="ID Line de Commande SAH", copy=False, help="ID Line de Commande dans SAH")
-    show_all_products = fields.Boolean(string='show_all_products',related='order_id.show_all_products')
+    produit_available_ids = fields.Many2many(product.template, string="Produit dont prévisionel possitif")
 
+        
     _sql_constraints = [
         ('id_order_line_sh_uniq', 'unique (id_order_line_sh)', "ID linr de commande SAH exists deja!"), ]
+    @api.onchange('order_id')
+    def produit_stock_prévisionnel(self):
+        produits = self.env['product.template'].search([('virtual_available', '>', 0)])
+        if order_id.show_all_products == True:
+            tab_produit_ids =[]
+            if produits:
+                for produit in produits:
+                    tab_produit_ids.append(produit.id)
+            self.produit_available_ids = tab_produit_ids
+
     
 
 class SaleSAH(models.Model):
