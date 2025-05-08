@@ -23,23 +23,16 @@
                
             </field>
         </record>
-        <!-- <record id="sale_order_line_product_domain" model="ir.ui.view">
-            <field name="name">sale.order.line.product.domain</field>
-            <field name="model">sale.order.line</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="remplace">
-                   <field name="product_id"
-                        domain="[
-                            '|',
-                            ('type', '!=', 'product'),
-                            '|',
-                            ('order_id.show_all_products', '=', True),
-                            ('virtual_available', '>', 0)
-                        ]"/>
-                </xpath>
-            </field>
-        </record> -->
+    <record id="sale_order_line_product_domain" model="ir.ui.view">
+        <field name="name">sale.order.line.product.domain</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="after">
+                <field name="show_all_products"/>
+            </xpath>
+        </field>
+    </record>
 
     </data>
 </odoo>

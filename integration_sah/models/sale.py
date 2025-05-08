@@ -11,6 +11,7 @@ class SaleLineSAH(models.Model):
     _inherit = "sale.order.line"
 
     id_order_line_sh = fields.Integer(string="ID Line de Commande SAH", copy=False, help="ID Line de Commande dans SAH")
+    show_all_products = fields.Boolean(string='show_all_products',related='order_id.show_all_products')
 
     _sql_constraints = [
         ('id_order_line_sh_uniq', 'unique (id_order_line_sh)', "ID linr de commande SAH exists deja!"), ]
