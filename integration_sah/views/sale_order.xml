@@ -15,7 +15,7 @@
                         '|',
                         ('type', '!=', 'product'),
                         '|',
-                        ('order_id.show_all_products', '=', True),
+                        ('show_all_products', '=', True),
                         ('virtual_available', '>', 0)
                     ]"/>
                 </xpath> 
