@@ -19,12 +19,15 @@ class SaleLineSAH(models.Model):
     @api.onchange('order_id')
     def produit_stock_prévisionnel(self):
         produits = self.env['product.template'].search([('virtual_available', '>', 0)])
+        pro = self.env['product.template'].search([()])
         if self.order_id.show_all_products == True:
             tab_produit_ids =[]
             if produits:
                 for produit in produits:
                     tab_produit_ids.append(produit.id)
             self.produit_available_ids = tab_produit_ids
+        else:
+            self.produit_available_ids = pro
 
     
 
