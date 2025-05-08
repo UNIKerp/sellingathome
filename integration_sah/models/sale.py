@@ -30,7 +30,7 @@ class SaleLineSAH(models.Model):
         else:
             if pro:
                 for p in pro:
-                    tab_produit_ids.append(p)
+                    tab_produit_ids.append(p.id)
             self.produit_available_ids = [(6, 0, tab_produit_ids)]
 
     
