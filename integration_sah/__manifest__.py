@@ -24,6 +24,7 @@
         'data/methode_paiement_sah.xml',
         'data/mode_livraison.xml',
         'wizard/account_commission_wizard.xml',
+        'views/sale_order.xml',
     ],
     'images':['static/description/icon.png',],
 }

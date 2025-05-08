@@ -8,6 +8,8 @@ _logger = logging.getLogger(__name__)
 class SaleOrderCombo(models.Model):
     _inherit = 'sale.order'
 
+    show_all_products = fields.Boolean(string='Afficher tous les produits')
+
     def create_order_with_combo(self):
         """
         Crée une commande avec un produit combo et ses produits associés.
