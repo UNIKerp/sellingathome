@@ -21,6 +21,8 @@ class SaleOrderCombo(models.Model):
             'partner_id': partner_id,
         })
 
+
+
         # Chargement du produit combo
         combo_product = self.env['product.product'].browse(combo_product_id)
 
