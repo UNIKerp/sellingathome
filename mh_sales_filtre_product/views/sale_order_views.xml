@@ -19,9 +19,9 @@
                     context="{'partner_id': parent.partner_id,'quantity': product_uom_qty,'pricelist': parent.pricelist_id,'uom':product_uom, 'company_id': parent.company_id, 'default_list_price': price_unit, 'default_uom_id': product_uom ,'show_all_products': parent.show_all_products}" options="{ 'no_open': True}" optional="show"
                         domain="[
                             ('sale_ok', '=', True),
-                            '|',
+                           
                             ('type', '!=', 'product'),
-                            '|',
+                        
                             ('virtual_available', '>', 0)
                         ]"
                         widget="sol_product_many2one" placeholder="Type to find a product..."/>
