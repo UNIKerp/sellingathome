@@ -16,13 +16,14 @@
                 </xpath>  -->
                 <xpath expr="//field[@name='product_template_id']" position="replace">
                     <field name="product_template_id" string="Product" readonly="id and not product_updatable" required="not display_type and not is_downpayment" 
-                    context="{'partner_id': parent.partner_id,'quantity': product_uom_qty,'pricelist': parent.pricelist_id,'uom':product_uom, 'company_id': parent.company_id, 'default_list_price': price_unit, 'default_uom_id': product_uom ,'show_all_products': parent.show_all_products}" options="{ 'no_open': True}" optional="show"
+                    context="{'partner_id': parent.partner_id,'quantity': product_uom_qty,'pricelist': parent.pricelist_id,'uom':product_uom, 'company_id': parent.company_id, 'default_list_price': price_unit, 'default_uom_id': product_uom}" options="{ 'no_open': True}" optional="show"
                         domain="[
                             ('sale_ok', '=', True),
                            
                             ('type', '!=', 'product'),
                         
-                            ('virtual_available', '>', 0)
+                            ('virtual_available', '>', 0),
+                            (parent.show_all_products, '=', True),
                         ]"
                         widget="sol_product_many2one" placeholder="Type to find a product..."/>
                 </xpath> 
