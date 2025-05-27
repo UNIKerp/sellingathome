@@ -23,7 +23,7 @@
                            
                         
                             ('virtual_available', '>', 0),
-                            (parent.show_all_products, '=', True),
+                            (order_id.show_all_products, '=', True),
                         ]"
                         widget="sol_product_many2one" placeholder="Type to find a product..."/>
                 </xpath> 
