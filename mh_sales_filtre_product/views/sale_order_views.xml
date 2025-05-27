@@ -20,7 +20,7 @@
                         domain="[
                             ('sale_ok', '=', True),
                            
-                            <!-- ('type', '!=', 'product'), -->
+                           
                         
                             ('virtual_available', '>', 0),
                             (parent.show_all_products, '=', True),
