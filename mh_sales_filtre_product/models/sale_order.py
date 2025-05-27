@@ -4,9 +4,9 @@ from odoo import models, fields, api, _
 
 _logger = logging.getLogger(__name__)
 
-# class SaleLineSAH(models.Model):
-#     _inherit = "sale.order.line"
-#     produit_available_ids = fields.Many2many('product.template', string="Produit dont prévisionel possitif")
+class SaleLineSAH(models.Model):
+    _inherit = "sale.order.line"
+    produit_available_ids = fields.Boolean(related="order_id.show_all_products")
 
         
 #     @api.onchange('order_id')
