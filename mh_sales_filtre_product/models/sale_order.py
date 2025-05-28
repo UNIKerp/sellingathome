@@ -9,7 +9,7 @@ class ProduitSAH(models.Model):
 class SaleOrderCombo(models.Model):
     _inherit = 'sale.order'
 
-    show_all_products = fields.Boolean(string='Filtre stock', help='Filtre sur les produits qui ont un stock prévisionnel > 0')
+    show_all_products = fields.Boolean(string='Filtre stock', help='Filtre sur les produits qui ont un stock prévisionnel > 0',default=False)
 
 
     @api.onchange('show_all_products')
@@ -18,10 +18,10 @@ class SaleOrderCombo(models.Model):
         """Met à jour la visibilité des produits selon le stock prévisionnel."""
         produits = self.env['product.template'].search([('sale_ok', '=', True)])
 
-        if self.show_all_products:
-            _logger.info("Filtrage activé : Affichage uniquement des produits avec stock > 0.")
+        if self.show_all_products == True:
+            _logger.info("Filtrage activé : Affichage uniquement des produits avec stock***************************************************** > 0.")
             produits.filtered(lambda p: p.virtual_available > 0).write({'is_visibles': True})
             produits.filtered(lambda p: p.virtual_available <= 0).write({'is_visibles': False})
         else:
-            _logger.info("Filtrage désactivé : Tous les produits sont visibles.")
+            _logger.info("Filtrage désactivé : Tous les produits sont visibles.@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@à")
             produits.write({'is_visibles': True})
