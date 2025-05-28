@@ -14,6 +14,7 @@ class SaleOrderCombo(models.Model):
 
     @api.onchange('show_all_products')
     def produit_stock_previsionnel(self):
+        _logger.info("Filtrage activé : Affichage uniquement des produits avec stock > 0.")
         """Met à jour la visibilité des produits selon le stock prévisionnel."""
         produits = self.env['product.template'].search([('sale_ok', '=', True)])
 
